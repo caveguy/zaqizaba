@@ -42,6 +42,8 @@ public class DeliveryProtocol {
 	final byte Cmd_readHIght8bits=(byte) 0xba;//?
 	final byte Cmd_setOutputLower8Bits=(byte) 0xc0;//?
 	final byte Cmd_setOutputHight8Bits=(byte) 0xc1;//?
+	final byte Cmd_readBusy=(byte) 0x50;//?
+	final byte Cmd_readErros=(byte) 0x51;//?
 	final byte BIT0=(byte) 0x01;
 	final byte BIT1=(byte) 0x02;
 	final byte BIT2=(byte) 0x04;
@@ -127,7 +129,8 @@ public class DeliveryProtocol {
 					case Cmd_setLeftWater:
 						dealReply_leftWater(reply);
 						break;
-							
+					case Cmd_readBusy:
+						dealReply_status(reply);
 						
 						
 						
@@ -186,6 +189,9 @@ public class DeliveryProtocol {
 	}
 	void dealReply_leftWater(byte data){
 		
+	}
+	void dealReply_status(byte data){
+		readStatusCallBack(data);
 	}
 	
 
@@ -378,6 +384,7 @@ public class DeliveryProtocol {
 		
 		void delivered();
 		void noDeliver();
+		void readStatus(byte status);
 	}
 	
 	private void deliveredCallBack(){
@@ -388,6 +395,12 @@ public class DeliveryProtocol {
 	private void noDeliverCallBack(){
 		if(callBack!=null)
 			callBack.noDeliver();
+		
+	}
+
+	private void readStatusCallBack(byte status){
+		if(callBack!=null)
+			callBack.readStatus( status);
 		
 	}
 	/*
@@ -430,6 +443,10 @@ public class DeliveryProtocol {
 	public void cmd_setRightWater(int time){
 		packCmd(Cmd_setRightWater,(byte) time);
 		//startAckTimer();
+	}
+	public void cmd_readBusy(){
+		packCmd(Cmd_readBusy,(byte) 0);
+	
 	}
 	public void cmd_pushLeftPowder(){
 		packCmd(Cmd_pushPowder,BIT0);
