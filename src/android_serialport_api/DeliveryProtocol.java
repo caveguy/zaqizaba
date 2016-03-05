@@ -3,6 +3,9 @@ package android_serialport_api;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -23,17 +26,51 @@ public class DeliveryProtocol {
 	private OutputStream mOutputStream;
 	private InputStream mInputStream;
 	private ReadThread mReadThread; 
-	byte cmd_deliver=0x53;
-	byte cmd_state=0x52;
-	int col=0;
-	int row=0;
+	
+	final byte Cmd_handshake=0x11;
+	final byte Cmd_dropCup=0x21;
+	final byte Cmd_redLight=0x22;
+	final byte Cmd_greedLight=0x23;
+	final byte Cmd_setLeftPowder=0x2a;
+	final byte Cmd_setLeftWater=0x2b;
+	final byte Cmd_setCenterPowder=0x2c;
+	final byte Cmd_setCenterWater=0x2d;
+	final byte Cmd_setRightPowder=0x2e;
+	final byte Cmd_setRightWater=0x2f;
+	final byte Cmd_pushPowder=0x30;
+	final byte Cmd_readLower8bits=(byte) 0xb9;
+	final byte Cmd_readHIght8bits=(byte) 0xba;//?
+	final byte Cmd_setOutputLower8Bits=(byte) 0xc0;//?
+	final byte Cmd_setOutputHight8Bits=(byte) 0xc1;//?
+	final byte BIT0=(byte) 0x01;
+	final byte BIT1=(byte) 0x02;
+	final byte BIT2=(byte) 0x04;
+	final byte BIT3=(byte) 0x08;
+	final byte BIT4=(byte) 0x10;
+	final byte BIT5=(byte) 0x20;
+	final byte BIT6=(byte) 0x40;
+	final byte BIT7=(byte) 0x80;
+	final int  ackTime=(int) 300;
+	
+
 	
 	boolean isDebug=true;
 	boolean finished=false;
-
+	Timer sendTimer=null;
 	Timer ackTimer=null;
 
 	
+	int canNext=0;
+	ArrayList<byte[]> sendList=new ArrayList<byte[]>();
+	
+	void getAck(){
+		hasAck=true;
+
+		canNext++;
+		if(ackTimerTask!=null){
+			ackTimerTask.cancel();
+		}
+	}
 	public DeliveryProtocol(Context c){
 		context=c;
 		//computeCrcTable();
@@ -53,6 +90,7 @@ public class DeliveryProtocol {
 			/* Create a receiving thread */
 			mReadThread = new ReadThread();
 			mReadThread.start();
+			startSendTimer();
 		} catch (Exception e) {
 			//DisplayError(R.string.error_security);
 		}
@@ -66,48 +104,34 @@ public class DeliveryProtocol {
 	}
 	
 	private void parseInput(byte[] data,int num){
-		if(num<5)
+		if(num<4)
 			return ;
 		//Log.e("protocol","parseInput!!!num="+num);
-		if(data[0]==(byte)0xaa&&data[num-1]==(byte)0xac){
-			if(data[num-2]==getCheckSun(data,num)){
-				hasAck=true;//收到回复
-				if(data[1]==cmd_deliver){ //出货返回
-					byte state=data[2];
-					if(state==0x30){//idle
-						//空闲说明指令被接收,开始发送查询指令
-						send_checkState(col, row);
-					}
-					else if(state==0x31){//busy
-						//延时一段时间后重新发送
-						myHandler.postDelayed(new Runnable(){
-
-							@Override
-							public void run() {
-								reSendData();
-							}
+		Log.e("rec","data[3]="+(int)data[3]);
+		Log.e("rec","getCheckSun(data,4)="+getCheckSun(data,4));
+		if(data[0]==(byte)0xaa){
+	//		if(data[0]==(byte)0xaa&&data[3]==getCheckSun(data,4)){
+			Log.e("rec","rec right!!");
+				getAck();//收到回复
+				byte reply=data[2];
+				switch(data[1]){
+					case Cmd_handshake:
+						dealReply_handShake(reply);
+						break;
+					case Cmd_dropCup:
+						dealReply_dropCup(reply);
+						break;
+					case Cmd_setLeftPowder:
+						dealReply_leftPowder(reply);
+						break;
+					case Cmd_setLeftWater:
+						dealReply_leftWater(reply);
+						break;
 							
-						}, 1000);	
-					}	
+						
+						
+						
 				}
-				else if(data[1]==cmd_state){
-					byte state=data[2];
-					if(state==0x30){//busy
-						myHandler.postDelayed(new Runnable(){
-							@Override
-							public void run() {
-								reSendData();
-							}
-							
-						}, 1000);
-					}
-					else if(state>0x30){//完成
-						finished();
-					}
-				}
-				
-
-			}
 		}
 	}
 	
@@ -119,18 +143,18 @@ public class DeliveryProtocol {
 	}
 
 	byte getCheckSun(byte[] data,int len){	
-		int length=len-2;
+		int length=len-1;
 		byte ck=0;
-		for(int i=1;i<length;i++){
+		for(int i=0;i<length;i++){
 			ck=(byte) (ck^data[i]);
 		}
 		return ck;
 	}
 
 	byte getCheckSun(byte[] data){	
-		int length=data.length-2;
+		int length=data.length-1;
 		byte ck=0;
-		for(int i=1;i<length;i++){
+		for(int i=0;i<length;i++){
 			ck=(byte) (ck^data[i]);
 		}
 		return ck;
@@ -139,29 +163,30 @@ public class DeliveryProtocol {
 	
 
 	
-	private void send_deliverAGood(int col,int row){
+	private void packCmd(byte cmd,byte arg){
 		byte[] data = new byte[] { 
 				(byte) 0xaa,
-				(byte) cmd_deliver,
-				(byte) (col+0x30), (byte)(row+0x30),
-				(byte) 0,(byte)0,(byte) 0 ,
-				(byte)0,
-				(byte)0xac};
-			data[7]=getCheckSun(data);
-			sendCmd(data);
+				(byte) cmd,
+				(byte) arg,
+				(byte)0};
+			data[3]=getCheckSun(data);
+			writeToUartCached(data);
+			canNext=1;
+			//sendCmd(data);
 	}
 	
-	private void send_checkState(int col,int row){
-		byte[] data = new byte[] { 
-				(byte) 0xaa,
-				(byte) cmd_state,
-				(byte) (col+0x30), (byte)(row+0x30),
-				(byte) 0,(byte)0,(byte) 0 ,
-				(byte)0,
-				(byte)0xac};
-			data[7]=getCheckSun(data);
-			sendCmd(data);
-	}	
+	void dealReply_handShake(byte data){
+		
+	}
+	void dealReply_dropCup(byte data){
+		
+	}
+	void dealReply_leftPowder(byte data){
+		
+	}
+	void dealReply_leftWater(byte data){
+		
+	}
 	
 
 	private void showLog(String tag, byte[] showArr,int num) {
@@ -209,8 +234,8 @@ public class DeliveryProtocol {
 	
 	
 	
-	private void sendCmd(byte[] data){
-		sendData=data;
+	private void sendCmd(byte[] send){
+		sendData=send;
 		if (mOutputStream != null) {
 			try {
 				if(sendData!=null){
@@ -229,6 +254,7 @@ public class DeliveryProtocol {
 				if(sendData!=null){
 					showLog("send",sendData,sendData.length);	
 					mOutputStream.write(sendData);
+					startAckTimer();
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -241,26 +267,51 @@ public class DeliveryProtocol {
 	
 
 	private void startAckTimer(){
+		if(ackTimerTask!=null){
+			ackTimerTask.cancel();
+			ackTimerTask=null;
+		}
 		hasAck=false;
 		ackCnt=0;
-		Log.e("modbus","startAckTimer############");
-		if(ackTimer!=null){
-			ackTimer.cancel();
-			ackTimer=null;
+		Log.e("ioctrl","startAckTimer############");
+		if(ackTimer==null){
+			ackTimer=new Timer();
 		}
-		ackTimer=new Timer();
-		ackTimer.schedule(new ackTimerTask(), 500,1000);
+
+		ackTimerTask=new AckTimerTask();
+		ackTimer.schedule(ackTimerTask, ackTime);
 	}
-	
+
+	AckTimerTask ackTimerTask=null;
+//	private void startAckTimer(){
+//		hasAck=false;
+//		ackCnt=0;
+//		Log.e("ioctrl","startAckTimer############");
+//		if(ackTimer==null){
+//			ackTimer=new Timer();
+//		}
+//		
+//		ackTimer.schedule(new AckTimerTask(), ackTime);
+//	}	
+
+	private void startSendTimer(){
+
+		if(sendTimer==null){
+			sendTimer=new Timer();
+		}
+		
+		sendTimer.schedule(new sendTimerTask(), 300,300);
+	}	
 	
 	
 
 	
 	
-	class ackTimerTask  extends TimerTask{
+	class AckTimerTask  extends TimerTask{
 		@Override
 		public void run() {
 			if(!hasAck){
+				Log.e("io","AckTimerTask !hasAck");
 				ackCnt++;
 				
 				if(ackCnt>10){
@@ -270,14 +321,49 @@ public class DeliveryProtocol {
 					reSendData();
 				}
 			}else{
-				ackTimer.cancel();
+				//ackTimer.cancel();
 			}
+		}	
+	}
+	class sendTimerTask  extends TimerTask{
+		@Override
+		public void run() {
+			onSendTime();
 		}	
 	}
 	
 
+	void writeToUartCached(byte[] data){
+			
+		    sendList.add(data);
+
+		}
 	
 	
+	
+	void onSendTime(){
+		//Log.e("io", "onSendTime ");
+	    if(!sendList.isEmpty()){
+
+	    	
+	        if(canNext!=0){
+	        	canNext--;
+	        	for(int i = 0;i<sendList.size();i++ ){
+	        		sendData = (byte[])sendList.get(i);
+	        		if(sendData!=null){
+	        			sendList.remove(i);
+	        	    	Log.e("io", "onSendTime !sendList.isEmpty() &&sendData!=null");
+	        			sendCmd(sendData);
+	        			startAckTimer();
+	        			break;
+	        			}
+	        		}
+	
+	            
+	            
+	        }
+	    }
+	}
 	
 	
 	///////////////////////回调接口////////////////////////////////
@@ -304,11 +390,79 @@ public class DeliveryProtocol {
 			callBack.noDeliver();
 		
 	}
-	//对外接口，出货
-	public void cmd_deliver(int col,int row){
-		this.col=col;
-		this.row=row;
-		send_deliverAGood(col,row);
-		startAckTimer();
+	/*
+	 * 握手
+	 */
+	public void cmd_handShake(){
+		packCmd(Cmd_handshake,(byte) 0);
+		//startAckTimer();
 	}
+	/*
+	 * 落杯
+	 */
+	public void cmd_dropCup(){
+		packCmd(Cmd_dropCup,(byte) 0);
+		//startAckTimer(); //10s
+	}
+	/*
+	 * 设置左出粉
+	 */
+	public void cmd_setLeftPowder(int time){
+		packCmd(Cmd_setLeftPowder,(byte) time);
+		//startAckTimer();
+	}
+	public void cmd_setLeftWater(int time){
+		packCmd(Cmd_setLeftWater,(byte) time);
+		//startAckTimer();
+	}
+	public void cmd_setCenterPowder(int time){
+		packCmd(Cmd_setCenterPowder,(byte) time);
+		//startAckTimer();
+	}
+	public void cmd_setCenterWater(int time){
+		packCmd(Cmd_setCenterWater,(byte) time);
+		//startAckTimer();
+	}
+	public void cmd_setRightPowder(int time){
+		packCmd(Cmd_setRightPowder,(byte) time);
+		//startAckTimer();
+	}
+	public void cmd_setRightWater(int time){
+		packCmd(Cmd_setRightWater,(byte) time);
+		//startAckTimer();
+	}
+	public void cmd_pushLeftPowder(){
+		packCmd(Cmd_pushPowder,BIT0);
+		//startAckTimer();
+	}
+	public void cmd_pushLeftPowder(int power,int water){
+		packCmd(Cmd_setLeftWater,(byte) water);		
+		packCmd(Cmd_setLeftPowder,(byte) power);
+		packCmd(Cmd_pushPowder,BIT0);
+		//startAckTimer();
+	}
+	public void cmd_pushCenterPowder(int power,int water){
+		packCmd(Cmd_setCenterWater,(byte) water);		
+		packCmd(Cmd_setCenterPowder,(byte) power);
+		packCmd(Cmd_pushPowder,BIT1);
+		//startAckTimer();
+	}
+	public void cmd_pushRightPowder(int power,int water){
+		packCmd(Cmd_setRightWater,(byte) water);		
+		packCmd(Cmd_setRightPowder,(byte) power);
+		packCmd(Cmd_pushPowder,BIT2);
+		//startAckTimer();
+	}
+	public void cmd_pushWater(int time){
+		packCmd(Cmd_setRightWater,(byte) time);
+		packCmd(Cmd_pushPowder,BIT3);
+		//startAckTimer();
+	}
+	
+	
+//	public void cmd_pushLeftPowder(int power,int water){
+//		cmd_setLeftPowder(power);		
+//		cmd_setLeftWater(water);
+//		cmd_pushLeftPowder();
+//	}
 }
