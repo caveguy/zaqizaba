@@ -50,7 +50,7 @@ public class DeliveryProtocol {
 	final byte BIT5=(byte) 0x20;
 	final byte BIT6=(byte) 0x40;
 	final byte BIT7=(byte) 0x80;
-	final int  ackTime=(int) 300;
+	final int  ackTime=(int) 200;
 	
 
 	
@@ -107,10 +107,10 @@ public class DeliveryProtocol {
 		if(num<4)
 			return ;
 		//Log.e("protocol","parseInput!!!num="+num);
-		Log.e("rec","data[3]="+(int)data[3]);
-		Log.e("rec","getCheckSun(data,4)="+getCheckSun(data,4));
-		if(data[0]==(byte)0xaa){
-	//		if(data[0]==(byte)0xaa&&data[3]==getCheckSun(data,4)){
+		//Log.e("rec","data[3]="+(int)data[3]);
+	//	Log.e("rec","getCheckSun(data,4)="+getCheckSun(data,4));
+		//if(data[0]==(byte)0xaa){
+		if(data[0]==(byte)0xaa&&data[3]==getCheckSun(data,4)){
 			Log.e("rec","rec right!!");
 				getAck();//收到回复
 				byte reply=data[2];
