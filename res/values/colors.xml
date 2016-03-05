@@ -1,0 +1,28 @@
+<resources>
+    <color name="air_blue">#05CBE5</color>
+    <color name="blue">#05CBE5</color>
+
+    <color name="air_yellow">#f9b900</color>
+    <color name="air_red">#e95513</color>
+    <color name="air_green">#50c800</color>
+    <color name="line">#33000000</color>
+    <color name="air_btn_blue">#00adfc</color>
+    <color name="air_tianqi2">#dc1e1e</color>
+    <color name="air_tianqi3">#009844</color>
+    <color name="air_tianqi4">#641482</color>
+    <color name="btn_blue">#009fe8</color>
+    <color name="white">#ffffff</color>
+    <color name="g">#88ffffff</color>
+    <color name="black">#000000</color>
+    <color name="unenabel">#33ffffff</color>
+  	<color name="unenabel2">#9e8DEEEE</color>
+    <color name="tranlate">#00000000</color>
+    <color name="green">#94a518</color>
+    <color name="brown">#472e16</color>
+    <color name="mask">#ca000000</color>
+
+    
+  
+   <color name="bright_foreground_dark">#ffffffff</color>  
+    
+</resources>

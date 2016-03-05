@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">CoffeeMachine</string>
+    <string name="btn">启动悬浮窗口</string>
+    <string name="floating">悬浮窗口</string>
+    <string name="stop">移除悬浮窗口</string>
+    <string name="btn1">特浓</string>
+    <string name="btn2">美式</string>
+    <string name="btn3">清洗</string>
+    <string name="btn4">初始化</string>
+    <string name="btn5">已付款</string>
+    <string name="btn6">落杯</string>
+    <string name="btn7">落水</string>
+    <string name="btn8">落奶粉</string>
+    <string name="btn9">换杯组</string>
+    <string name="btn10">落糖</string>
+    <string name="btn11">key11</string>
+    <string name="btn12">key12</string>
+    <string name="btn13">key13</string>
+    <string name="btn14">key14</string>
+    <string name="btn15">key15</string>
+    <string name="tab1">支付宝支付</string>
+    <string name="tab2">微信支付(待开发)</string>
+    <string name="McUartName">/dev/ttymxc3</string>
+    <string name="IoUartName">/dev/ttymxc2</string>
+    
+    
+    <string name="cmd1_ready">准备就绪</string>
+    <string name="cmd1_heating">加热中</string>
+    <string name="cmd1_rinsing">清洗中</string>
+    <string name="cmd1_openTab">打开右旋钮</string>
+    <string name="cmd1_close_tab">关闭右旋钮</string>
+    <string name="cmd1_too_hot">过热</string>
+    <string name="cmd1_mild">清淡</string>
+    <string name="cmd1_strong">浓郁</string>
+    <string name="cmd1_2cpus">双杯</string>
+    <string name="cmd1_cleaning">系统清洗中</string>
+    <string name="cmd1_emptying">清空系统</string>
+    <string name="cmd1_decalc_on">除垢中</string>
+    <string name="cmd1_add_tablet">加热清洗剂</string>
+    <string name="cmd1_no_tray">无底盘</string>
+    <string name="cmd1_waiting">稍等</string>
+    <string name="cmd1_fault">故障</string>
+    <string name="cmd1_fault1">故障1</string>
+    <string name="cmd1_fault2">故障2</string>
+    <string name="cmd1_fault3">故障3</string>
+    <string name="cmd1_fault4">故障4</string>
+    <string name="cmd1_fault5">故障5</string>
+    <string name="cmd1_fault6">故障6</string>
+    <string name="cmd1_standby">休眠</string>
+    <string name="cmd1_hold">保持</string>
+    <string name="cmd1_powder">咖啡粉</string>
+    <string name="cmd1_normal">普通</string>
+    <string name="cmd1_steam">奶泡</string>
+    <string name="cmd1_myCoffee">我的咖啡杯</string>
+    <string name="cmd1_fill_powder">请加入咖啡粉</string>
+    <string name="cmd1_water">热水</string>
+    <string name="cmd1_espresso">特浓咖啡</string>
+    <string name="cmd1_americano">美式咖啡</string>
+    <string name="cmd1_filterReady">过滤器准备就绪</string>
+    <string name="cmd1_insertOpenTab">插入过滤器并打开右旋钮</string>
+    <string name="cmd1_rinsingFilter">清洗过滤器</string>
+    <string name="cmd1_pressRinse">请按清洗键</string>
+    <string name="cmd1_fillWater">请加入纯水</string>
+    <string name="cmd1_fillingSystem">填充系统</string>
+    <string name="cmd1_fillBeans">请加入咖啡豆</string>
+    <string name="cmd1_selectCupButton">选择单双杯键</string>
+    <string name="cmd1_steamReady">奶泡准备就绪</string>
+    <string name="cmd1_cleanReady">系统清洗准备就绪</string>
+    <string name="cmd1_emptyTRay">清空地盘</string>
+    <string name="cmd1_trayMissing">缺少底盘</string>
+    <string name="cmd1_chgFilterOpenTab">更换过滤器并打开右旋钮</string>
+    <string name="cmd1_decalcytyReady">除垢准备就绪</string>
+    <string name="cmd1_solventInTank">水箱加除垢剂并打开右旋</string>
+    <string name="cmd1_addMorePowder">增加咖啡粉</string>
+    <string name="cmd1_emptyGround">清空废渣盒</string>
+    <string name="cmd1_unknow">未知状态</string>
+    
+     <string name="chooseTaste">"请选择口味"</string>   
+    <string name="espresso">意式咖啡</string>
+    <string name="american">美式咖啡</string>
+    <string name="latte">拿铁</string>
+    <string name="cappuccino">卡布奇诺</string>
+    <string name="sugar">糖</string>
+    <string name="milk">奶</string>
+    <string name="init">初始化</string>
+    <string name="clean">清洗</string>
+    <string name="paySuccess">支付成功</string>
+    <string name="connectFailed">网络请求失败</string>
+    <string name="createQrSuccess">获取二维码成功</string>
+    <string name="createQrFailed">获取二维码成功</string>
+    <string name="missingParas">"物品名称和单价不能为空"</string>
+    <string name="request">"我们会尽快核实，属实将返回您的付款"</string>
+    <string name="noCup">"抱歉，机器中无纸杯"</string>
+    <string name="hasCup">"落杯成功"</string>
+    <string name="finished">"finished"</string>
+    <string name="hasDirtyCup">"请移除已有杯子"</string>
+    <string name="maintain">"系统维护..."</string>
+   
+
+
+
+</resources>
