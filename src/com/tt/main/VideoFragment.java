@@ -2,9 +2,6 @@ package com.tt.main;
 
 import java.io.File;
 
-import com.example.coffemachinev2.R;
-import com.loopj.android.http.MySSLSocketFactory;
-
 import android.app.Fragment;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -13,22 +10,16 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
+import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.SurfaceHolder.Callback;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
-import android_serialport_api.DeliveryProtocol;
-import android_serialport_api.DeliveryProtocol.CallBack;
+
+import com.example.coffemachinev2.R;
 
 public class VideoFragment extends Fragment 
 

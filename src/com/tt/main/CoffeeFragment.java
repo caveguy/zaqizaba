@@ -43,18 +43,20 @@ import coffee.shop.po.response.QueryDeviceGoodsRsp;
 
 import com.example.coffemachinev2.R;
 import com.tt.util.Encode;
-import com.tt.util.RadioGroupV2;
-import com.tt.util.RadioGroupV2.OnCheckedChangeListener;
+import com.tt.util.ToastShow;
 
-public class CoffeeFragment extends Fragment implements OnClickListener ,OnCheckedChangeListener{
+public class CoffeeFragment extends Fragment implements OnClickListener {
 	EditText et_water,et_powder;
 	Button btn_start,btn_hand,btn_dropCup,btn_status;
 	TextView t_status;
 	DeliveryProtocol deliveryController=null;
 	private MachineProtocol myMachine=null;
-	RadioGroupV2 coffeeGroup=null;
+	//RadioGroupV2 coffeeGroup=null;
+	
+	ToastShow myToast;
 	RelativeLayout layout_qr;
 	//RadioGroupV2   payGroup=null;
+	CheckBox btn_coffee1,btn_coffee2,btn_coffee3,btn_coffee4,btn_coffee5,btn_coffee6;
 	CheckBox btn_pay1,btn_pay2,btn_pay3,btn_pay4;
 	ImageView img_qr;
 	
@@ -83,20 +85,33 @@ public class CoffeeFragment extends Fragment implements OnClickListener ,OnCheck
     }
 
     void initView(View view){
-    	coffeeGroup=(RadioGroupV2)view.findViewById(R.id.radio_group);
-    	coffeeGroup.setOnCheckedChangeListener(this);
+    //	coffeeGroup=(RadioGroupV2)view.findViewById(R.id.radio_group);
+    //	coffeeGroup.setOnCheckedChangeListener(this);
     	
      //	payGroup=(RadioGroupV2)view.findViewById(R.id.radio_group2);
      //	payGroup.setOnCheckedChangeListener(this);
      //	btn_pay1=(RadioButton)view.findViewById(R.id.radio_pay1);
+    	myToast =new ToastShow(getActivity());
     	btn_pay1=(CheckBox)view.findViewById(R.id.radio_pay1);
     	btn_pay2=(CheckBox)view.findViewById(R.id.radio_pay2);
     	btn_pay3=(CheckBox)view.findViewById(R.id.radio_pay3);
     	btn_pay4=(CheckBox)view.findViewById(R.id.radio_pay4);
+     	btn_coffee1=(CheckBox)view.findViewById(R.id.radio_1);
+     	btn_coffee2=(CheckBox)view.findViewById(R.id.radio_2);
+     	btn_coffee3=(CheckBox)view.findViewById(R.id.radio_3);
+     	btn_coffee4=(CheckBox)view.findViewById(R.id.radio_4);
+     	btn_coffee5=(CheckBox)view.findViewById(R.id.radio_5);
+     	btn_coffee6=(CheckBox)view.findViewById(R.id.radio_6);
     	btn_pay1.setOnCheckedChangeListener(checkListener);
     	btn_pay2.setOnCheckedChangeListener(checkListener);
     	btn_pay3.setOnCheckedChangeListener(checkListener);
     	btn_pay4.setOnCheckedChangeListener(checkListener);
+    	btn_coffee1.setOnCheckedChangeListener(checkListener);
+    	btn_coffee2.setOnCheckedChangeListener(checkListener);
+    	btn_coffee3.setOnCheckedChangeListener(checkListener);
+    	btn_coffee4.setOnCheckedChangeListener(checkListener);
+    	btn_coffee5.setOnCheckedChangeListener(checkListener);
+    	btn_coffee6.setOnCheckedChangeListener(checkListener);
     	layout_qr=(RelativeLayout)view.findViewById(R.id.layou_qr);
     	img_qr=(ImageView)view.findViewById(R.id.img_qr);
     }
@@ -131,7 +146,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener ,OnCheck
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
-						t_status.setText(""+status);
+					//	t_status.setText(""+status);
 					}
 				});
 				
@@ -146,8 +161,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener ,OnCheck
                 super.onLoad();
                 /*获得设备商品列表*/
                 
-                
-                
+             //Toast.makeText(getActivity(), "连接成功", Toast.LENGTH_LONG).show();
+                myToast.toastShow("连接服务器成功");
                 new QueryDeviceGoodsAsyncTask(){
                     @Override
                     protected void onPostExecute(QueryDeviceGoodsRsp rsp) {
@@ -165,16 +180,28 @@ public class CoffeeFragment extends Fragment implements OnClickListener ,OnCheck
                 }.execute(deviceInterfaceAdapter.getDevice().getFeedId());
             }
 			@Override
-			public void onPayFail() {
-				// TODO Auto-generated method stub
-				
+			public void onPayFail(Long arg0) {				
+				myHandler.post(new Runnable() {	
+					@Override
+					public void run() {
+						 myToast.toastShow("支付失败");	
+					}
+				});	
 			}
 
 			@Override
-			public void onPaySuccess() {
-				// TODO Auto-generated method stub
+			public void onPaySuccess(Long arg0) {
+				Log.e(Tag,"!!!!!!!!!!!!!!!!!!onPaySuccess");
+				myHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						myToast.toastShow("支付成功成功");
+					}
+				});
+				 
 				
 			}
+
         	
         };
         deviceInterfaceAdapter = new CoffeeDeviceInterfaceAdapter(getActivity(),myHandler,coffeeDeviceEvent);
@@ -195,15 +222,15 @@ public class CoffeeFragment extends Fragment implements OnClickListener ,OnCheck
 
 		final String filePath = getActivity().getCacheDir() + File.pathSeparator + "qtImage"
 				+ ".jpg";
-		int widthPix = 400;
-		int heightPix = 400;
+		int widthPix = 600;
+		int heightPix = 600;
 		boolean blCreated = Encode.createQRImage(url, widthPix, heightPix,
 				null, filePath);
 
 		if (blCreated) {
 		//	displayType();
 			//creatResultThread();//只有在二维码生成成功后才会启动是否支付成功的查询。
-			//myToast.toastShow(R.string.createQrSuccess);
+			myToast.toastShow(R.string.createQrSuccess);
 			Message msg=new Message();
 			msg.what=1000;
 			msg.obj=filePath;
@@ -212,7 +239,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener ,OnCheck
 			
 
 		} else {
-		//	myToast.toastShow(R.string.createQrFailed);
+			myToast.toastShow(R.string.createQrFailed);
 		}
 	}
     
@@ -247,7 +274,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener ,OnCheck
             @Override
             protected void onPostExecute(TPResponse rsp) {
                 if(rsp.getErrcode()==TPConstants.Errcode.SUCCESS){
-                    Toast.makeText(getActivity(),"申请退款成功",Toast.LENGTH_LONG).show();
+                  //  Toast.makeText(getActivity(),"申请退款成功",Toast.LENGTH_LONG).show();
                 }
             }
         }.execute(refundReq);
@@ -303,37 +330,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener ,OnCheck
 		}
 	}
 
-	@Override
-	public void onCheckedChanged(RadioGroupV2 radioGroupV2, int checkedId) {
-		if(radioGroupV2==coffeeGroup){
-		if(oldCheckedId!=checkedId){
-			switch(checkedId){
-				case R.id.radio_1:
-					Log.e(Tag,"radio_1 clicked!");
-					break;
-				case R.id.radio_2:
-	
-					break;
-				case R.id.radio_3:
 
-					break;
-				case R.id.radio_4:
-					
-					break;
-				case R.id.radio_5:
-					
-					break;
-				case R.id.radio_6:
-					
-					break;
-					
-			}
-		}
-		}
-
-		
-		oldCheckedId=checkedId;
-	}
 	android.widget.CompoundButton.OnCheckedChangeListener checkListener
 	=new android.widget.CompoundButton.OnCheckedChangeListener(){
 
@@ -344,12 +341,16 @@ public class CoffeeFragment extends Fragment implements OnClickListener ,OnCheck
 			int id =buttonView.getId();
 			if(isChecked){
 				setPayIconRadio(id);
+				setCoffeeIconRadio(id);
 			}
 			switch(id){
 			case R.id.radio_pay1:
 				if(isChecked){
-					askPay(1l,2);
-					layout_qr.setVisibility(View.VISIBLE);
+					if(goodId.containsValue(0));{
+						long goodid=goodId.get(0);
+						askPay(goodid,2);
+						layout_qr.setVisibility(View.VISIBLE);
+					}
 				}
 				else
 					
@@ -357,8 +358,11 @@ public class CoffeeFragment extends Fragment implements OnClickListener ,OnCheck
 				break;
 			case R.id.radio_pay2:
 				if(isChecked){
-					askPay(2l,2);
-					layout_qr.setVisibility(View.VISIBLE);
+					if(goodId.containsValue(1));{
+						long goodid=goodId.get(1);
+						askPay(goodid,1);
+						layout_qr.setVisibility(View.VISIBLE);
+					}
 				}
 				else
 					layout_qr.setVisibility(View.GONE);
@@ -401,15 +405,64 @@ public class CoffeeFragment extends Fragment implements OnClickListener ,OnCheck
 		
 		}
 	}
-	
+	void setCoffeeIconRadio(int id){
+		switch(id){
+			case R.id.radio_1:
+				btn_coffee2.setChecked(false);
+				btn_coffee3.setChecked(false);
+				btn_coffee4.setChecked(false);
+				btn_coffee5.setChecked(false);
+				btn_coffee6.setChecked(false);
+				break;
+			case R.id.radio_2:
+				btn_coffee1.setChecked(false);
+				btn_coffee3.setChecked(false);
+				btn_coffee4.setChecked(false);
+				btn_coffee5.setChecked(false);
+				btn_coffee6.setChecked(false);
+				break;
+			case R.id.radio_3:
+				btn_coffee2.setChecked(false);
+				btn_coffee1.setChecked(false);
+				btn_coffee4.setChecked(false);
+				btn_coffee5.setChecked(false);
+				btn_coffee6.setChecked(false);
+				break;
+			case R.id.radio_4:
+				btn_coffee1.setChecked(false);
+				btn_coffee2.setChecked(false);
+				btn_coffee3.setChecked(false);
+				btn_coffee5.setChecked(false);
+				btn_coffee6.setChecked(false);
+				break;
+			case R.id.radio_5:
+				btn_coffee1.setChecked(false);
+				btn_coffee2.setChecked(false);
+				btn_coffee3.setChecked(false);
+				btn_coffee4.setChecked(false);
+				btn_coffee6.setChecked(false);
+				break;
+			case R.id.radio_6:
+				btn_coffee1.setChecked(false);
+				btn_coffee2.setChecked(false);
+				btn_coffee3.setChecked(false);
+				btn_coffee4.setChecked(false);
+				btn_coffee5.setChecked(false);
+				break;
+
+		
+		}
+	}	
 	    private MyHandler myHandler = new MyHandler(getActivity()){
 	        @Override
 	        public void myHandleMessage(Message msg) {
+	        	
 	    		switch (msg.what) {
 				case 1000:
 					img_qr.setImageBitmap(BitmapFactory.decodeFile(msg.obj.toString()));
+					break;
 	        }
-	    };
+	        };
 	    };
 
 }

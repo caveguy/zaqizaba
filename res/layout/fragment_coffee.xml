@@ -24,6 +24,7 @@
 	    android:padding="@dimen/padding_type"
 	    android:background="@drawable/bg_type"
 	    android:orientation="vertical" >
+	    <!-- 
 	  <com.tt.util.RadioGroupV2
 	      android:id="@+id/radio_group"
 	    android:layout_width="match_parent"
@@ -31,12 +32,13 @@
 	    android:layout_gravity="center"
 	    android:orientation="vertical"
 	     >
+	      -->
 		<LinearLayout 
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
 		    android:layout_weight="1"
 		    android:orientation="horizontal" >
-	        <RadioButton     
+	        <CheckBox     
 	            android:id="@+id/radio_1"  
 	            android:layout_width="match_parent"     
 	            android:layout_height="@dimen/size_CoffeeType"  
@@ -52,7 +54,7 @@
 	            />
 
 	          
-	        <RadioButton     
+	        <CheckBox     
 	            android:id="@+id/radio_2"  
 	            android:layout_width="match_parent"     
 	            android:layout_height="@dimen/size_CoffeeType"  
@@ -66,7 +68,7 @@
 	            android:background="@drawable/radio2" 
 	            android:adjustViewBounds="true" 
 	            /> 
-	        <RadioButton     
+	        <CheckBox     
 	            android:id="@+id/radio_3"  
 	            android:layout_width="match_parent"     
 	            android:layout_height="@dimen/size_CoffeeType"  
@@ -86,7 +88,7 @@
 		    android:layout_height="wrap_content"
 		    android:layout_weight="1"
 		    android:orientation="horizontal" >
-	        <RadioButton     
+	        <CheckBox     
 	            android:id="@+id/radio_4"  
 	            android:layout_width="match_parent"     
 	            android:layout_height="@dimen/size_CoffeeType"  
@@ -99,7 +101,7 @@
 	            android:layout_margin="@dimen/padding_type" 
 	            android:background="@drawable/radio4"  
 	            /> 
-	        <RadioButton     
+	        <CheckBox     
 	            android:id="@+id/radio_5"  
 	            android:layout_width="match_parent"     
 	            android:layout_height="@dimen/size_CoffeeType"  
@@ -112,7 +114,7 @@
 	            android:layout_margin="@dimen/padding_type"
 	            android:background="@drawable/radio5"  
 	            /> 
-	        <RadioButton     
+	        <CheckBox     
 	            android:id="@+id/radio_6"  
 	            android:layout_width="match_parent"     
 	            android:layout_height="@dimen/size_CoffeeType"  
@@ -127,9 +129,9 @@
 	            />             
 	     </LinearLayout>  	      
 	      
-	      
+	      <!--  
 	  </com.tt.util.RadioGroupV2>  
-	    
+	   --> 
 	    
 	<!--  
 	<GridView 
