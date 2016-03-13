@@ -1,9 +1,18 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
    android:background="@color/white_bg"
    android:orientation="vertical"
-    android:padding="@dimen/padding_fragCoffee"
+   android:padding="@dimen/padding_fragCoffee"
+ 
+    >
+
+
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   android:background="@color/white_bg"
+   android:orientation="vertical"
     >
 
  
@@ -266,6 +275,7 @@
 	        android:layout_height="wrap_content"
 	        android:src="@drawable/icon_pay_4"
 	        android:scaleType="centerInside"
+	       
 	        android:adjustViewBounds="true"
 	        />
 	         <TextView 
@@ -278,6 +288,61 @@
 	     </LinearLayout> 	     
 	   </LinearLayout>
 
-</LinearLayout>
-
-
+  </LinearLayout>
+	<RelativeLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" 
+	   android:padding="30dp"
+	   android:layout_alignParentTop="true"
+	    android:clickable="true"
+	    >
+   		<ImageView
+   		    android:id="@+id/img_qrBg"
+   		   	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:src="@drawable/bg_qr0"
+	    	 android:adjustViewBounds="true"
+	    	android:layout_marginTop="30dp"
+	    >   
+   		  </ImageView>  
+   		 
+   		<ImageView
+   		    android:id="@+id/img_qr"
+   		   	android:layout_width="120dp"
+	    	android:layout_height="120dp"
+	    	android:src="@drawable/qr"
+	    	 android:adjustViewBounds="true"
+	    	android:layout_alignTop="@id/img_qrBg"
+	    	android:layout_alignLeft="@id/img_qrBg"
+	    	android:layout_marginTop="30dp"
+	    	android:layout_marginLeft="30dp"
+	    >   
+   		  </ImageView>
+   		
+   		<Button
+   		    android:id="@+id/btn_other"
+   		    android:layout_width="80dp"
+	    	android:layout_height="50dp" 
+	    	android:background="@drawable/icon_other" 
+	    	android:text="@string/t_otherPay"
+	    	android:layout_alignTop="@id/img_qr"
+	    	android:layout_toRightOf="@id/img_qr"
+	    	android:layout_marginLeft="20dp"
+	    	android:textColor="@color/brown_title"	    	
+	    	>
+   		</Button>
+   		   		<Button
+   		    android:id="@+id/btn_cancel"
+   		    android:layout_width="80dp"
+	    	android:layout_height="26dp" 
+	    	android:background="@drawable/icon_cancel" 
+	    	android:text="@string/cancel"
+	    	android:layout_below="@id/btn_other"
+	    	android:layout_toRightOf="@id/img_qr"
+	    	android:layout_marginLeft="20dp"
+	    	android:layout_marginTop="20dp"
+	    	android:textColor="@color/brown_title"	    	
+	    	>
+   		</Button>
+	  </RelativeLayout>
+</RelativeLayout>

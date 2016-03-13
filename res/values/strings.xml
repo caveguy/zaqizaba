@@ -105,6 +105,8 @@
     <string name="coffee_type4">"拿铁|￥18"</string>
     <string name="coffee_type5">"糖|￥1"</string>
     <string name="coffee_type6">"奶|￥2"</string>
+    <string name="t_otherPay">"使用其他付款方式"</string>
+    <string name="cancel">"取消"</string>
    
 
 
