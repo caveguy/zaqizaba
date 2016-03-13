@@ -40,10 +40,10 @@ public class DeliveryProtocol {
 	final byte Cmd_pushPowder=0x30;
 	final byte Cmd_readLower8bits=(byte) 0xb9;
 	final byte Cmd_readHIght8bits=(byte) 0xba;//?
-	final byte Cmd_setOutputLower8Bits=(byte) 0xc0;//?
-	final byte Cmd_setOutputHight8Bits=(byte) 0xc1;//?
-	final byte Cmd_readBusy=(byte) 0x50;//?
-	final byte Cmd_readErros=(byte) 0x51;//?
+	final byte Cmd_setOutputLower8Bits=(byte) 0xc0;//
+	final byte Cmd_setOutputHight8Bits=(byte) 0xc1;//
+	final byte Cmd_readBusy=(byte) 0x50;//
+	final byte Cmd_readErros=(byte) 0x51;//
 	final byte BIT0=(byte) 0x01;
 	final byte BIT1=(byte) 0x02;
 	final byte BIT2=(byte) 0x04;
@@ -54,7 +54,14 @@ public class DeliveryProtocol {
 	final byte BIT7=(byte) 0x80;
 	final int  ackTime=(int) 200;
 	
-
+	final byte DropCup_finish =(byte) 0x0;
+	final byte DropCup_nocup =(byte) 0x01;
+	final byte DropCup_timeOut =(byte) 0x02;
+	final byte DropCup_stuck =(byte) 0x03;
+	final byte DropCup_busy =(byte) 0x07;
+//	final byte DropCup_nocup =(byte) 0x01;
+	
+		
 	
 	boolean isDebug=true;
 	boolean finished=false;

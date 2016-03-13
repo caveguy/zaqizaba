@@ -38,5 +38,7 @@
 	<dimen name="padding_payIcon">16dp</dimen>
 	<dimen name="padding_type">7dp</dimen>
 	<dimen name="size_CoffeeType">100dp</dimen>
+	<dimen name="size_pay_icon">66dp</dimen>
+	<dimen name="marginTop_payTile">5dp</dimen>
 	
 </resources>

@@ -184,8 +184,111 @@
 	    android:gravity="center"
 	    android:background="@drawable/bg_icon_pay"
 	    android:layout_weight="21"
-	    android:orientation="horizontal" >
-
+	    android:orientation="vertical" >
+<!-- 
+	  <com.tt.util.RadioGroupV2
+	     android:id="@+id/radio_group2"
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/size_pay_icon" 
+	    android:paddingTop="10dp"
+	    android:orientation="horizontal"
+	     >
+	      -->
+		   <LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="@dimen/size_pay_icon" 
+	    	android:paddingTop="10dp"
+		    android:orientation="horizontal" >
+	        <CheckBox     
+	            android:id="@+id/radio_pay1"  
+	            android:layout_width="wrap_content"     
+	            android:layout_height="wrap_content"  	           
+	            android:layout_weight="1"  
+	            android:button="@null"
+	            android:adjustViewBounds="true"
+	            android:layout_marginLeft="@dimen/padding_payIcon"
+		    	android:layout_marginRight="@dimen/padding_payIcon"
+	            android:background="@drawable/pay_radio1" 
+	            />
+	        
+	        <CheckBox     
+	            android:id="@+id/radio_pay2"  
+	            android:layout_width="wrap_content"     
+	            android:layout_height="wrap_content"  	           
+	            android:layout_weight="1"  
+	            android:button="@null"
+	            android:adjustViewBounds="true"
+	            android:layout_marginLeft="@dimen/padding_payIcon"
+		    	android:layout_marginRight="@dimen/padding_payIcon"
+	            android:background="@drawable/pay_radio2" 
+	            />	        
+	        
+	        <CheckBox     
+	            android:id="@+id/radio_pay3"  
+	            android:layout_width="wrap_content"     
+	            android:layout_height="wrap_content"  	           
+	            android:layout_weight="1"  
+	            android:button="@null"
+	            android:adjustViewBounds="true"
+	            android:layout_marginLeft="@dimen/padding_payIcon"
+		    	android:layout_marginRight="@dimen/padding_payIcon"
+	            android:background="@drawable/pay_radio3" 
+	            />       
+ 	        <CheckBox     
+	            android:id="@+id/radio_pay4"  
+	            android:layout_width="wrap_content"     
+	            android:layout_height="wrap_content"  	           
+	            android:layout_weight="1"  
+	            android:button="@null"
+	            android:adjustViewBounds="true"
+	            android:layout_marginLeft="@dimen/padding_payIcon"
+		    	android:layout_marginRight="@dimen/padding_payIcon"
+	            android:background="@drawable/pay_radio4" 
+	            />  
+	          </LinearLayout>
+	          <!-- 
+ 	    </com.tt.util.RadioGroupV2>
+ 	     --> 
+	  	  <LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" 
+	    android:orientation="horizontal"
+	    android:layout_marginTop="@dimen/marginTop_payTile"
+	     >
+ 	     	 <TextView 
+	    	 android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="@color/brown_title"
+	         android:textSize="@dimen/size_payTitle"
+	         android:gravity="center"
+	         android:layout_weight="1"
+	        android:text="@string/tab1"/>     
+ 	     	 <TextView 
+	    	 android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="@color/brown_title"
+	         android:textSize="@dimen/size_payTitle"
+	         android:gravity="center"
+	         android:layout_weight="1"
+	        android:text="@string/tab2"/>     
+ 	     	 <TextView 
+	    	 android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="@color/brown_title"
+	         android:textSize="@dimen/size_payTitle"
+	         android:gravity="center"
+	         android:layout_weight="1"
+	        android:text="@string/tab3"/>     
+ 	     	 <TextView 
+	    	 android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="@color/brown_title"
+	         android:textSize="@dimen/size_payTitle"
+	         android:gravity="center"
+	         android:layout_weight="1"
+	        android:text="@string/tab4"/>     
+	  	   </LinearLayout>    
+		<!--  
 	    <LinearLayout
 		    android:layout_width="match_parent"
 		    android:layout_weight="1"
@@ -285,14 +388,17 @@
 	        android:textColor="@color/brown_title"
 	        android:text="@string/tab4"/>  
 	        
-	     </LinearLayout> 	     
+	     </LinearLayout> 
+	     -->	     
 	   </LinearLayout>
 
   </LinearLayout>
 	<RelativeLayout 
+	    android:id="@+id/layou_qr"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content" 
 	   android:padding="30dp"
+	   android:visibility="gone"
 	   android:layout_alignParentTop="true"
 	    android:clickable="true"
 	    >
