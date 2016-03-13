@@ -19,9 +19,13 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
+        	
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new ProtocolTestFragment())
-                    .commit();
+            .add(R.id.frag_video, new VideoFragment()).commit();
+            getFragmentManager().beginTransaction()
+                    .add(R.id.frag_msg, new MassageFragment()) .commit();  
+            getFragmentManager().beginTransaction()
+            .add(R.id.frag_work, new CoffeeFragment()) .commit();
         }
     }
 

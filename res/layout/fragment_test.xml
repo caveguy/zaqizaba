@@ -1,0 +1,73 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+        <LinearLayout
+        android:orientation="vertical"
+       	android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+       
+         >
+    <LinearLayout
+        android:orientation="horizontal"
+       	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+       
+         >
+         
+          <TextView
+  
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="设置左出粉量：" />
+        <EditText 
+        android:id="@+id/et_leftPowder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         android:numeric="integer"
+        android:text="10" />
+                  <TextView
+  
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="设置左出水量" />
+        <EditText 
+        android:id="@+id/et_leftWater"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numeric="integer"
+        android:text="10" />
+           </LinearLayout> 
+        
+           <Button 
+       android:id="@+id/btn_push"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="左出粉" />
+        <TextView
+        android:id="@+id/t_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="请测试" />
+    
+    
+         <Button 
+       android:id="@+id/btn_hand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="握手" /> 
+         <Button 
+       android:id="@+id/btn_dropCup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="落杯" />     
+
+       <Button 
+       android:id="@+id/btn_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="读状态" />   
+   </LinearLayout> 
+    
+    
+
+</RelativeLayout>

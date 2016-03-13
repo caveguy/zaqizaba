@@ -1,0 +1,84 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_timer"
+    >
+
+<LinearLayout
+    android:layout_alignParentLeft="true"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent" 
+    android:layout_marginLeft="@dimen/left_time"
+    android:layout_marginTop="@dimen/top_time"
+    android:layout_marginBottom="@dimen/bottom_time"
+    android:gravity="left" 
+    android:orientation="vertical">
+	<TextView 
+	 android:id="@+id/t_time"   
+   	 android:layout_width="wrap_content"
+     android:layout_height="match_parent"
+     android:textSize="@dimen/size_time"
+     android:textColor="@color/gray_time"
+     android:layout_weight="1"
+     android:text="10:56"/> 
+	<TextView 
+	 android:id="@+id/t_week"   
+   	 android:layout_width="wrap_content"
+     android:layout_height="match_parent"
+     android:textSize="@dimen/size_week"
+     android:textColor="@color/gray_time"
+     android:layout_weight="1"
+     android:text="星期三"/>  
+	<TextView 
+	 android:id="@+id/t_date"
+   	 android:layout_width="wrap_content"
+     android:layout_height="match_parent"
+     android:textSize="@dimen/size_date"
+     android:textColor="@color/gray_time"
+     android:layout_weight="1"
+     android:text="2016年3月11日"/>  
+       
+       
+ 
+    
+</LinearLayout>
+
+<LinearLayout
+    android:layout_alignParentRight="true"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent" 
+    android:gravity="right" 
+        android:layout_marginRight="@dimen/right_msg"
+    android:layout_marginTop="@dimen/top_msg"
+    android:layout_marginBottom="@dimen/bottom_msg"
+     android:orientation="vertical"
+    >
+    	<TextView 
+	 android:id="@+id/t_msg1"   
+   	 android:layout_width="wrap_content"
+     android:layout_height="match_parent"
+     android:textSize="@dimen/size_msg1"
+     android:textColor="@color/red_msg"
+     android:layout_weight="6"
+     android:text="优惠信息"/> 
+	<TextView 
+	 android:id="@+id/t_msg2"   
+   	 android:layout_width="wrap_content"
+     android:layout_height="match_parent"
+     android:textSize="@dimen/size_msg2"
+     android:textColor="@color/red_msg"
+     android:layout_weight="6"
+     android:text="Enjoy Coffee time"/>  
+	<TextView 
+	 android:id="@+id/t_msg3"
+   	 android:layout_width="wrap_content"
+     android:layout_height="match_parent"
+     android:textSize="@dimen/size_msg3"
+     android:textColor="@color/red_msg"
+     android:layout_weight="5"
+     android:text="Have a nice day"/>
+    
+</LinearLayout>
+
+
+</RelativeLayout>

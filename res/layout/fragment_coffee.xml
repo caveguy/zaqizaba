@@ -1,0 +1,283 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   android:background="@color/white_bg"
+   android:orientation="vertical"
+    android:padding="@dimen/padding_fragCoffee"
+    >
+
+ 
+	<LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:layout_weight="55"
+	    android:padding="@dimen/padding_type"
+	    android:background="@drawable/bg_type"
+	    android:orientation="vertical" >
+	  <com.tt.util.RadioGroupV2
+	      android:id="@+id/radio_group"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" 
+	    android:layout_gravity="center"
+	    android:orientation="vertical"
+	     >
+		<LinearLayout 
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:orientation="horizontal" >
+	        <RadioButton     
+	            android:id="@+id/radio_1"  
+	            android:layout_width="match_parent"     
+	            android:layout_height="@dimen/size_CoffeeType"  
+	            
+	            android:textSize="14.0sp"  
+	            android:textColor="@color/brown_title"    
+	            android:gravity="bottom|center_horizontal"  
+	            android:text="@string/coffee_type1" 
+	            android:layout_weight="1"  
+	            android:button="@null"
+	            android:layout_margin="@dimen/padding_type"
+	            android:background="@drawable/radio1" 
+	            />
+
+	          
+	        <RadioButton     
+	            android:id="@+id/radio_2"  
+	            android:layout_width="match_parent"     
+	            android:layout_height="@dimen/size_CoffeeType"  
+	            android:text="@string/coffee_type2"  
+	            android:textSize="14.0sp"  
+	            android:textColor="@color/brown_title"    
+	            android:gravity="bottom|center_horizontal" 
+	            android:layout_weight="1"  
+	            android:button="@null"  
+	            android:layout_margin="@dimen/padding_type"
+	            android:background="@drawable/radio2" 
+	            android:adjustViewBounds="true" 
+	            /> 
+	        <RadioButton     
+	            android:id="@+id/radio_3"  
+	            android:layout_width="match_parent"     
+	            android:layout_height="@dimen/size_CoffeeType"  
+	            android:text="@string/coffee_type3"  
+	            android:textSize="14.0sp"  
+	            android:textColor="@color/brown_title"    
+	            android:gravity="bottom|center_horizontal"  
+	            android:layout_weight="1"  
+	            android:button="@null"  
+	            android:layout_margin="@dimen/padding_type"
+	            android:background="@drawable/radio3"
+	            android:adjustViewBounds="true"  
+	            />             
+	     </LinearLayout>     
+		<LinearLayout 
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:orientation="horizontal" >
+	        <RadioButton     
+	            android:id="@+id/radio_4"  
+	            android:layout_width="match_parent"     
+	            android:layout_height="@dimen/size_CoffeeType"  
+	            android:text="@string/coffee_type4"  
+	            android:textSize="14.0sp"  
+	            android:textColor="@color/brown_title"    
+	            android:gravity="bottom|center_horizontal"  
+	            android:layout_weight="1"  
+	            android:button="@null" 
+	            android:layout_margin="@dimen/padding_type" 
+	            android:background="@drawable/radio4"  
+	            /> 
+	        <RadioButton     
+	            android:id="@+id/radio_5"  
+	            android:layout_width="match_parent"     
+	            android:layout_height="@dimen/size_CoffeeType"  
+	            android:text="@string/coffee_type5"  
+	            android:textSize="14.0sp" 
+	            android:textColor="@color/brown_title"    
+	            android:gravity="bottom|center_horizontal"  
+	            android:layout_weight="1"  
+	            android:button="@null" 
+	            android:layout_margin="@dimen/padding_type"
+	            android:background="@drawable/radio5"  
+	            /> 
+	        <RadioButton     
+	            android:id="@+id/radio_6"  
+	            android:layout_width="match_parent"     
+	            android:layout_height="@dimen/size_CoffeeType"  
+	            android:text="@string/coffee_type6"  
+	            android:textSize="14.0sp"  
+	            android:textColor="@color/brown_title"    
+	            android:gravity="bottom|center_horizontal"  
+	            android:layout_weight="1"  
+	            android:button="@null"  
+	            android:layout_margin="@dimen/padding_type"
+	            android:background="@drawable/radio6"  
+	            />             
+	     </LinearLayout>  	      
+	      
+	      
+	  </com.tt.util.RadioGroupV2>  
+	    
+	    
+	<!--  
+	<GridView 
+	    android:id="@+id/gridView"
+	    android:layout_marginTop="20dp"
+	    android:layout_width="match_parent"
+   		android:layout_height="wrap_content"
+   		android:numColumns="3"
+   		android:listSelector="@null" 
+	    >
+	    
+	</GridView>	 
+	-->      
+ </LinearLayout>   
+  	 
+<!--   状态显示    --> 	 
+   <LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@drawable/bg_msg"
+	    android:layout_weight="25"
+	    android:orientation="vertical"
+	    android:gravity="center"
+       >
+
+       
+	     <TextView 
+	   		android:id="@+id/t_coffeeType"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/state_text_size"
+	        android:textColor="@color/brown"
+	        android:text="请选择咖啡"/>
+
+          <TextView 
+	   		android:id="@+id/t_payType"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/state_text_size"
+	        android:textColor="@color/brown"
+	        android:text="请选择付款方式"/>
+       
+       
+   </LinearLayout>    
+    	 
+<!--   支付种类    -->
+
+   
+   <LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:background="@drawable/bg_icon_pay"
+	    android:layout_weight="21"
+	    android:orientation="horizontal" >
+
+	    <LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_weight="1"
+		    android:layout_height="wrap_content"
+		    android:gravity="center"
+		    android:paddingLeft="@dimen/padding_payIcon"
+		    android:paddingRight="@dimen/padding_payIcon"
+		    android:orientation="vertical" >   	    
+ 
+	        <ImageView
+	        android:id="@+id/img_1"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:src="@drawable/icon_pay_1"
+	        android:adjustViewBounds="true"
+	        />
+	         <TextView 
+	    	 android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="@color/brown_title"
+	         android:textSize="@dimen/size_payTitle"
+	        android:text="@string/tab1"/>  
+	        
+	     </LinearLayout> 
+	     
+	     <LinearLayout
+		   android:layout_width="match_parent"
+		    android:layout_weight="1"
+		    android:layout_height="wrap_content"
+		    android:gravity="center"
+		    android:paddingLeft="@dimen/padding_payIcon"
+		    android:paddingRight="@dimen/padding_payIcon"
+		    android:orientation="vertical" >   	    
+	    	   
+	        <ImageView
+	        android:id="@+id/img_2"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"   
+	        android:src="@drawable/icon_pay_2"
+	        android:adjustViewBounds="true"
+	        />
+	         <TextView 
+	    	 android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/size_payTitle"
+	        android:textColor="@color/brown_title"
+	        android:text="@string/tab2"/>  
+	        
+	     </LinearLayout>  
+	     <LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_weight="1"
+		    android:layout_height="wrap_content"
+		    android:gravity="center"
+		    android:paddingLeft="@dimen/padding_payIcon"
+		    android:paddingRight="@dimen/padding_payIcon"
+		    android:orientation="vertical" >   	    
+	    	   
+	        <ImageView
+	        android:id="@+id/img_3"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:src="@drawable/icon_pay_3"
+	        android:adjustViewBounds="true"
+	        />
+	         <TextView 
+	    	 android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/size_payTitle"
+	        android:textColor="@color/brown_title"
+	        android:text="@string/tab3"/>  
+	        
+	     </LinearLayout> 
+	     	     <LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_weight="1"
+		    android:layout_height="wrap_content"
+		    android:adjustViewBounds="true"
+		    android:gravity="center"
+		    android:paddingLeft="@dimen/padding_payIcon"
+		    android:paddingRight="@dimen/padding_payIcon"
+		    android:orientation="vertical" >   	    
+	    	   
+	        <ImageView
+	        android:id="@+id/img_4"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:src="@drawable/icon_pay_4"
+	        android:scaleType="centerInside"
+	        android:adjustViewBounds="true"
+	        />
+	         <TextView 
+	    	 android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/size_payTitle"
+	        android:textColor="@color/brown_title"
+	        android:text="@string/tab4"/>  
+	        
+	     </LinearLayout> 	     
+	   </LinearLayout>
+
+</LinearLayout>
+
+
