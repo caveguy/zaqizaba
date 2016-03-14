@@ -13,6 +13,7 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.media.MediaPlayer.OnSeekCompleteListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.style.LineHeightSpan.WithDensity;
@@ -74,7 +75,7 @@ public class VideoFragment extends Fragment
 		public void surfaceCreated(SurfaceHolder holder) {
 			Log.e(TAG, "SurfaceHolder 被创建");
 
-				play(which_file);
+				play(which_file++);
 
 		}
 
@@ -111,20 +112,21 @@ public class VideoFragment extends Fragment
 		String path;
 		if(allVideoList.isEmpty())
 			return;
-		if(allVideoList.get(which)!=null)
+		
+		if(allVideoList.size()>which)
 			path=allVideoList.get(which);
 		else{
 			which_file=0;
 			path=allVideoList.get(which_file);
 			}
-		//String path=Environment.getExternalStorageDirectory()+"/"+fileName;
+
 		Log.e(TAG, "path="+path);
 		
 		
 		
 		File file = new File(path);
 		if (!file.exists()) {
-			Toast.makeText(getActivity(), "视频文件路径错误", 0).show();
+			//Toast.makeText(getActivity(), "视频文件路径错误", 0).show();
 			return;
 		}
 		try {
@@ -133,44 +135,47 @@ public class VideoFragment extends Fragment
 				mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 				Log.e(TAG, "setDisplay");
 				mediaPlayer.setDisplay(surfaceHolder);
+				mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
+
+					@Override
+					public void onPrepared(MediaPlayer mp) {
+						Log.e(TAG, "装载完成");
+						mediaPlayer.start();
+						// 按照初始位置播放
+						mediaPlayer.seekTo(0);
+						// 设置进度条的最大进度为视频流的最大播放时长
+						//seekBar.setMax(mediaPlayer.getDuration());
+						// 开始线程，更新进度条的刻度
+					}
+				});
+				mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+					@Override
+					public void onCompletion(MediaPlayer mp) {
+						Log.e(TAG, "播放完成");
+						play(which_file++);
+					}
+				});
+
+
+				mediaPlayer.setOnErrorListener(new OnErrorListener() {
+
+					@Override
+					public boolean onError(MediaPlayer mp, int what, int extra) {
+						// 发生错误重新播放
+						 play(which_file++);
+						return false;
+					}
+				});
+				
+				mediaPlayer.setLooping(false);//不循环
 			}
+			mediaPlayer.reset();
 			mediaPlayer.setDataSource(file.getAbsolutePath());
 			Log.e(TAG, "开始装载");
 			mediaPlayer.prepareAsync();
-			mediaPlayer.setLooping(false);//不循环
-			mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
 
-				@Override
-				public void onPrepared(MediaPlayer mp) {
-					Log.e(TAG, "装载完成");
-					mediaPlayer.start();
-					// 按照初始位置播放
-					mediaPlayer.seekTo(0);
-					// 设置进度条的最大进度为视频流的最大播放时长
-					//seekBar.setMax(mediaPlayer.getDuration());
-					// 开始线程，更新进度条的刻度
-				}
-			});
-			mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
-
-				@Override
-				public void onCompletion(MediaPlayer mp) {
-					// 在播放完毕被回调
-					//btn_play.setEnabled(true);
-					 play(which_file++);
-				}
-			});
-
-			mediaPlayer.setOnErrorListener(new OnErrorListener() {
-
-				@Override
-				public boolean onError(MediaPlayer mp, int what, int extra) {
-					// 发生错误重新播放
-					play(0);
-					isPlaying = false;
-					return false;
-				}
-			});
+			
 		} catch (Exception e) {
 			Log.e(TAG, "Exception:"+e.toString());
 			e.printStackTrace();
