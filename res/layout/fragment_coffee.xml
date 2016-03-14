@@ -41,7 +41,7 @@
 	        <CheckBox     
 	            android:id="@+id/radio_1"  
 	            android:layout_width="match_parent"     
-	            android:layout_height="@dimen/size_CoffeeType"  
+	            android:layout_height="match_parent"  
 	            
 	            android:textSize="14.0sp"  
 	            android:textColor="@color/brown_title"    
@@ -49,6 +49,7 @@
 	            android:text="@string/coffee_type1" 
 	            android:layout_weight="1"  
 	            android:button="@null"
+	            android:paddingBottom="@dimen/paddingBotton_iconCoffee"
 	            android:layout_margin="@dimen/padding_type"
 	            android:background="@drawable/radio1" 
 	            />
@@ -57,7 +58,7 @@
 	        <CheckBox     
 	            android:id="@+id/radio_2"  
 	            android:layout_width="match_parent"     
-	            android:layout_height="@dimen/size_CoffeeType"  
+	            android:layout_height="match_parent"  
 	            android:text="@string/coffee_type2"  
 	            android:textSize="14.0sp"  
 	            android:textColor="@color/brown_title"    
@@ -65,13 +66,14 @@
 	            android:layout_weight="1"  
 	            android:button="@null"  
 	            android:layout_margin="@dimen/padding_type"
+	            android:paddingBottom="@dimen/paddingBotton_iconCoffee"
 	            android:background="@drawable/radio2" 
 	            android:adjustViewBounds="true" 
 	            /> 
 	        <CheckBox     
 	            android:id="@+id/radio_3"  
 	            android:layout_width="match_parent"     
-	            android:layout_height="@dimen/size_CoffeeType"  
+	            android:layout_height="match_parent"  
 	            android:text="@string/coffee_type3"  
 	            android:textSize="14.0sp"  
 	            android:textColor="@color/brown_title"    
@@ -79,6 +81,7 @@
 	            android:layout_weight="1"  
 	            android:button="@null"  
 	            android:layout_margin="@dimen/padding_type"
+	            android:paddingBottom="@dimen/paddingBotton_iconCoffee"
 	            android:background="@drawable/radio3"
 	            android:adjustViewBounds="true"  
 	            />             
@@ -87,11 +90,11 @@
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
 		    android:layout_weight="1"
-		    android:orientation="horizontal" >
+		    android:orientation="horizontal">
 	        <CheckBox     
 	            android:id="@+id/radio_4"  
 	            android:layout_width="match_parent"     
-	            android:layout_height="@dimen/size_CoffeeType"  
+	            android:layout_height="match_parent"  
 	            android:text="@string/coffee_type4"  
 	            android:textSize="14.0sp"  
 	            android:textColor="@color/brown_title"    
@@ -99,12 +102,13 @@
 	            android:layout_weight="1"  
 	            android:button="@null" 
 	            android:layout_margin="@dimen/padding_type" 
+	            android:paddingBottom="@dimen/paddingBotton_iconCoffee"
 	            android:background="@drawable/radio4"  
 	            /> 
 	        <CheckBox     
 	            android:id="@+id/radio_5"  
 	            android:layout_width="match_parent"     
-	            android:layout_height="@dimen/size_CoffeeType"  
+	            android:layout_height="match_parent"  
 	            android:text="@string/coffee_type5"  
 	            android:textSize="14.0sp" 
 	            android:textColor="@color/brown_title"    
@@ -112,12 +116,13 @@
 	            android:layout_weight="1"  
 	            android:button="@null" 
 	            android:layout_margin="@dimen/padding_type"
+	            android:paddingBottom="@dimen/paddingBotton_iconCoffee"
 	            android:background="@drawable/radio5"  
 	            /> 
 	        <CheckBox     
 	            android:id="@+id/radio_6"  
 	            android:layout_width="match_parent"     
-	            android:layout_height="@dimen/size_CoffeeType"  
+	            android:layout_height="match_parent"  
 	            android:text="@string/coffee_type6"  
 	            android:textSize="14.0sp"  
 	            android:textColor="@color/brown_title"    
@@ -125,6 +130,7 @@
 	            android:layout_weight="1"  
 	            android:button="@null"  
 	            android:layout_margin="@dimen/padding_type"
+	            android:paddingBottom="@dimen/paddingBotton_iconCoffee"
 	            android:background="@drawable/radio6"  
 	            />             
 	     </LinearLayout>  	      
@@ -198,13 +204,14 @@
 	      -->
 		   <LinearLayout
 		    android:layout_width="match_parent"
-		    android:layout_height="@dimen/size_pay_icon" 
+		    android:layout_height="match_parent" 
 	    	android:paddingTop="10dp"
+	    	android:layout_weight="4"
 		    android:orientation="horizontal" >
 	        <CheckBox     
 	            android:id="@+id/radio_pay1"  
-	            android:layout_width="wrap_content"     
-	            android:layout_height="wrap_content"  	           
+	            android:layout_width="match_parent"     
+	            android:layout_height="match_parent"  	           
 	            android:layout_weight="1"  
 	            android:button="@null"
 	            android:adjustViewBounds="true"
@@ -215,8 +222,8 @@
 	        
 	        <CheckBox     
 	            android:id="@+id/radio_pay2"  
-	            android:layout_width="wrap_content"     
-	            android:layout_height="wrap_content"  	           
+	            android:layout_width="match_parent"     
+	            android:layout_height="match_parent"  	           
 	            android:layout_weight="1"  
 	            android:button="@null"
 	            android:adjustViewBounds="true"
@@ -227,8 +234,8 @@
 	        
 	        <CheckBox     
 	            android:id="@+id/radio_pay3"  
-	            android:layout_width="wrap_content"     
-	            android:layout_height="wrap_content"  	           
+	            android:layout_width="match_parent"     
+	            android:layout_height="match_parent"  	           
 	            android:layout_weight="1"  
 	            android:button="@null"
 	            android:adjustViewBounds="true"
@@ -238,8 +245,8 @@
 	            />       
  	        <CheckBox     
 	            android:id="@+id/radio_pay4"  
-	            android:layout_width="wrap_content"     
-	            android:layout_height="wrap_content"  	           
+	            android:layout_width="match_parent"     
+	            android:layout_height="match_parent"  	           
 	            android:layout_weight="1"  
 	            android:button="@null"
 	            android:adjustViewBounds="true"
@@ -253,13 +260,14 @@
  	     --> 
 	  	  <LinearLayout
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content" 
+	    android:layout_height="match_parent" 
 	    android:orientation="horizontal"
+	    android:layout_weight="15"
 	    android:layout_marginTop="@dimen/marginTop_payTile"
 	     >
  	     	 <TextView 
 	    	 android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="match_parent"
 	        android:textColor="@color/brown_title"
 	         android:textSize="@dimen/size_payTitle"
 	         android:gravity="center"
@@ -267,7 +275,7 @@
 	        android:text="@string/tab1"/>     
  	     	 <TextView 
 	    	 android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="match_parent"
 	        android:textColor="@color/brown_title"
 	         android:textSize="@dimen/size_payTitle"
 	         android:gravity="center"
@@ -275,7 +283,7 @@
 	        android:text="@string/tab2"/>     
  	     	 <TextView 
 	    	 android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="match_parent"
 	        android:textColor="@color/brown_title"
 	         android:textSize="@dimen/size_payTitle"
 	         android:gravity="center"
@@ -283,115 +291,14 @@
 	        android:text="@string/tab3"/>     
  	     	 <TextView 
 	    	 android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="match_parent"
 	        android:textColor="@color/brown_title"
 	         android:textSize="@dimen/size_payTitle"
 	         android:gravity="center"
 	         android:layout_weight="1"
 	        android:text="@string/tab4"/>     
 	  	   </LinearLayout>    
-		<!--  
-	    <LinearLayout
-		    android:layout_width="match_parent"
-		    android:layout_weight="1"
-		    android:layout_height="wrap_content"
-		    android:gravity="center"
-		    android:paddingLeft="@dimen/padding_payIcon"
-		    android:paddingRight="@dimen/padding_payIcon"
-		    android:orientation="vertical" >   	    
- 
-	        <ImageView
-	        android:id="@+id/img_1"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-	        android:src="@drawable/icon_pay_1"
-	        android:adjustViewBounds="true"
-	        />
-	         <TextView 
-	    	 android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textColor="@color/brown_title"
-	         android:textSize="@dimen/size_payTitle"
-	        android:text="@string/tab1"/>  
-	        
-	     </LinearLayout> 
-	     
-	     <LinearLayout
-		   android:layout_width="match_parent"
-		    android:layout_weight="1"
-		    android:layout_height="wrap_content"
-		    android:gravity="center"
-		    android:paddingLeft="@dimen/padding_payIcon"
-		    android:paddingRight="@dimen/padding_payIcon"
-		    android:orientation="vertical" >   	    
-	    	   
-	        <ImageView
-	        android:id="@+id/img_2"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"   
-	        android:src="@drawable/icon_pay_2"
-	        android:adjustViewBounds="true"
-	        />
-	         <TextView 
-	    	 android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textSize="@dimen/size_payTitle"
-	        android:textColor="@color/brown_title"
-	        android:text="@string/tab2"/>  
-	        
-	     </LinearLayout>  
-	     <LinearLayout
-		    android:layout_width="match_parent"
-		    android:layout_weight="1"
-		    android:layout_height="wrap_content"
-		    android:gravity="center"
-		    android:paddingLeft="@dimen/padding_payIcon"
-		    android:paddingRight="@dimen/padding_payIcon"
-		    android:orientation="vertical" >   	    
-	    	   
-	        <ImageView
-	        android:id="@+id/img_3"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:src="@drawable/icon_pay_3"
-	        android:adjustViewBounds="true"
-	        />
-	         <TextView 
-	    	 android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textSize="@dimen/size_payTitle"
-	        android:textColor="@color/brown_title"
-	        android:text="@string/tab3"/>  
-	        
-	     </LinearLayout> 
-	     	     <LinearLayout
-		    android:layout_width="match_parent"
-		    android:layout_weight="1"
-		    android:layout_height="wrap_content"
-		    android:adjustViewBounds="true"
-		    android:gravity="center"
-		    android:paddingLeft="@dimen/padding_payIcon"
-		    android:paddingRight="@dimen/padding_payIcon"
-		    android:orientation="vertical" >   	    
-	    	   
-	        <ImageView
-	        android:id="@+id/img_4"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:src="@drawable/icon_pay_4"
-	        android:scaleType="centerInside"
-	       
-	        android:adjustViewBounds="true"
-	        />
-	         <TextView 
-	    	 android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textSize="@dimen/size_payTitle"
-	        android:textColor="@color/brown_title"
-	        android:text="@string/tab4"/>  
-	        
-	     </LinearLayout> 
-	     -->	     
+     
 	   </LinearLayout>
 
   </LinearLayout>

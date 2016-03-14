@@ -40,5 +40,6 @@
 	<dimen name="size_CoffeeType">100dp</dimen>
 	<dimen name="size_pay_icon">66dp</dimen>
 	<dimen name="marginTop_payTile">5dp</dimen>
+	<dimen name="paddingBotton_iconCoffee">6dp</dimen>
 	
 </resources>
