@@ -45,21 +45,20 @@ import com.example.coffemachinev2.R;
 import com.tt.util.Encode;
 import com.tt.util.ToastShow;
 
-public class CoffeeFragment extends Fragment implements OnClickListener {
-	EditText et_water,et_powder;
-	Button btn_start,btn_hand,btn_dropCup,btn_status;
-	TextView t_status;
+public class CoffeeFragment extends Fragment implements OnClickListener,android.widget.CompoundButton.OnCheckedChangeListener {
+
+	TextView t_coffeeType,t_payType;
 	DeliveryProtocol deliveryController=null;
-	private MachineProtocol myMachine=null;
-	//RadioGroupV2 coffeeGroup=null;
-	
+	private MachineProtocol myMachine=null;	
 	ToastShow myToast;
 	RelativeLayout layout_qr;
-	//RadioGroupV2   payGroup=null;
 	CheckBox btn_coffee1,btn_coffee2,btn_coffee3,btn_coffee4,btn_coffee5,btn_coffee6;
 	CheckBox btn_pay1,btn_pay2,btn_pay3,btn_pay4;
 	ImageView img_qr;
-	
+	Button btn_cancel,btn_other;
+	long cur_goodId=-1;
+	private final int WeixinPay=2;
+	private final int AliPay=2;
 	HashMap<Integer,Long> goodId=new HashMap<Integer,Long>();
 	HashMap<Long,String>	goodName=new HashMap<Long,String>();
 	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
@@ -102,18 +101,25 @@ public class CoffeeFragment extends Fragment implements OnClickListener {
      	btn_coffee4=(CheckBox)view.findViewById(R.id.radio_4);
      	btn_coffee5=(CheckBox)view.findViewById(R.id.radio_5);
      	btn_coffee6=(CheckBox)view.findViewById(R.id.radio_6);
-    	btn_pay1.setOnCheckedChangeListener(checkListener);
-    	btn_pay2.setOnCheckedChangeListener(checkListener);
-    	btn_pay3.setOnCheckedChangeListener(checkListener);
-    	btn_pay4.setOnCheckedChangeListener(checkListener);
-    	btn_coffee1.setOnCheckedChangeListener(checkListener);
-    	btn_coffee2.setOnCheckedChangeListener(checkListener);
-    	btn_coffee3.setOnCheckedChangeListener(checkListener);
-    	btn_coffee4.setOnCheckedChangeListener(checkListener);
-    	btn_coffee5.setOnCheckedChangeListener(checkListener);
-    	btn_coffee6.setOnCheckedChangeListener(checkListener);
+    	btn_pay1.setOnCheckedChangeListener(this);
+    	btn_pay2.setOnCheckedChangeListener(this);
+    	btn_pay3.setOnCheckedChangeListener(this);
+    	btn_pay4.setOnCheckedChangeListener(this);
+    	btn_coffee1.setOnCheckedChangeListener(this);
+    	btn_coffee2.setOnCheckedChangeListener(this);
+    	btn_coffee3.setOnCheckedChangeListener(this);
+    	btn_coffee4.setOnCheckedChangeListener(this);
+    	btn_coffee5.setOnCheckedChangeListener(this);
+    	btn_coffee6.setOnCheckedChangeListener(this);
     	layout_qr=(RelativeLayout)view.findViewById(R.id.layou_qr);
     	img_qr=(ImageView)view.findViewById(R.id.img_qr);
+    	btn_cancel=(Button)view.findViewById(R.id.btn_cancel);
+    	btn_other=(Button)view.findViewById(R.id.btn_other);
+    	btn_cancel.setOnClickListener(this);
+    	btn_other.setOnClickListener(this);
+    	t_coffeeType=(TextView)view.findViewById(R.id.t_coffeeType);
+    	t_payType=(TextView)view.findViewById(R.id.t_payType);
+    	setPayEnable(false);
     }
     
     
@@ -213,7 +219,14 @@ public class CoffeeFragment extends Fragment implements OnClickListener {
     }
     
     void setGoodMsg(){
-    	
+    	myHandler.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				setIconNames();
+			}
+		});
     	
     }
     
@@ -310,11 +323,12 @@ public class CoffeeFragment extends Fragment implements OnClickListener {
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		switch(v.getId()){
-		case R.id.btn_push:
-			Log.e(Tag,"btn_push!!");
-			int leftPowder=Integer.parseInt(et_powder.getText().toString());
-			int leftWater=Integer.parseInt(et_water.getText().toString());
-			deliveryController.cmd_pushLeftPowder(leftPowder, leftWater);
+		case R.id.btn_cancel:
+			//还需要向服务器上报取消订单
+			cancelOder();
+			break;
+		case R.id.btn_other:
+			useOtherPay();
 			break;
 		case R.id.btn_hand:
 			Log.e(Tag,"btn_hand!!");
@@ -331,8 +345,6 @@ public class CoffeeFragment extends Fragment implements OnClickListener {
 	}
 
 
-	android.widget.CompoundButton.OnCheckedChangeListener checkListener
-	=new android.widget.CompoundButton.OnCheckedChangeListener(){
 
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView,
@@ -346,11 +358,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener {
 			switch(id){
 			case R.id.radio_pay1:
 				if(isChecked){
-					if(goodId.containsValue(0));{
-						long goodid=goodId.get(0);
-						askPay(goodid,2);
-						layout_qr.setVisibility(View.VISIBLE);
-					}
+					setWeixinpay();
 				}
 				else
 					
@@ -358,27 +366,178 @@ public class CoffeeFragment extends Fragment implements OnClickListener {
 				break;
 			case R.id.radio_pay2:
 				if(isChecked){
-					if(goodId.containsValue(1));{
-						long goodid=goodId.get(1);
-						askPay(goodid,1);
-						layout_qr.setVisibility(View.VISIBLE);
-					}
+					setAlipay();
 				}
 				else
 					layout_qr.setVisibility(View.GONE);
 				break;
 			case R.id.radio_pay3:
-				
+				if(isChecked){
+					setAppealPay();
+				}
+				else
+				;	
 				break;
 			case R.id.radio_pay4:
-				
+				if(isChecked){
+					setCardPay();
+				}
+				else
+				;	
+				break;
+			case R.id.radio_1:
+				if(isChecked){
+					setCoffeeType(0);
+				}
+				else{
+					setCoffeeType(-1);
+				}
+				break;
+			case R.id.radio_2:
+				if(isChecked){
+					setCoffeeType(1);
+				}
+				else{
+					setCoffeeType(-1);
+				}
+				break;
+			case R.id.radio_3:
+				if(isChecked){
+					setCoffeeType(2);
+				}
+				else{
+					setCoffeeType(-1);
+				}
+				break;
+			case R.id.radio_4:
+				if(isChecked){
+					setCoffeeType(3);
+				}
+				else{
+					setCoffeeType(-1);
+				}
+				break;
+			case R.id.radio_5:
+				if(isChecked){
+					setCoffeeType(4);
+				}
+				else{
+					setCoffeeType(-1);
+				}
+				break;
+			case R.id.radio_6:
+				if(isChecked){
+					setCoffeeType(5);
+				}
+				else{
+					setCoffeeType(-1);
+				}
 				break;
 			
 			}
 			
 		}
+
+		void setIconNames(){
+			long id=0;
+			if(goodId.containsKey(0)){
+				id=goodId.get(0);
+				String name=goodName.get(id);
+				BigDecimal price=goodPrice.get(id);
+				name=name+"|￥"+price.toString();
+				btn_coffee1.setText(name);
+			}
+			if(goodId.containsKey(1)){
+				id=goodId.get(1);
+				String name=goodName.get(id);
+				BigDecimal price=goodPrice.get(id);
+				name=name+"|￥"+price.toString();
+				btn_coffee2.setText(name);
+			}
+			if(goodId.containsKey(2)){
+				id=goodId.get(2);
+				String name=goodName.get(id);
+				BigDecimal price=goodPrice.get(id);
+				name=name+"|￥"+price.toString();
+				btn_coffee3.setText(name);
+			}
+			if(goodId.containsKey(3)){
+				id=goodId.get(3);
+				String name=goodName.get(id);
+				BigDecimal price=goodPrice.get(id);
+				name=name+"|￥"+price.toString();
+				btn_coffee4.setText(name);
+			}
+			if(goodId.containsKey(4)){
+				id=goodId.get(4);
+				String name=goodName.get(id);
+				BigDecimal price=goodPrice.get(id);
+				name=name+"|￥"+price.toString();
+				btn_coffee5.setText(name);
+			}
+			if(goodId.containsKey(5)){
+				id=goodId.get(5);
+				String name=goodName.get(id);
+				BigDecimal price=goodPrice.get(id);
+				name=name+"|￥"+price.toString();
+				btn_coffee6.setText(name);
+			}
+		}
+		void setPayEnable(boolean enable){
+			btn_pay1.setEnabled(enable);
+			btn_pay2.setEnabled(enable);
+			btn_pay3.setEnabled(enable);
+			btn_pay4.setEnabled(enable);
+		}
 		
-	};
+		void setCoffeeType(int type){
+			
+			if(type==-1){
+				cur_goodId=-1;
+				setPayEnable(false);
+				return ;
+			}
+			setPayEnable(true);
+			if(goodId.containsKey(type)){
+				cur_goodId=goodId.get(type);
+			
+				String disp="已选择"+goodName.get(cur_goodId)+"|￥"+goodPrice.get(cur_goodId).toString();
+				
+				t_coffeeType.setText(disp);
+			}
+		}
+		
+		
+		void cancelOder(){
+			layout_qr.setVisibility(View.GONE);
+			t_coffeeType.setText(R.string.pleaseChooseCoffee);
+			t_payType.setText(R.string.pleaseChoosePay);
+			setCoffeeIconRadio(0);
+			setPayIconRadio(0);
+		}
+		void useOtherPay(){
+			layout_qr.setVisibility(View.GONE);
+			t_payType.setText(R.string.pleaseChoosePay);
+			setPayIconRadio(0);
+		}
+		void setWeixinpay(){
+
+			askPay(cur_goodId,WeixinPay);
+			t_payType.setText(R.string.chooseWeixin);
+			layout_qr.setVisibility(View.VISIBLE);
+		}
+		void setAlipay(){
+			
+			askPay(cur_goodId,AliPay);
+			t_payType.setText(R.string.chooseZfb);
+			layout_qr.setVisibility(View.VISIBLE);
+		}
+		void setAppealPay(){
+			
+		}
+		void setCardPay(){
+			
+		}
 	
 	void setPayIconRadio(int id){
 		switch(id){
@@ -402,6 +561,11 @@ public class CoffeeFragment extends Fragment implements OnClickListener {
 				btn_pay2.setChecked(false);
 				btn_pay3.setChecked(false);
 				break;
+			case 0:
+				btn_pay1.setChecked(false);
+				btn_pay2.setChecked(false);
+				btn_pay3.setChecked(false);	
+				btn_pay4.setChecked(false);	
 		
 		}
 	}
@@ -449,7 +613,13 @@ public class CoffeeFragment extends Fragment implements OnClickListener {
 				btn_coffee4.setChecked(false);
 				btn_coffee5.setChecked(false);
 				break;
-
+			case 0:
+				btn_coffee1.setChecked(false);
+				btn_coffee2.setChecked(false);
+				btn_coffee3.setChecked(false);
+				btn_coffee4.setChecked(false);
+				btn_coffee5.setChecked(false);		
+				btn_coffee6.setChecked(false);		
 		
 		}
 	}	

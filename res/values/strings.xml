@@ -107,6 +107,12 @@
     <string name="coffee_type6">"奶|￥2"</string>
     <string name="t_otherPay">"使用其他付款方式"</string>
     <string name="cancel">"取消"</string>
+    <string name="pleaseChooseCoffee">"请选择咖啡"</string>
+    <string name="pleaseChoosePay">"请选择支付方式"</string>
+    <string name="chooseWeixin">"使用微信支付"</string>
+    <string name="chooseZfb">"使用支付宝支付"</string>
+    <string name="chooseAppeal">"使用Appeal支付"</string>
+    <string name="chooseCard">"使用Card支付"</string>
    
 
 

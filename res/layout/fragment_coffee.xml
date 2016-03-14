@@ -325,7 +325,7 @@
    		    android:id="@+id/img_qr"
    		   	android:layout_width="120dp"
 	    	android:layout_height="120dp"
-	    	android:src="@drawable/qr"
+
 	    	 android:adjustViewBounds="true"
 	    	android:layout_alignTop="@id/img_qrBg"
 	    	android:layout_alignLeft="@id/img_qrBg"
