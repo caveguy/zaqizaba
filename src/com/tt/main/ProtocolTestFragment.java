@@ -33,30 +33,49 @@ public class ProtocolTestFragment extends Fragment implements OnClickListener {
         deliveryController=new DeliveryProtocol(getActivity());
         deliveryController.setCallBack(new CallBack(){
 
+
+
 			@Override
-			public void delivered() {
+			public void cupDroped() {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void cupStuck() {
 				// TODO Auto-generated method stub
 				
 			}
 
 			@Override
-			public void noDeliver() {
+			public void noCupDrop() {
 				// TODO Auto-generated method stub
 				
 			}
 
 			@Override
-			public void readStatus(byte st) {
+			public void dropCupTimeOut() {
 				// TODO Auto-generated method stub
-				status=st;
-				myHandler.post(new Runnable() {
-					
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						t_status.setText(""+status);
-					}
-				});
+				
+			}
+
+			@Override
+			public void hasDirtyCup() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void powderDroped() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void sendTimeOut() {
+				// TODO Auto-generated method stub
 				
 			}
         	
@@ -96,7 +115,7 @@ public class ProtocolTestFragment extends Fragment implements OnClickListener {
 			deliveryController.cmd_dropCup();
 			break;
 		case R.id.btn_status:
-			deliveryController.cmd_readBusy();
+			deliveryController.cmd_readState();
 			break;
 		}
 	}

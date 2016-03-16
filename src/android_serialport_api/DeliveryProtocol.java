@@ -10,6 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.content.Context;
+import android.os.DropBoxManager;
 import android.os.Handler;
 import android.util.Log;
 
@@ -18,7 +19,7 @@ import com.example.coffemachinev2.R;
 public class DeliveryProtocol {
 	Context context;
 	byte[] sendData=null;
-	boolean hasAck=false;
+	boolean hasAck=true;  //默认有回复，为了让第一条信息发送出去
 	int ackCnt=0;
 	private Handler myHandler=new Handler();
 	SerialPortUtil serialPortUtil=null;
@@ -38,11 +39,12 @@ public class DeliveryProtocol {
 	final byte Cmd_setRightPowder=0x2e;
 	final byte Cmd_setRightWater=0x2f;
 	final byte Cmd_pushPowder=0x30;
+	final byte Cmd_readState=0x50;
 	final byte Cmd_readLower8bits=(byte) 0xb9;
 	final byte Cmd_readHIght8bits=(byte) 0xba;//?
 	final byte Cmd_setOutputLower8Bits=(byte) 0xc0;//
 	final byte Cmd_setOutputHight8Bits=(byte) 0xc1;//
-	final byte Cmd_readBusy=(byte) 0x50;//
+//	final byte Cmd_readBusy=(byte) 0x50;//
 	final byte Cmd_readErros=(byte) 0x51;//
 	final byte BIT0=(byte) 0x01;
 	final byte BIT1=(byte) 0x02;
@@ -52,30 +54,36 @@ public class DeliveryProtocol {
 	final byte BIT5=(byte) 0x20;
 	final byte BIT6=(byte) 0x40;
 	final byte BIT7=(byte) 0x80;
-	final int  ackTime=(int) 200;
 	
 	final byte DropCup_finish =(byte) 0x0;
 	final byte DropCup_nocup =(byte) 0x01;
 	final byte DropCup_timeOut =(byte) 0x02;
 	final byte DropCup_stuck =(byte) 0x03;
+	final byte DropCup_dirtyCup =(byte) 0x04;
 	final byte DropCup_busy =(byte) 0x07;
+//	final byte DropPowder_finish =(byte) 0x07;
 //	final byte DropCup_nocup =(byte) 0x01;
-	
+	final int SendTimerDuaration=300;
+	final int AckTimerDuaration=200;
+	final int QueryTimerDuaration=1000;
 		
 	
 	boolean isDebug=true;
-	boolean finished=false;
+	boolean isFinished=false;
+	boolean hasResult=false;
+	
 	Timer sendTimer=null;
 	Timer ackTimer=null;
-
-	
-	int canNext=0;
+	Timer queryTimer=null;
+	AckTimerTask ackTimerTask=null;
+	QueryTimerTask queryTimerTask=null;
+	//int canNext=0;
 	ArrayList<byte[]> sendList=new ArrayList<byte[]>();
 	
 	void getAck(){
 		hasAck=true;
 
-		canNext++;
+	//	canNext++;
 		if(ackTimerTask!=null){
 			ackTimerTask.cancel();
 		}
@@ -122,21 +130,25 @@ public class DeliveryProtocol {
 		if(data[0]==(byte)0xaa&&data[3]==getCheckSun(data,4)){
 			Log.e("rec","rec right!!");
 				getAck();//收到回复
-				byte reply=data[2];
+				byte reply=data[2];	
 				switch(data[1]){
 					case Cmd_handshake:
 						dealReply_handShake(reply);
 						break;
-					case Cmd_dropCup:
-						dealReply_dropCup(reply);
-						break;
+	
 					case Cmd_setLeftPowder:
-						dealReply_leftPowder(reply);
-						break;
 					case Cmd_setLeftWater:
-						dealReply_leftWater(reply);
+					case Cmd_setCenterPowder:
+					case Cmd_setCenterWater:
+					case Cmd_setRightPowder:
+					case Cmd_setRightWater:
+						dealReply_set(reply);
 						break;
-					case Cmd_readBusy:
+					case Cmd_dropCup:
+					case Cmd_pushPowder:
+						dealReply_actions(reply);
+						break;
+					case Cmd_readState:
 						dealReply_status(reply);
 						
 						
@@ -148,8 +160,8 @@ public class DeliveryProtocol {
 
 	
 	void finished(){
-		finished=true;
-		deliveredCallBack();
+		isFinished=true;
+		cupDropedCallBack();
 	}
 
 	byte getCheckSun(byte[] data,int len){	
@@ -181,24 +193,55 @@ public class DeliveryProtocol {
 				(byte)0};
 			data[3]=getCheckSun(data);
 			writeToUartCached(data);
-			canNext=1;
+//			canNext=1;
 			//sendCmd(data);
 	}
 	
 	void dealReply_handShake(byte data){
 		
 	}
-	void dealReply_dropCup(byte data){
-		
+	void dealReply_actions(byte data){
+		if(data==0){
+			startQueryTimer();
+		}
+//		else{
+//			reSendData();
+//		}
 	}
-	void dealReply_leftPowder(byte data){
-		
+	void dealReply_set(byte data){
+//		if(data!=0){
+//			reSendData();
+//		}
 	}
-	void dealReply_leftWater(byte data){
-		
-	}
+
 	void dealReply_status(byte data){
-		readStatusCallBack(data);
+		//readStatusCallBack(data);
+		byte cupState=(byte) (data&0x07);
+		switch(cupState){
+		case DropCup_finish: //落杯完成
+			cupDropedCallBack();		
+			break;	
+		case DropCup_nocup:
+			noCupCallBack();
+			break;
+		case DropCup_timeOut:
+			dropCupTimeOutCallBack();
+			break;
+		case DropCup_stuck:
+			cupStuckCallBack();
+			break;			
+		case DropCup_dirtyCup:
+			hasDirtyCupCallBack();
+			
+		case DropCup_busy:
+			break;
+			
+		}
+		byte powderState=(byte) (data&0x18);
+		if(powderState==0){
+			dropPowderCallBack();
+		}	
+		
 	}
 	
 
@@ -292,10 +335,10 @@ public class DeliveryProtocol {
 		}
 
 		ackTimerTask=new AckTimerTask();
-		ackTimer.schedule(ackTimerTask, ackTime);
+		ackTimer.schedule(ackTimerTask, AckTimerDuaration);
 	}
 
-	AckTimerTask ackTimerTask=null;
+
 //	private void startAckTimer(){
 //		hasAck=false;
 //		ackCnt=0;
@@ -313,12 +356,25 @@ public class DeliveryProtocol {
 			sendTimer=new Timer();
 		}
 		
-		sendTimer.schedule(new sendTimerTask(), 300,300);
+		sendTimer.schedule(new sendTimerTask(), SendTimerDuaration,SendTimerDuaration);
 	}	
 	
+	private void startQueryTimer(){
+		
+		if(queryTimer==null){
+			queryTimer=new Timer();
+		}
+		if(queryTimerTask==null){
+			queryTimerTask=new QueryTimerTask();
+		}
+		queryTimer.schedule(queryTimerTask, QueryTimerDuaration,QueryTimerDuaration);
+	}	
 	
-
-	
+	private void cancelQueryTimer(){
+		if(queryTimerTask!=null){
+			queryTimerTask.cancel();
+		}
+	}
 	
 	class AckTimerTask  extends TimerTask{
 		@Override
@@ -329,7 +385,7 @@ public class DeliveryProtocol {
 				
 				if(ackCnt>10){
 					ackTimer.cancel();
-					noDeliverCallBack(); //发送失败，出货失败
+					sendTimeOutCallBack(); //发送超时
 				}else{
 					reSendData();
 				}
@@ -345,7 +401,12 @@ public class DeliveryProtocol {
 		}	
 	}
 	
-
+	class QueryTimerTask  extends TimerTask{
+		@Override
+		public void run() {
+			onQueryTime();
+		}	
+	}
 	void writeToUartCached(byte[] data){
 			
 		    sendList.add(data);
@@ -359,8 +420,9 @@ public class DeliveryProtocol {
 	    if(!sendList.isEmpty()){
 
 	    	
-	        if(canNext!=0){
-	        	canNext--;
+	        if(hasAck){
+//	        	if(canNext!=0){
+//	        		canNext--;
 	        	for(int i = 0;i<sendList.size();i++ ){
 	        		sendData = (byte[])sendList.get(i);
 	        		if(sendData!=null){
@@ -371,13 +433,15 @@ public class DeliveryProtocol {
 	        			break;
 	        			}
 	        		}
-	
-	            
-	            
+      
 	        }
 	    }
 	}
-	
+	void onQueryTime(){
+		if(!hasResult){
+			cmd_readState();
+		}
+	}
 	
 	///////////////////////回调接口////////////////////////////////
 
@@ -389,98 +453,122 @@ public class DeliveryProtocol {
 
 	public interface CallBack {
 		
-		void delivered();
-		void noDeliver();
-		void readStatus(byte status);
+		void cupDroped();
+		void cupStuck();
+		void noCupDrop();
+		void dropCupTimeOut();
+		void hasDirtyCup();
+		void powderDroped();
+		void sendTimeOut();
+
 	}
 	
-	private void deliveredCallBack(){
+	private void cupDropedCallBack(){
+		cancelQueryTimer();
 		if(callBack!=null)
-			callBack.delivered();
+			callBack.cupDroped();
 		
 	}
-	private void noDeliverCallBack(){
+	private void noCupCallBack(){
+		cancelQueryTimer();
 		if(callBack!=null)
-			callBack.noDeliver();
+			callBack.noCupDrop();
+		
+	}
+	private void dropCupTimeOutCallBack(){
+		cancelQueryTimer();
+		if(callBack!=null)
+			callBack.dropCupTimeOut();
+		
+	}
+	private void cupStuckCallBack(){
+		cancelQueryTimer();
+		if(callBack!=null)
+			callBack.cupStuck();
+		
+	}
+	private void hasDirtyCupCallBack(){
+		if(callBack!=null)
+			callBack.hasDirtyCup();
+		
+	}
+	private void dropPowderCallBack(){
+		cancelQueryTimer();
+		if(callBack!=null)
+			callBack.powderDroped();
+		
+	}
+	
+	private void sendTimeOutCallBack(){
+		if(callBack!=null)
+			callBack.sendTimeOut();
 		
 	}
 
-	private void readStatusCallBack(byte status){
-		if(callBack!=null)
-			callBack.readStatus( status);
-		
+
+
+
+	/*
+	 *查询状态
+	 */
+	public void cmd_readState(){
+		packCmd(Cmd_readState,(byte) 0);
 	}
 	/*
 	 * 握手
 	 */
 	public void cmd_handShake(){
 		packCmd(Cmd_handshake,(byte) 0);
-		//startAckTimer();
 	}
 	/*
 	 * 落杯
 	 */
 	public void cmd_dropCup(){
 		packCmd(Cmd_dropCup,(byte) 0);
-		//startAckTimer(); //10s
 	}
 	/*
-	 * 设置左出粉
+	 * 设置出粉
 	 */
 	public void cmd_setLeftPowder(int time){
 		packCmd(Cmd_setLeftPowder,(byte) time);
-		//startAckTimer();
 	}
 	public void cmd_setLeftWater(int time){
 		packCmd(Cmd_setLeftWater,(byte) time);
-		//startAckTimer();
 	}
 	public void cmd_setCenterPowder(int time){
-		packCmd(Cmd_setCenterPowder,(byte) time);
-		//startAckTimer();
+		packCmd(Cmd_setCenterPowder,(byte) time);	
 	}
 	public void cmd_setCenterWater(int time){
-		packCmd(Cmd_setCenterWater,(byte) time);
-		//startAckTimer();
+		packCmd(Cmd_setCenterWater,(byte) time);	
 	}
 	public void cmd_setRightPowder(int time){
 		packCmd(Cmd_setRightPowder,(byte) time);
-		//startAckTimer();
 	}
 	public void cmd_setRightWater(int time){
 		packCmd(Cmd_setRightWater,(byte) time);
-		//startAckTimer();
 	}
-	public void cmd_readBusy(){
-		packCmd(Cmd_readBusy,(byte) 0);
-	
-	}
+
 	public void cmd_pushLeftPowder(){
 		packCmd(Cmd_pushPowder,BIT0);
-		//startAckTimer();
 	}
 	public void cmd_pushLeftPowder(int power,int water){
 		packCmd(Cmd_setLeftWater,(byte) water);		
 		packCmd(Cmd_setLeftPowder,(byte) power);
 		packCmd(Cmd_pushPowder,BIT0);
-		//startAckTimer();
 	}
 	public void cmd_pushCenterPowder(int power,int water){
 		packCmd(Cmd_setCenterWater,(byte) water);		
 		packCmd(Cmd_setCenterPowder,(byte) power);
 		packCmd(Cmd_pushPowder,BIT1);
-		//startAckTimer();
 	}
 	public void cmd_pushRightPowder(int power,int water){
 		packCmd(Cmd_setRightWater,(byte) water);		
 		packCmd(Cmd_setRightPowder,(byte) power);
 		packCmd(Cmd_pushPowder,BIT2);
-		//startAckTimer();
 	}
 	public void cmd_pushWater(int time){
 		packCmd(Cmd_setRightWater,(byte) time);
 		packCmd(Cmd_pushPowder,BIT3);
-		//startAckTimer();
 	}
 	
 	

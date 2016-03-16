@@ -131,30 +131,50 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
         deliveryController=new DeliveryProtocol(getActivity());
         deliveryController.setCallBack(new CallBack(){
 
+	
+
+
 			@Override
-			public void delivered() {
+			public void cupDroped() {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void cupStuck() {
 				// TODO Auto-generated method stub
 				
 			}
 
 			@Override
-			public void noDeliver() {
+			public void noCupDrop() {
 				// TODO Auto-generated method stub
 				
 			}
 
 			@Override
-			public void readStatus(byte st) {
+			public void dropCupTimeOut() {
 				// TODO Auto-generated method stub
-				status=st;
-				myHandler.post(new Runnable() {
-					
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-					//	t_status.setText(""+status);
-					}
-				});
+				
+			}
+
+			@Override
+			public void hasDirtyCup() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void powderDroped() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void sendTimeOut() {
+				// TODO Auto-generated method stub
 				
 			}
         	
@@ -334,13 +354,13 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			Log.e(Tag,"btn_hand!!");
 			deliveryController.cmd_handShake();
 			break;
-		case R.id.btn_dropCup:
-			Log.e(Tag,"btn_dropCup!!");
-			deliveryController.cmd_dropCup();
-			break;
-		case R.id.btn_status:
-			deliveryController.cmd_readBusy();
-			break;
+//		case R.id.btn_dropCup:
+//			Log.e(Tag,"btn_dropCup!!");
+//			deliveryController.cmd_dropCup();
+//			break;
+//		case R.id.btn_status:
+//			deliveryController.cmd_readState();
+//			break;
 		}
 	}
 
