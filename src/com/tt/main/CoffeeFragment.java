@@ -136,45 +136,45 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
 			@Override
 			public void cupDroped() {
-				// TODO Auto-generated method stub
-				
+				//杯子已经掉下，可以打咖啡了
+				makeCoffee();
 			}
 
 
 
 			@Override
 			public void cupStuck() {
-				// TODO Auto-generated method stub
+				cupStuck();
 				
 			}
 
 			@Override
 			public void noCupDrop() {
-				// TODO Auto-generated method stub
+				noCups();
 				
 			}
 
 			@Override
 			public void dropCupTimeOut() {
-				// TODO Auto-generated method stub
+				dropCupTimeOut();
 				
 			}
 
 			@Override
 			public void hasDirtyCup() {
-				// TODO Auto-generated method stub
+				hasDirtyCup();
 				
 			}
 
 			@Override
 			public void powderDroped() {
-				// TODO Auto-generated method stub
+				powderDroped();
 				
 			}
 
 			@Override
 			public void sendTimeOut() {
-				// TODO Auto-generated method stub
+				toAssistControllerTimeOut();
 				
 			}
         	
@@ -237,6 +237,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
     	
     }
+
     
     void setGoodMsg(){
     	myHandler.post(new Runnable() {
@@ -655,4 +656,55 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	        };
 	    };
 
+	    /**
+	     * 制作咖啡接口
+	     *此函数触发出粉/出咖啡 
+	     */
+	    void makeCoffee(){
+	    	//test
+	    	deliveryController.cmd_pushLeftPowder(10, 10);
+	    }
+	    /**
+	     *没有杯子了
+	     *提示用户，并通知服务器做退款处理
+	     */
+	    void noCups(){
+	    	t_payType.setText(R.string.noCup);
+	    }
+	    /**
+	     * 卡杯了
+	     * 提示用户手动取杯，并通知服务器
+	     */
+	    void cupStucked(){
+	    	t_payType.setText(R.string.cupStuck);
+	    }
+	    /**
+	     * 
+	     * 有脏杯子没有取走，提示用户拿走脏杯子
+	     */
+	    void hasDirtyCup(){
+	    	t_payType.setText(R.string.hasDirtyCup);
+	    }
+	    /**
+	     * 出粉完成
+	     * 
+	     */
+	    void powderDroped(){
+
+	    }
+	    /**
+	     * 跟辅助板通信超时
+	     * 
+	     */
+	    void toAssistControllerTimeOut(){
+	    	t_payType.setText(R.string.toAssisTimeOut);
+	    }
+
+		@Override
+		public void onDestroy() {
+			deliveryController.cleanTimer();
+			myMachine.cleanTimer();
+			super.onDestroy();
+		}
+	    
 }

@@ -96,6 +96,7 @@
     <string name="request">"我们会尽快核实，属实将返回您的付款"</string>
     <string name="noCup">"抱歉，机器中无纸杯"</string>
     <string name="hasCup">"落杯成功"</string>
+    <string name="cupStuck">"杯子卡住了，掏出卡住杯子"</string>
     <string name="finished">"finished"</string>
     <string name="hasDirtyCup">"请移除已有杯子"</string>
     <string name="maintain">"系统维护..."</string>
@@ -113,6 +114,7 @@
     <string name="chooseZfb">"使用支付宝支付"</string>
     <string name="chooseAppeal">"使用Appeal支付"</string>
     <string name="chooseCard">"使用Card支付"</string>
+    <string name="toAssisTimeOut">"与辅助板通信超时"</string>
    
 
 

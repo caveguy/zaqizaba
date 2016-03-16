@@ -127,4 +127,19 @@ public class MassageFragment extends Fragment {
     public void setMsg3(String msg){
     	t_msg3.setText(msg); 
     }
+    
+    public void  cleanTimer(){
+    	clockTime.cancel();
+    	clockTime=null;
+    }
+    
+    
+	@Override
+	public void onDestroy() {
+		cleanTimer();
+		super.onDestroy();
+	}
+    
+    
+    
 }

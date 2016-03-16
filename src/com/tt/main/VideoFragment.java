@@ -282,5 +282,17 @@ public class VideoFragment extends Fragment
 		
 	}
 	
+    public void  cleanTimer(){
+    	myTimer.cancel();
+    	myTimer=null;
+    }
+    
+    
+	@Override
+	public void onDestroy() {
+		cleanTimer();
+		super.onDestroy();
+	}
+	
 
 }

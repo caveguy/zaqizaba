@@ -571,10 +571,14 @@ public class DeliveryProtocol {
 		packCmd(Cmd_pushPowder,BIT3);
 	}
 	
-	
-//	public void cmd_pushLeftPowder(int power,int water){
-//		cmd_setLeftPowder(power);		
-//		cmd_setLeftWater(water);
-//		cmd_pushLeftPowder();
-//	}
+	//程序结束时调用
+	public void cleanTimer(){
+		 sendTimer.cancel();
+		 ackTimer.cancel();
+		queryTimer.cancel();
+		 sendTimer=null;
+		 ackTimer=null;
+		queryTimer=null;
+	}
+
 }
