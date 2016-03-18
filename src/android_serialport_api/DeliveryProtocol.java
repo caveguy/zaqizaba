@@ -573,12 +573,18 @@ public class DeliveryProtocol {
 	
 	//程序结束时调用
 	public void cleanTimer(){
-		 sendTimer.cancel();
-		 ackTimer.cancel();
-		queryTimer.cancel();
-		 sendTimer=null;
-		 ackTimer=null;
-		queryTimer=null;
+		if(sendTimer!=null){
+			sendTimer.cancel();
+			sendTimer=null;
+		}if(ackTimer!=null){
+			ackTimer.cancel();
+			ackTimer=null;
+		}
+		 if(queryTimer!=null){
+			 queryTimer.cancel();
+			 queryTimer=null;
+		 }	 
+		
 	}
 
 }

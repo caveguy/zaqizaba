@@ -249,8 +249,10 @@ public class MachineProtocol {
 	}
 	//程序结束时调用
 	public void cleanTimer(){
-		myTimer.cancel();
-		myTimer=null;
+		if(myTimer!=null){
+			myTimer.cancel();
+			myTimer=null;
+		}
 
 	}
 }

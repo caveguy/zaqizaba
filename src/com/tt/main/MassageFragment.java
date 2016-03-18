@@ -129,8 +129,10 @@ public class MassageFragment extends Fragment {
     }
     
     public void  cleanTimer(){
-    	clockTime.cancel();
-    	clockTime=null;
+    	if(clockTime!=null){
+    		clockTime.cancel();
+    		clockTime=null;
+    	}
     }
     
     

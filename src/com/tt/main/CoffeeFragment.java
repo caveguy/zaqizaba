@@ -59,6 +59,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	long cur_goodId=-1;
 	private final int WeixinPay=2;
 	private final int AliPay=2;
+	private final int Cmd_mcDisp=1002;
+	
 	HashMap<Integer,Long> goodId=new HashMap<Integer,Long>();
 	HashMap<Long,String>	goodName=new HashMap<Long,String>();
 	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
@@ -238,6 +240,50 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	
     }
 
+    
+	void dealMcRecive(){
+		 ParseReceiveCommand.setCallBack(new ParseReceiveCommand.CallBack() {
+			
+			@Override
+			public void onParsed(int cmd) {
+				// TODO Auto-generated method stub
+				 if(cmd==1){
+					String dispString= ParseReceiveCommand.getDispStringId(getActivity());
+				
+//					if(dispString.equals(getString(R.string.cmd1_espresso))){
+//						dispString=getType();//由于所有的咖啡类型都基于特浓，所以在此须做转换
+//					}
+					//mySharePreference.setStringValue(MC_state, dispString);
+		             Message message = new Message();      
+		             message.what = Cmd_mcDisp; 
+		             message.obj=dispString;
+		             myHandler.sendMessage(message); 
+		           //  last_Cmd1_data0=ParseReceiveCommand.cmd1_data0;
+				 }
+				 else if(cmd==0x19){
+					myMachine.initMachine();
+				 }
+			}
+
+			@Override
+			public void onFault() {
+//				if(isNormal){
+//					isNormal=false;
+//					setDisable();
+//				}
+			}
+
+			@Override
+			public void onWork() {
+//				if(!isNormal){
+//					isNormal=true;
+//					setEnable();
+//				}
+			}
+		});
+	} 
+    
+    
     
     void setGoodMsg(){
     	myHandler.post(new Runnable() {
