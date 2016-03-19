@@ -194,16 +194,24 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
                 new QueryDeviceGoodsAsyncTask(){
                     @Override
                     protected void onPostExecute(QueryDeviceGoodsRsp rsp) {
-                        if(rsp.getErrcode()==0){
-                        	int i=0;
-                           for(DeviceGoods goods:rsp.getGoods()){
-                        	   Long id=goods.getGoodsId();
-                        	   goodId.put(i++, id);
-                        	   goodName.put(id,goods.getGoodsName());
-                        	   goodPrice.put(id, goods.getGoodsPrice());
-                           }
-                           setGoodMsg();
-                        }
+                    	
+                    	//try{
+	                        if(rsp.getErrcode()==0){
+	                        	
+	                        	int i=0;
+	                           for(DeviceGoods goods:rsp.getGoods()){
+	                        	   
+	                        	   Long id=goods.getGoodsId();
+	                        	   goodId.put(i++, id);
+	                        	   goodName.put(id,goods.getGoodsName());
+	                        	   goodPrice.put(id, goods.getGoodsPrice());
+	                           }
+	                           myToast.toastShow("rsp.getErrcode() i="+i);
+	                           setGoodMsg();
+	                        }
+//	                    }catch(Exception e){
+//	                    	Log.e(Tag, e.toString());
+//	                    }
                     }
                 }.execute(deviceInterfaceAdapter.getDevice().getFeedId());
             }

@@ -241,9 +241,9 @@ public class VideoFragment extends Fragment
 	                        return true;  
 	                    }  
 	                } 
-//	                else if (file.isDirectory()) {  //嵌套还是不嵌套？
-//	                    getVideoFile(list, file);  
-//	                }  
+	                else if (file.isDirectory()) {  //嵌套还是不嵌套？
+	                    getVideoFile(list, file);  
+	                }  
 	                return false;  
 	            }  
 	        });  
