@@ -58,7 +58,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	Button btn_cancel,btn_other;
 	long cur_goodId=-1;
 	private final int WeixinPay=2;
-	private final int AliPay=2;
+	private final int AliPay=1;
 	private final int Cmd_mcDisp=1002;
 	
 	HashMap<Integer,Long> goodId=new HashMap<Integer,Long>();
@@ -139,44 +139,44 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			@Override
 			public void cupDroped() {
 				//杯子已经掉下，可以打咖啡了
-				makeCoffee();
+				mc_makeCoffee();
 			}
 
 
 
 			@Override
 			public void cupStuck() {
-				cupStuck();
+				mc_cupStuck();
 				
 			}
 
 			@Override
 			public void noCupDrop() {
-				noCups();
+				mc_noCups();
 				
 			}
 
 			@Override
 			public void dropCupTimeOut() {
-				dropCupTimeOut();
+				mc_dropCupTimeOut();
 				
 			}
 
 			@Override
 			public void hasDirtyCup() {
-				hasDirtyCup();
+				mc_hasDirtyCup();
 				
 			}
 
 			@Override
 			public void powderDroped() {
-				powderDroped();
+				mc_powderDroped();
 				
 			}
 
 			@Override
 			public void sendTimeOut() {
-				toAssistControllerTimeOut();
+				mc_toAssistControllerTimeOut();
 				
 			}
         	
@@ -220,6 +220,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				myHandler.post(new Runnable() {	
 					@Override
 					public void run() {
+						
 						 myToast.toastShow("支付失败");	
 					}
 				});	
@@ -231,7 +232,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				myHandler.post(new Runnable() {
 					@Override
 					public void run() {
-						myToast.toastShow("支付成功成功");
+						t_payType.setText(R.string.paySuccess);
+						myToast.toastShow(R.string.paySuccess);
+						mc_dropCup();
 					}
 				});
 				 
@@ -710,48 +713,95 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	        };
 	    };
 
+	    
+	    
+	    void mc_dropCup(){
+	    	deliveryController.cmd_dropCup();
+	    }
 	    /**
 	     * 制作咖啡接口
 	     *此函数触发出粉/出咖啡 
 	     */
-	    void makeCoffee(){
+	    void mc_makeCoffee(){
 	    	//test
-	    	deliveryController.cmd_pushLeftPowder(10, 10);
+	    	myHandler.post(new Runnable() {		
+				@Override
+				public void run() {
+					t_payType.setText(R.string.dropPowder);
+				}
+			});
+	    	
+	    	deliveryController.cmd_pushLeftPowder(70, 50);
 	    }
 	    /**
 	     *没有杯子了
 	     *提示用户，并通知服务器做退款处理
 	     */
-	    void noCups(){
-	    	t_payType.setText(R.string.noCup);
+	    void mc_noCups(){
+	    	myHandler.post(new Runnable() {		
+				@Override
+				public void run() {
+					t_payType.setText(R.string.noCup);
+				}
+			});
+	    	
 	    }
 	    /**
 	     * 卡杯了
 	     * 提示用户手动取杯，并通知服务器
 	     */
-	    void cupStucked(){
-	    	t_payType.setText(R.string.cupStuck);
+	    void mc_cupStucked(){
+	    	myHandler.post(new Runnable() {		
+				@Override
+				public void run() {
+					t_payType.setText(R.string.cupStuck);
+				}
+			});
+	    	
 	    }
 	    /**
 	     * 
 	     * 有脏杯子没有取走，提示用户拿走脏杯子
 	     */
-	    void hasDirtyCup(){
-	    	t_payType.setText(R.string.hasDirtyCup);
+	    void mc_hasDirtyCup(){
+	    	myHandler.post(new Runnable() {		
+				@Override
+				public void run() {
+					t_payType.setText(R.string.hasDirtyCup);
+				}
+			});
+	    	
 	    }
 	    /**
 	     * 出粉完成
 	     * 
 	     */
-	    void powderDroped(){
-
+	    void mc_powderDroped(){
+	    	myHandler.post(new Runnable() {		
+				@Override
+				public void run() {
+					t_payType.setText(R.string.finished);
+				}
+			});
+	    }
+	    void mc_dropCupTimeOut(){
+	    	
+	    }
+	    void mc_cupStuck(){
+	    	
 	    }
 	    /**
 	     * 跟辅助板通信超时
 	     * 
 	     */
-	    void toAssistControllerTimeOut(){
-	    	t_payType.setText(R.string.toAssisTimeOut);
+	    void mc_toAssistControllerTimeOut(){
+	    	myHandler.post(new Runnable() {		
+				@Override
+				public void run() {
+					t_payType.setText(R.string.toAssisTimeOut);
+				}
+			});
+	    	
 	    }
 
 		@Override

@@ -28,6 +28,8 @@ public class DeliveryProtocol {
 	private InputStream mInputStream;
 	private ReadThread mReadThread; 
 	
+	
+	
 	final byte Cmd_handshake=0x11;
 	final byte Cmd_dropCup=0x21;
 	final byte Cmd_redLight=0x22;
@@ -54,7 +56,7 @@ public class DeliveryProtocol {
 	final byte BIT5=(byte) 0x20;
 	final byte BIT6=(byte) 0x40;
 	final byte BIT7=(byte) 0x80;
-	
+	final byte Bit_detectCup=BIT2;
 	final byte DropCup_finish =(byte) 0x0;
 	final byte DropCup_nocup =(byte) 0x01;
 	final byte DropCup_timeOut =(byte) 0x02;
@@ -71,12 +73,15 @@ public class DeliveryProtocol {
 	boolean isDebug=true;
 	boolean isFinished=false;
 	boolean hasResult=false;
-	
+	byte curState=0;
 	Timer sendTimer=null;
 	Timer ackTimer=null;
 	Timer queryTimer=null;
 	AckTimerTask ackTimerTask=null;
 	QueryTimerTask queryTimerTask=null;
+	byte query_what=0;
+	
+	
 	//int canNext=0;
 	ArrayList<byte[]> sendList=new ArrayList<byte[]>();
 	
@@ -150,8 +155,10 @@ public class DeliveryProtocol {
 						break;
 					case Cmd_readState:
 						dealReply_status(reply);
-						
-						
+						break;
+					case Cmd_readLower8bits:
+						dealReply_OutPutState(reply);
+						break;
 						
 				}
 		}
@@ -159,10 +166,10 @@ public class DeliveryProtocol {
 	
 
 	
-	void finished(){
-		isFinished=true;
-		cupDropedCallBack();
-	}
+//	void finished(){
+//		isFinished=true;
+//		cupDropedCallBack();
+//	}
 
 	byte getCheckSun(byte[] data,int len){	
 		int length=len-1;
@@ -202,48 +209,58 @@ public class DeliveryProtocol {
 	}
 	void dealReply_actions(byte data){
 		if(data==0){
-			startQueryTimer();
+			startQueryTimer(Cmd_readState);
 		}
-//		else{
-//			reSendData();
-//		}
+
 	}
+	
+	void dealReply_OutPutState(byte data){
+		if((data&Bit_detectCup)!=0){
+			cancelQueryTimer();
+			cmd_dropCup();
+		}else{ //有杯子，继续检测
+			
+		}
+	
+	}
+	
+	
 	void dealReply_set(byte data){
-//		if(data!=0){
-//			reSendData();
-//		}
+
 	}
 
 	void dealReply_status(byte data){
 		//readStatusCallBack(data);
-		byte cupState=(byte) (data&0x07);
-		switch(cupState){
-		case DropCup_finish: //落杯完成
-			cupDropedCallBack();		
-			break;	
-		case DropCup_nocup:
-			noCupCallBack();
-			break;
-		case DropCup_timeOut:
-			dropCupTimeOutCallBack();
-			break;
-		case DropCup_stuck:
-			cupStuckCallBack();
-			break;			
-		case DropCup_dirtyCup:
-			hasDirtyCupCallBack();
-			
-		case DropCup_busy:
-			break;
-			
+		if(curState==Cmd_dropCup){
+			byte cupState=(byte) (data&0x07);
+			switch(cupState){
+			case DropCup_finish: //落杯完成
+				cupDropedCallBack();		
+				break;	
+			case DropCup_nocup:
+				noCupCallBack();
+				break;
+			case DropCup_timeOut:
+				dropCupTimeOutCallBack();
+				break;
+			case DropCup_stuck:
+				cupStuckCallBack();
+				break;			
+			case DropCup_dirtyCup:
+				hasDirtyCupCallBack();
+				
+			case DropCup_busy:
+				break;
+				
+			}
+		}else if(curState==Cmd_pushPowder){	
+			byte powderState=(byte) (data&0x18);
+			if(powderState==0){
+				dropPowderCallBack();
+			}	
 		}
-		byte powderState=(byte) (data&0x18);
-		if(powderState==0){
-			dropPowderCallBack();
-		}	
-		
 	}
-	
+
 
 	private void showLog(String tag, byte[] showArr,int num) {
 		int i;
@@ -359,20 +376,22 @@ public class DeliveryProtocol {
 		sendTimer.schedule(new sendTimerTask(), SendTimerDuaration,SendTimerDuaration);
 	}	
 	
-	private void startQueryTimer(){
-		
+	private void startQueryTimer(byte cmd){
+		query_what=cmd;
 		if(queryTimer==null){
 			queryTimer=new Timer();
 		}
 		if(queryTimerTask==null){
 			queryTimerTask=new QueryTimerTask();
+			queryTimer.schedule(queryTimerTask, QueryTimerDuaration,QueryTimerDuaration);
 		}
-		queryTimer.schedule(queryTimerTask, QueryTimerDuaration,QueryTimerDuaration);
+		
 	}	
 	
 	private void cancelQueryTimer(){
 		if(queryTimerTask!=null){
 			queryTimerTask.cancel();
+			queryTimerTask=null;
 		}
 	}
 	
@@ -439,7 +458,14 @@ public class DeliveryProtocol {
 	}
 	void onQueryTime(){
 		if(!hasResult){
-			cmd_readState();
+			switch(query_what){
+			case Cmd_readLower8bits:
+				cmd_ReadCupIsToke();
+				break;
+			case Cmd_readState:
+				cmd_readState();
+				break;
+			}
 		}
 	}
 	
@@ -488,8 +514,12 @@ public class DeliveryProtocol {
 		
 	}
 	private void hasDirtyCupCallBack(){
+		cancelQueryTimer();
+		
 		if(callBack!=null)
 			callBack.hasDirtyCup();
+		//cmd_ReadCupIsToke();
+		startQueryTimer(Cmd_readLower8bits);
 		
 	}
 	private void dropPowderCallBack(){
@@ -524,7 +554,14 @@ public class DeliveryProtocol {
 	 * 落杯
 	 */
 	public void cmd_dropCup(){
+		curState=Cmd_dropCup;
 		packCmd(Cmd_dropCup,(byte) 0);
+	}
+	/*
+	 * 查询杯子是否拿走
+	 */
+	public void cmd_ReadCupIsToke(){
+		packCmd(Cmd_readLower8bits,(byte) 0);
 	}
 	/*
 	 * 设置出粉
@@ -552,21 +589,25 @@ public class DeliveryProtocol {
 		packCmd(Cmd_pushPowder,BIT0);
 	}
 	public void cmd_pushLeftPowder(int power,int water){
+		curState=Cmd_pushPowder;
 		packCmd(Cmd_setLeftWater,(byte) water);		
 		packCmd(Cmd_setLeftPowder,(byte) power);
 		packCmd(Cmd_pushPowder,BIT0);
 	}
 	public void cmd_pushCenterPowder(int power,int water){
+		curState=Cmd_pushPowder;
 		packCmd(Cmd_setCenterWater,(byte) water);		
 		packCmd(Cmd_setCenterPowder,(byte) power);
 		packCmd(Cmd_pushPowder,BIT1);
 	}
 	public void cmd_pushRightPowder(int power,int water){
+		curState=Cmd_pushPowder;
 		packCmd(Cmd_setRightWater,(byte) water);		
 		packCmd(Cmd_setRightPowder,(byte) power);
 		packCmd(Cmd_pushPowder,BIT2);
 	}
 	public void cmd_pushWater(int time){
+		curState=Cmd_pushPowder;
 		packCmd(Cmd_setRightWater,(byte) time);
 		packCmd(Cmd_pushPowder,BIT3);
 	}
