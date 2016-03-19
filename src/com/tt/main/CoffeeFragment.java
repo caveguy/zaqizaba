@@ -4,7 +4,9 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import tp.ass.device.web.response.TPResponse;
 import tp.device.DeviceInterface.MyHandler;
@@ -26,11 +28,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android_serialport_api.DeliveryProtocol;
 import android_serialport_api.DeliveryProtocol.CallBack;
 import android_serialport_api.MachineProtocol;
@@ -47,6 +47,16 @@ import com.tt.util.ToastShow;
 
 public class CoffeeFragment extends Fragment implements OnClickListener,android.widget.CompoundButton.OnCheckedChangeListener {
 
+	private final int CoffeeType1=0;
+	private final int CoffeeType2=1;
+	private final int CoffeeType3=2;
+	private final int CoffeeType4=3;
+	private final int CoffeeType5=4;
+	private final int CoffeeType6=5;
+
+
+	
+	
 	TextView t_coffeeType,t_payType;
 	DeliveryProtocol deliveryController=null;
 	private MachineProtocol myMachine=null;	
@@ -126,20 +136,35 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     
     
     
+    Integer getCurType(){
+    	Iterator it = goodId.entrySet().iterator(); 
+    	while (it.hasNext()) {  	  
+    		 Map.Entry entry=(HashMap.Entry) it.next();  
+    		    Integer key = (Integer)entry.getKey();  	    
+    		    Long value = (Long)entry.getValue();  
+    	    if( value==cur_goodId){
+    	    	return key;
+    	    }  
+    	}
+    	return 0;
+    }
+    
     void initMachines(){
     	myMachine=new MachineProtocol(getActivity());
     	mcSetCallBack();
-    	myMachine.initMachine();
         deliveryController=new DeliveryProtocol(getActivity());
         deliveryController.setCallBack(new CallBack(){
 
 	
 
 
+        	
+        	
+        	
 			@Override
 			public void cupDroped() {
 				//杯子已经掉下，可以打咖啡了
-				mc_makeCoffee();
+				mc_makeCoffee(getCurType());
 			}
 
 
@@ -234,11 +259,11 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					public void run() {
 						t_payType.setText(R.string.paySuccess);
 						myToast.toastShow(R.string.paySuccess);
-						mc_dropCup();
+						layout_qr.setVisibility(View.GONE);
+						
 					}
 				});
-				 
-				
+				mc_dropCup();
 			}
 
         	
@@ -582,8 +607,12 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				String disp="已选择"+goodName.get(cur_goodId)+"|￥"+goodPrice.get(cur_goodId).toString();
 				
 				t_coffeeType.setText(disp);
+				t_payType.setText(R.string.pleaseChoosePay);
+				
 			}
 		}
+		
+
 		
 		
 		void cancelOder(){
@@ -709,6 +738,12 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				case 1000:
 					img_qr.setImageBitmap(BitmapFactory.decodeFile(msg.obj.toString()));
 					break;
+				case Cmd_mcDisp:
+					myToast.toastShow(msg.obj.toString());
+					if(msg.obj.toString().equals(getActivity().getString(R.string.cmd1_pressRinse))){
+						myMachine. sendCleanCmd() ;
+					}
+					break;
 	        }
 	        };
 	    };
@@ -722,7 +757,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	     * 制作咖啡接口
 	     *此函数触发出粉/出咖啡 
 	     */
-	    void mc_makeCoffee(){
+	    void mc_makeCoffee(int type){
 	    	//test
 	    	myHandler.post(new Runnable() {		
 				@Override
@@ -730,8 +765,32 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					t_payType.setText(R.string.dropPowder);
 				}
 			});
-	    	
-	    	deliveryController.cmd_pushLeftPowder(70, 50);
+	    	switch(type){
+	    	case CoffeeType1:
+	    		myMachine.dropCoffee();
+		    	deliveryController.cmd_pushWater(150);
+		    	//deliveryController.cmd_pushLeftPowder(70, 50,150);
+		    	break;
+	    	case CoffeeType2:
+	    		myMachine.dropCoffee();
+	    		deliveryController.cmd_pushCenterPowder(70, 50,150);
+	    		deliveryController.cmd_pushLeftPowder(70, 50,150);
+	    		break;
+	    	case CoffeeType3:
+	    		myMachine.dropCoffee();
+	    		break;
+	    	case CoffeeType4:
+	    		myMachine.dropCoffee();
+	    		//deliveryController.cmd_pushRightPowder(70,50,150);
+	    		deliveryController.cmd_pushLeftPowder(70,50,150);
+	    		break;
+	    	case CoffeeType5:
+	    		deliveryController.cmd_pushCenterPowder(70, 50,150);
+	    		break;
+	    	case CoffeeType6:
+	    		deliveryController.cmd_pushLeftPowder(70, 50,150);
+	    		break;
+	    	}
 	    }
 	    /**
 	     *没有杯子了

@@ -4,13 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import android.content.Context;
-import android.os.DropBoxManager;
 import android.os.Handler;
 import android.util.Log;
 
@@ -36,10 +33,13 @@ public class DeliveryProtocol {
 	final byte Cmd_greedLight=0x23;
 	final byte Cmd_setLeftPowder=0x2a;
 	final byte Cmd_setLeftWater=0x2b;
+	final byte Cmd_setLeftPreWater=0x27;
 	final byte Cmd_setCenterPowder=0x2c;
 	final byte Cmd_setCenterWater=0x2d;
+	final byte Cmd_setCenterPreWater=0x28;
 	final byte Cmd_setRightPowder=0x2e;
 	final byte Cmd_setRightWater=0x2f;
+	final byte Cmd_setRightPreWater=0x29;
 	final byte Cmd_pushPowder=0x30;
 	final byte Cmd_readState=0x50;
 	final byte Cmd_readLower8bits=(byte) 0xb9;
@@ -104,8 +104,7 @@ public class DeliveryProtocol {
 		try {
 			String path =context.getString(R.string.IoUartName) ;	
 			serialPortUtil = new SerialPortUtil();
-			mSerialPort = serialPortUtil.getSerialPort("/dev/ttymxc2",9600);
-//			mSerialPort = serialPortUtil.getSerialPort(path,9600);
+			mSerialPort = serialPortUtil.getSerialPort(path,9600);
 			mOutputStream = mSerialPort.getOutputStream();
 			mInputStream = mSerialPort.getInputStream();
 
@@ -413,12 +412,7 @@ public class DeliveryProtocol {
 			}
 		}	
 	}
-	class sendTimerTask  extends TimerTask{
-		@Override
-		public void run() {
-			onSendTime();
-		}	
-	}
+
 	
 	class QueryTimerTask  extends TimerTask{
 		@Override
@@ -433,6 +427,13 @@ public class DeliveryProtocol {
 		}
 	
 	
+	
+	class sendTimerTask  extends TimerTask{
+		@Override
+		public void run() {
+			onSendTime();
+		}	
+	}
 	
 	void onSendTime(){
 		//Log.e("io", "onSendTime ");
@@ -588,20 +589,24 @@ public class DeliveryProtocol {
 	public void cmd_pushLeftPowder(){
 		packCmd(Cmd_pushPowder,BIT0);
 	}
-	public void cmd_pushLeftPowder(int power,int water){
+	public void cmd_pushLeftPowder(int power,int preWater,int water){
 		curState=Cmd_pushPowder;
 		packCmd(Cmd_setLeftWater,(byte) water);		
+		packCmd(Cmd_setLeftPreWater,(byte) preWater);		
 		packCmd(Cmd_setLeftPowder,(byte) power);
 		packCmd(Cmd_pushPowder,BIT0);
 	}
-	public void cmd_pushCenterPowder(int power,int water){
+	public void cmd_pushCenterPowder(int power,int preWater,int water){
 		curState=Cmd_pushPowder;
-		packCmd(Cmd_setCenterWater,(byte) water);		
+		packCmd(Cmd_setCenterPreWater,(byte) preWater);
+		packCmd(Cmd_setCenterWater,(byte) water);
+		
 		packCmd(Cmd_setCenterPowder,(byte) power);
 		packCmd(Cmd_pushPowder,BIT1);
 	}
-	public void cmd_pushRightPowder(int power,int water){
+	public void cmd_pushRightPowder(int power,int preWater,int water){
 		curState=Cmd_pushPowder;
+		packCmd(Cmd_setRightPreWater,(byte) preWater);
 		packCmd(Cmd_setRightWater,(byte) water);		
 		packCmd(Cmd_setRightPowder,(byte) power);
 		packCmd(Cmd_pushPowder,BIT2);

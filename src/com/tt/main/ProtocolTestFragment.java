@@ -104,7 +104,7 @@ public class ProtocolTestFragment extends Fragment implements OnClickListener {
 			Log.e(Tag,"btn_push!!");
 			int leftPowder=Integer.parseInt(et_powder.getText().toString());
 			int leftWater=Integer.parseInt(et_water.getText().toString());
-			deliveryController.cmd_pushLeftPowder(leftPowder, leftWater);
+			deliveryController.cmd_pushLeftPowder(leftPowder,50, leftWater);
 			break;
 		case R.id.btn_hand:
 			Log.e(Tag,"btn_hand!!");

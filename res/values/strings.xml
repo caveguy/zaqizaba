@@ -25,7 +25,7 @@
     <string name="tab4">Card支付</string>
     <string name="tab3">Appeal支付</string>
     <string name="McUartName">/dev/ttymxc3</string>
-    <string name="IoUartName">/dev/ttymxc2</string>
+    <string name="IoUartName">/dev/ttymxc4</string>
     
     
     <string name="cmd1_ready">准备就绪</string>
