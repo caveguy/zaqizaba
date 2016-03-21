@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.coffemachinev2.R;
+import com.tt.util.LogCatHelper;
 
 public class MainActivity extends Activity {
 
@@ -17,7 +18,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        LogCatHelper.getInstance(this).start();
         if (savedInstanceState == null) {
         	
             getFragmentManager().beginTransaction()
@@ -28,6 +29,12 @@ public class MainActivity extends Activity {
             .add(R.id.frag_work, new CoffeeFragment()) .commit();
         }
     }
+
+	@Override
+	protected void onDestroy() {
+		 LogCatHelper.getInstance(this).stop();
+		super.onDestroy();
+	}
 
 
 

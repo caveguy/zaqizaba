@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import tp.ass.device.web.response.TPResponse;
 import tp.device.DeviceInterface.MyHandler;
@@ -29,6 +31,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android_serialport_api.DeliveryProtocol;
@@ -62,15 +65,20 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	private MachineProtocol myMachine=null;	
 	ToastShow myToast;
 	RelativeLayout layout_qr;
+	LinearLayout layout_mask;
 	CheckBox btn_coffee1,btn_coffee2,btn_coffee3,btn_coffee4,btn_coffee5,btn_coffee6;
 	CheckBox btn_pay1,btn_pay2,btn_pay3,btn_pay4;
 	ImageView img_qr;
 	Button btn_cancel,btn_other;
+	Timer closeTimer=null;
 	long cur_goodId=-1;
+	boolean isTrading=false; //正在交易状态，
+	
+	CloseTimeTask closeTask=null;
 	private final int WeixinPay=2;
 	private final int AliPay=1;
 	private final int Cmd_mcDisp=1002;
-	
+	private final int CloseTime=1000*60*3;
 	HashMap<Integer,Long> goodId=new HashMap<Integer,Long>();
 	HashMap<Long,String>	goodName=new HashMap<Long,String>();
 	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
@@ -131,7 +139,31 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	btn_other.setOnClickListener(this);
     	t_coffeeType=(TextView)view.findViewById(R.id.t_coffeeType);
     	t_payType=(TextView)view.findViewById(R.id.t_payType);
+    	layout_mask=(LinearLayout)view.findViewById(R.id.layout_mask);
     	setPayEnable(false);
+    }
+    
+    
+    void setEnble(boolean enable){
+    	if(enable){	
+    		myHandler.post(new Runnable() {
+    			@Override
+    			public void run() {
+    				layout_mask.setVisibility(View.GONE);
+    			}
+    		});
+    		
+    		
+    	}else{
+    		myHandler.post(new Runnable() {
+    			@Override
+    			public void run() {
+    	    		if(!isTrading)//支付窗
+    	    			layout_mask.setVisibility(View.VISIBLE);
+    			}
+    		});
+
+    	}
     }
     
     
@@ -253,17 +285,23 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
 			@Override
 			public void onPaySuccess(Long arg0) {
-				Log.e(Tag,"!!!!!!!!!!!!!!!!!!onPaySuccess");
+				Log.d(Tag,"!!!!!!!!!!!!!!!!!!onPaySuccess");
 				myHandler.post(new Runnable() {
 					@Override
 					public void run() {
 						t_payType.setText(R.string.paySuccess);
 						myToast.toastShow(R.string.paySuccess);
 						layout_qr.setVisibility(View.GONE);
+						//cancelCloseTimer(); //不能取消，否则按钮状态没有清除
 						
 					}
 				});
 				mc_dropCup();
+			}
+			@Override
+			public void onReceiveTranspTransfer(String arg0) {
+				Log.d(Tag,"onReceiveTranspTransfer ="+arg0);	
+				
 			}
 
         	
@@ -276,48 +314,6 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	
     }
 
-    
-	void dealMcRecive(){
-		 ParseReceiveCommand.setCallBack(new ParseReceiveCommand.CallBack() {
-			
-			@Override
-			public void onParsed(int cmd) {
-				// TODO Auto-generated method stub
-				 if(cmd==1){
-					String dispString= ParseReceiveCommand.getDispStringId(getActivity());
-				
-//					if(dispString.equals(getString(R.string.cmd1_espresso))){
-//						dispString=getType();//由于所有的咖啡类型都基于特浓，所以在此须做转换
-//					}
-					//mySharePreference.setStringValue(MC_state, dispString);
-		             Message message = new Message();      
-		             message.what = Cmd_mcDisp; 
-		             message.obj=dispString;
-		             myHandler.sendMessage(message); 
-		           //  last_Cmd1_data0=ParseReceiveCommand.cmd1_data0;
-				 }
-				 else if(cmd==0x19){
-					myMachine.initMachine();
-				 }
-			}
-
-			@Override
-			public void onFault() {
-//				if(isNormal){
-//					isNormal=false;
-//					setDisable();
-//				}
-			}
-
-			@Override
-			public void onWork() {
-//				if(!isNormal){
-//					isNormal=true;
-//					setEnable();
-//				}
-			}
-		});
-	} 
     
     
     
@@ -405,7 +401,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				// TODO Auto-generated method stub
 				 if(cmd==1){
 					String dispString= ParseReceiveCommand.getDispStringId(getActivity());
-				
+					if(dispString.equals(getString(R.string.cmd1_pressRinse))){
+						myMachine.sendCleanCmd();
+					}
 				 }
 				 else if(cmd==0x19){
 					myMachine.initMachine();
@@ -414,11 +412,12 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
 			@Override
 			public void onFault() {
+				setEnble(false);
 			}
 
 			@Override
 			public void onWork() {
-
+				setEnble(true);
 			}
 		});
 	}
@@ -616,6 +615,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		
 		
 		void cancelOder(){
+			isTrading=false;
 			layout_qr.setVisibility(View.GONE);
 			t_coffeeType.setText(R.string.pleaseChooseCoffee);
 			t_payType.setText(R.string.pleaseChoosePay);
@@ -627,14 +627,16 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			t_payType.setText(R.string.pleaseChoosePay);
 			setPayIconRadio(0);
 		}
-		void setWeixinpay(){
-
+		void setWeixinpay(){		
+			isTrading=true;
+			 startCloseTimer(); 
 			askPay(cur_goodId,WeixinPay);
 			t_payType.setText(R.string.chooseWeixin);
 			layout_qr.setVisibility(View.VISIBLE);
 		}
 		void setAlipay(){
-			
+			isTrading=true;
+			startCloseTimer();
 			askPay(cur_goodId,AliPay);
 			t_payType.setText(R.string.chooseZfb);
 			layout_qr.setVisibility(View.VISIBLE);
@@ -740,9 +742,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					break;
 				case Cmd_mcDisp:
 					myToast.toastShow(msg.obj.toString());
-					if(msg.obj.toString().equals(getActivity().getString(R.string.cmd1_pressRinse))){
-						myMachine. sendCleanCmd() ;
-					}
+
 					break;
 	        }
 	        };
@@ -863,11 +863,61 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	
 	    }
 
+	    
+	    class CloseTimeTask extends TimerTask{
+			@Override
+			public void run() {
+				isTrading=false;
+				myHandler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						cancelOder(); //超时后关闭交易
+						closeTask=null;
+					}
+				});	
+			}
+	    	
+	    }
+	    
+	    void startCloseTimer(){
+	    	if(closeTimer==null){
+	    		closeTimer=new Timer();
+	    	}
+	    	if(closeTask==null){
+	    		closeTask=new CloseTimeTask();
+	    		closeTimer.schedule(closeTask, CloseTime);
+	    	}else{
+	    		if(closeTask.cancel()){
+	    			closeTask=new CloseTimeTask();
+	    			closeTimer.schedule(closeTask, CloseTime);
+	    		}
+	    	}
+	    	
+	    	
+	    }
+	    void cancelCloseTimer(){
+	    	if(closeTask!=null)
+	    		closeTask.cancel();
+	    }
+		public void cleanTimer(){
+			if(closeTimer!=null){
+				closeTimer.cancel();
+				closeTimer=null;
+			}	
+		}
+	    
 		@Override
 		public void onDestroy() {
 			deliveryController.cleanTimer();
 			myMachine.cleanTimer();
+			cleanTimer();
 			super.onDestroy();
 		}
+		
+		
+		
+		
+		
 	    
 }

@@ -70,13 +70,14 @@ public class DeliveryProtocol {
 	final int QueryTimerDuaration=1000;
 		
 	
-	boolean isDebug=true;
+	boolean isDebug=false;
 	boolean isFinished=false;
 	boolean hasResult=false;
 	byte curState=0;
 	Timer sendTimer=null;
 	Timer ackTimer=null;
 	Timer queryTimer=null;
+	final String TAG="DeliveryProtocol";
 	AckTimerTask ackTimerTask=null;
 	QueryTimerTask queryTimerTask=null;
 	byte query_what=0;
@@ -311,7 +312,8 @@ public class DeliveryProtocol {
 		if (mOutputStream != null) {
 			try {
 				if(sendData!=null){
-					showLog("send",sendData,sendData.length);	
+					if(isDebug)
+						showLog(TAG+"send",sendData,sendData.length);	
 					mOutputStream.write(sendData);
 				}
 			} catch (IOException e) {
@@ -324,7 +326,8 @@ public class DeliveryProtocol {
 		if (mOutputStream != null) {
 			try {
 				if(sendData!=null){
-					showLog("send",sendData,sendData.length);	
+					if(isDebug)
+						showLog("send",sendData,sendData.length);	
 					mOutputStream.write(sendData);
 					startAckTimer();
 				}
@@ -345,7 +348,7 @@ public class DeliveryProtocol {
 		}
 		hasAck=false;
 		ackCnt=0;
-		Log.e("ioctrl","startAckTimer############");
+	//	Log.e("ioctrl","startAckTimer############");
 		if(ackTimer==null){
 			ackTimer=new Timer();
 		}
@@ -398,7 +401,7 @@ public class DeliveryProtocol {
 		@Override
 		public void run() {
 			if(!hasAck){
-				Log.e("io","AckTimerTask !hasAck");
+			//	Log.e("io","AckTimerTask !hasAck");
 				ackCnt++;
 				
 				if(ackCnt>10){
@@ -447,7 +450,7 @@ public class DeliveryProtocol {
 	        		sendData = (byte[])sendList.get(i);
 	        		if(sendData!=null){
 	        			sendList.remove(i);
-	        	    	Log.e("io", "onSendTime !sendList.isEmpty() &&sendData!=null");
+	        	    	//Log.e("io", "onSendTime !sendList.isEmpty() &&sendData!=null");
 	        			sendCmd(sendData);
 	        			startAckTimer();
 	        			break;

@@ -23,7 +23,7 @@ public class MachineProtocol {
 	private OutputStream mOutputStream;
 	private InputStream mInputStream;
 	private ReadThread mReadThread; 
-	boolean isDebug=true;
+	boolean isDebug=false;
 	ArrayList<byte[]> sendList=new ArrayList<byte[]>();
 	byte[] sendData=null;
 	int queryCnt=0;
@@ -69,9 +69,9 @@ public class MachineProtocol {
 
 	protected void onDataReceived(final byte[] buffer, final int size) {
 		if(isDebug)
-		showLog(TAG+" Recivedata", buffer,size) ;
+			showLog(TAG+" Recivedata", buffer,size) ;
 		int num=ParseReceiveCommand.ParseAllCmd(buffer,size);
-		Log.e(TAG+"revice", "num="+num);
+		//Log.e(TAG+"revice", "num="+num);
 		
 		 if(num!=0){
 			 
@@ -140,7 +140,8 @@ public class MachineProtocol {
 	void sendCmdId(int cmd){
 		byte[] sendData=Send_Command.sendCmd(cmd);
 		if(sendData!=null){
-			showLog("send",sendData,sendData.length);	
+			if(isDebug)
+				showLog("send",sendData,sendData.length);	
 			writeToUartCached(sendData);
 		
 		}
@@ -187,7 +188,8 @@ public class MachineProtocol {
 		
 		byte[] sendData=Send_Command.cmd0x0_SendClean();
 		if(sendData!=null){
-			showLog("send",sendData,sendData.length);	
+			if(isDebug)
+				showLog(TAG+"send",sendData,sendData.length);	
 			writeToUartCached(sendData);
 		}
 //			if (mOutputStream != null) {
@@ -236,7 +238,8 @@ public class MachineProtocol {
 		if (mOutputStream != null) {
 			try {
 				if(sendData!=null){
-					showLog("send to uart",sendData,sendData.length);	
+					if(isDebug)
+						showLog("send to uart",sendData,sendData.length);	
 					mOutputStream.write(sendData);
 				}
 			} catch (IOException e) {
@@ -293,7 +296,7 @@ public class MachineProtocol {
 	        		sendData = (byte[])sendList.get(i);
 	        		if(sendData!=null){
 	        			sendList.remove(i);
-	        	    	Log.e("io", "onSendTime !sendList.isEmpty() &&sendData!=null");
+	        	    //	Log.e("io", "onSendTime !sendList.isEmpty() &&sendData!=null");
 	        			sendCmd(sendData);
 	        			//startAckTimer();
 	        			break;
