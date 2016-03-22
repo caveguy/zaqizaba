@@ -46,6 +46,7 @@ import coffee.shop.po.response.QueryDeviceGoodsRsp;
 
 import com.example.coffemachinev2.R;
 import com.tt.util.Encode;
+import com.tt.util.TTLog;
 import com.tt.util.ToastShow;
 
 public class CoffeeFragment extends Fragment implements OnClickListener,android.widget.CompoundButton.OnCheckedChangeListener {
@@ -86,7 +87,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	
     private CoffeeDeviceInterfaceAdapter deviceInterfaceAdapter;
     private CoffeeDeviceEvent coffeeDeviceEvent;
-	
+    TTLog mylog=null;
 	int oldCheckedId=0;
 	byte status;
 	//Handler myHandler;
@@ -95,6 +96,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_coffee, container, false);
+        
+        mylog=new TTLog(Tag,true);
+        
         initView(rootView);
         initMachines();
   //      myHandler =new Handler();
@@ -104,12 +108,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     }
 
     void initView(View view){
-    //	coffeeGroup=(RadioGroupV2)view.findViewById(R.id.radio_group);
-    //	coffeeGroup.setOnCheckedChangeListener(this);
-    	
-     //	payGroup=(RadioGroupV2)view.findViewById(R.id.radio_group2);
-     //	payGroup.setOnCheckedChangeListener(this);
-     //	btn_pay1=(RadioButton)view.findViewById(R.id.radio_pay1);
+
     	myToast =new ToastShow(getActivity());
     	btn_pay1=(CheckBox)view.findViewById(R.id.radio_pay1);
     	btn_pay2=(CheckBox)view.findViewById(R.id.radio_pay2);
@@ -285,7 +284,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
 			@Override
 			public void onPaySuccess(Long arg0) {
-				Log.d(Tag,"!!!!!!!!!!!!!!!!!!onPaySuccess");
+				mylog.log_i("onPaySuccess!!!");
 				myHandler.post(new Runnable() {
 					@Override
 					public void run() {
@@ -300,7 +299,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			}
 			@Override
 			public void onReceiveTranspTransfer(String arg0) {
-				Log.d(Tag,"onReceiveTranspTransfer ="+arg0);	
+				mylog.log_d("onReceiveTranspTransfer ="+arg0);	
 				
 			}
 
@@ -433,7 +432,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			useOtherPay();
 			break;
 		case R.id.btn_hand:
-			Log.e(Tag,"btn_hand!!");
+			mylog.log_i("btn_hand!!");
 			deliveryController.cmd_handShake();
 			break;
 //		case R.id.btn_dropCup:
