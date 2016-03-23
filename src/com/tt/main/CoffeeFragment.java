@@ -58,9 +58,24 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	private final int CoffeeType5=4;
 	private final int CoffeeType6=5;
 
+	private final int StepNone=0;  
+	private final int StepPay=1; //等待支付
+	private final int StepMaking=2; //正在制作
+	private final int StepTakingCup=3; //等待取走
+	private final byte CoffeeFinish=0x01;//咖啡完成
+	private final byte PowderFinish=0x02;//出粉完成
+	private final byte AllFinish=(byte) (CoffeeFinish|PowderFinish);
+	private final int CloseCnt_pay=60*2;
+	private final int CloseCnt_TakingCup=30;
+	
 
-	
-	
+	private final int WeixinPay=2;
+	private final int AliPay=1;
+	private final int Handler_mcDisp=1002;
+	private final int Handler_qr=1001;
+	private final int Handler_tPay=1003;
+	private final long NoGoodSelected=-1;
+	CloseTimeTask closeTask=null;
 	TextView t_coffeeType,t_payType;
 	DeliveryProtocol deliveryController=null;
 	private MachineProtocol myMachine=null;	
@@ -74,29 +89,10 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	Timer closeTimer=null;
 	long cur_goodId=-1;
 	String tPayDisp=null;
-//	boolean isTrading=false; //正在交易状态，
-	
-
 	byte makingStep=0;  //出粉跟出咖啡完成标志
 	int tradeStep=0;    //整个交易步骤
-	private final int StepNone=0;  
-	private final int StepPay=1; //等待支付
-	private final int StepMaking=2; //正在制作
-	private final int StepTakingCup=3; //等待取走
-	private final byte CoffeeFinish=0x01;//咖啡完成
-	private final byte PowderFinish=0x02;//出粉完成
-	private final byte AllFinish=(byte) (CoffeeFinish|PowderFinish);
-	private final int CloseCnt_pay=60*2;
-	private final int CloseCnt_TakingCup=30;
 	
 	
-	
-	CloseTimeTask closeTask=null;
-	private final int WeixinPay=2;
-	private final int AliPay=1;
-	private final int Handler_mcDisp=1002;
-	private final int Handler_qr=1001;
-	private final int Handler_tPay=1003;
 	HashMap<Integer,Long> goodId=new HashMap<Integer,Long>();
 	HashMap<Long,String>	goodName=new HashMap<Long,String>();
 	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
@@ -156,7 +152,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	t_coffeeType=(TextView)view.findViewById(R.id.t_coffeeType);
     	t_payType=(TextView)view.findViewById(R.id.t_payType);
     	layout_mask=(LinearLayout)view.findViewById(R.id.layout_mask);
-    	setPayEnable(false);
+    	//setPayEnable(false);
     }
     
     
@@ -491,22 +487,44 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			}
 			switch(id){
 			case R.id.radio_pay1:
+
 				if(isChecked){
+					if(cur_goodId==NoGoodSelected){
+						myToast.toastShow(R.string.pleaseChooseCoffee);
+						setPayIconRadio(0);
+						break;
+					}
 					setWeixinpay();
 				}
-				else
-					
+				else{
+					cancelCloseTimer();
 					layout_qr.setVisibility(View.GONE);
+					t_payType.setText(R.string.pleaseChoosePay);
+				}
 				break;
 			case R.id.radio_pay2:
 				if(isChecked){
+					if(cur_goodId==NoGoodSelected){
+						myToast.toastShow(R.string.pleaseChooseCoffee);
+						setPayIconRadio(0);
+						break;
+					}
 					setAlipay();
 				}
-				else
+				else{
+					cancelCloseTimer();
 					layout_qr.setVisibility(View.GONE);
+					t_payType.setText(R.string.pleaseChoosePay);
+				}
 				break;
 			case R.id.radio_pay3:
+
 				if(isChecked){
+					if(cur_goodId==NoGoodSelected){
+						myToast.toastShow(R.string.pleaseChooseCoffee);
+						setPayIconRadio(0);
+						break;
+					}
 					setAppealPay();
 				}
 				else
@@ -514,6 +532,11 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				break;
 			case R.id.radio_pay4:
 				if(isChecked){
+					if(cur_goodId==NoGoodSelected){
+						myToast.toastShow(R.string.pleaseChooseCoffee);
+						setPayIconRadio(0);
+						break;
+					}
 					setCardPay();
 				}
 				else
@@ -617,21 +640,22 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				btn_coffee6.setText(name);
 			}
 		}
-		void setPayEnable(boolean enable){
-			btn_pay1.setEnabled(enable);
-			btn_pay2.setEnabled(enable);
-			btn_pay3.setEnabled(enable);
-			btn_pay4.setEnabled(enable);
-		}
+//		void setPayEnable(boolean enable){
+//			btn_pay1.setEnabled(enable);
+//			btn_pay2.setEnabled(enable);
+//			btn_pay3.setEnabled(enable);
+//			btn_pay4.setEnabled(enable);
+//		}
 		
 		void setCoffeeType(int type){
 			
 			if(type==-1){
 				cur_goodId=-1;
-				setPayEnable(false);
+				t_coffeeType.setText(R.string.pleaseChooseCoffee);
+				//setPayEnable(false);
 				return ;
 			}
-			setPayEnable(true);
+			//setPayEnable(true);
 			if(goodId.containsKey(type)){
 				cur_goodId=goodId.get(type);
 			
@@ -661,7 +685,6 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			cancelCloseTimer();
 			layout_qr.setVisibility(View.GONE);
 			t_payType.setText(R.string.pleaseChoosePay);
-			
 			setPayIconRadio(0);
 		}
 		void setWeixinpay(){		

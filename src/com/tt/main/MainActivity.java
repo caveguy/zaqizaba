@@ -36,14 +36,7 @@ public class MainActivity extends Activity {
 
 				@Override
 				public void updateMsg(String msg) {
-					String msgs[]=msg.split(";");
-					if(msgs.length>0);
-						massageFrag.setMsg1(msgs[0]);	
-					if(msgs.length>1);
-						massageFrag.setMsg2(msgs[1]);	
-					if(msgs.length>2);
-						massageFrag.setMsg1(msgs[2]);	
-						
+					massageFrag.setMsg(msg);
 				}
 
             });

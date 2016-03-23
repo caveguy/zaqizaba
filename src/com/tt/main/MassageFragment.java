@@ -34,6 +34,7 @@ public class MassageFragment extends Fragment {
 	SimpleDateFormat formatDate = new SimpleDateFormat ("yyyy年MM月dd日;HH:mm;");
 	SimpleDateFormat formatTime = new SimpleDateFormat ("HH:mm");
 	private final int Msg_updateTime=1001;
+	private final int Msg_updateMsg=1002;
 	SharePreferenceUtil sharePreferenceUtil;
 	private final String Tag="MsgFrag";
 	private final String MsgKey1="key1";
@@ -61,15 +62,15 @@ public class MassageFragment extends Fragment {
     void setMessage(){
     	String msg=sharePreferenceUtil.getStringValue(MsgKey1);
     	if(msg!=null){
-    		setMsg1(msg);
+    		t_msg1.setText(msg);
     	}
     	 msg=sharePreferenceUtil.getStringValue(MsgKey2);
      	if(msg!=null){
-    		setMsg2(msg);
+     		t_msg2.setText(msg);
     	}
 	   	 msg=sharePreferenceUtil.getStringValue(MsgKey3);
-	    	if(msg!=null){
-	   		setMsg3(msg);
+	    if(msg!=null){
+	    	t_msg3.setText(msg);
 	   	}
     }
     class ClockTimerTask extends TimerTask{
@@ -127,6 +128,22 @@ public class MassageFragment extends Fragment {
 						t_week.setText(week);
 						
 					}
+					break;
+				case Msg_updateMsg:
+					String msgs[]=msg.obj.toString().split("#");
+					if(msgs.length>0){
+						sharePreferenceUtil.setStringValue(MsgKey1,msgs[0]);
+						t_msg1.setText(msgs[0]);
+					}
+					if(msgs.length>1){
+						sharePreferenceUtil.setStringValue(MsgKey2,msgs[1]);
+						t_msg2.setText(msgs[1]);
+					}
+					if(msgs.length>2){
+						sharePreferenceUtil.setStringValue(MsgKey3,msgs[2]);
+						t_msg3.setText(msgs[2]);
+					}
+					break;
 			}
 			
 			
@@ -134,17 +151,18 @@ public class MassageFragment extends Fragment {
 		}
 
     };
+	private void sendMsgToHandler(int what,String dsp){
+		Message msg=new Message();
+		msg.what=what;
+		msg.obj=dsp;
+		mHandler.sendMessage(msg);
+	}
     
-    
-    public void setMsg1(String msg){
-    	t_msg1.setText(msg); 	
+    public void setMsg(String msg){
+    	sendMsgToHandler(Msg_updateMsg,msg);
+    		
     }
-    public void setMsg2(String msg){
-    	t_msg2.setText(msg); 
-    }
-    public void setMsg3(String msg){
-    	t_msg3.setText(msg); 
-    }
+
     
     public void  cleanTimer(){
     	if(clockTime!=null){
