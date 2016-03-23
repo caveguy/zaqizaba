@@ -847,29 +847,30 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				}
 			});
 	    	switch(type){
-	    	case CoffeeType1:
+	    	case CoffeeType1://美式
 	    		myMachine.dropCoffee();
-		    	deliveryController.cmd_pushWater(150);
-		    	//deliveryController.cmd_pushLeftPowder(70, 50,150);
+		    	//deliveryController.cmd_pushWater(60);	
+		    	deliveryController.cmd_pushLeftPowder(70, 50,150);//落糖
 		    	break;
-	    	case CoffeeType2:
+	    	case CoffeeType2://卡布
 	    		myMachine.dropCoffee();
 	    		deliveryController.cmd_pushCenterPowder(70, 50,150);
 	    		deliveryController.cmd_pushLeftPowder(70, 50,150);
 	    		break;
-	    	case CoffeeType3:
+	    	case CoffeeType3://意式
 	    		myMachine.dropCoffee();
 	    		break;
-	    	case CoffeeType4:
+	    	case CoffeeType4://拿铁
 	    		myMachine.dropCoffee();
-	    		//deliveryController.cmd_pushRightPowder(70,50,150);
+	    		deliveryController.cmd_pushRightPowder(70,50,150);
 	    		deliveryController.cmd_pushLeftPowder(70,50,150);
 	    		break;
-	    	case CoffeeType5:
-	    		deliveryController.cmd_pushCenterPowder(70, 50,150);
-	    		break;
-	    	case CoffeeType6:
+	    	case CoffeeType5://糖
 	    		deliveryController.cmd_pushLeftPowder(70, 50,150);
+	    		
+	    		break;
+	    	case CoffeeType6://奶
+	    		deliveryController.cmd_pushCenterPowder(70, 50,150);
 	    		break;
 	    	}
 	    }

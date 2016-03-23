@@ -622,6 +622,7 @@ public class DeliveryProtocol {
 	public void cmd_pushLeftPowder(){
 		packCmd(Cmd_pushPowder,BIT0);
 	}
+	//糖
 	public void cmd_pushLeftPowder(int power,int preWater,int water){
 		curState=Cmd_pushPowder;
 		packCmd(Cmd_setLeftWater,(byte) water);		
@@ -629,6 +630,7 @@ public class DeliveryProtocol {
 		packCmd(Cmd_setLeftPowder,(byte) power);
 		packCmd(Cmd_pushPowder,BIT0);
 	}
+	//奶
 	public void cmd_pushCenterPowder(int power,int preWater,int water){
 		curState=Cmd_pushPowder;
 		packCmd(Cmd_setCenterPreWater,(byte) preWater);
@@ -637,6 +639,7 @@ public class DeliveryProtocol {
 		packCmd(Cmd_setCenterPowder,(byte) power);
 		packCmd(Cmd_pushPowder,BIT1);
 	}
+	//巧克力
 	public void cmd_pushRightPowder(int power,int preWater,int water){
 		curState=Cmd_pushPowder;
 		packCmd(Cmd_setRightPreWater,(byte) preWater);
