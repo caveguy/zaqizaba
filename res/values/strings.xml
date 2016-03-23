@@ -97,7 +97,7 @@
     <string name="noCup">"抱歉，机器中无纸杯"</string>
     <string name="hasCup">"落杯成功"</string>
     <string name="cupStuck">"杯子卡住了，掏出卡住杯子"</string>
-    <string name="finished">"咖啡制作完成"</string>
+    <string name="finished">"咖啡制作完成，请取杯"</string>
     <string name="hasDirtyCup">"请移除已有杯子"</string>
     <string name="maintain">"系统维护..."</string>
     <string name="coffee_type1">"意式咖啡|￥5"</string>
@@ -115,7 +115,8 @@
     <string name="chooseAppeal">"使用Appeal支付"</string>
     <string name="chooseCard">"使用Card支付"</string>
     <string name="toAssisTimeOut">"与辅助板通信超时"</string>
-    <string name="dropPowder">"落杯成功，正在做咖啡"</string>
+    <string name="dropPowder">"落杯成功，正在制作咖啡"</string>
+    <string name="startDropCup">"正在落杯"</string>
    
 
 

@@ -193,11 +193,6 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
         deliveryController=new DeliveryProtocol(getActivity());
         deliveryController.setCallBack(new CallBack(){
 
-	
-
-
-        	
-        	
         	
 			@Override
 			public void cupDroped() {
@@ -243,7 +238,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				
 			}
 			@Override
-			public void dealFinish() {
+			public void tradeFinish() {
 				cancelCloseTimer();
 				mylog.log_i("***cup was taken away,deal finished ****");
 				myHandler.post(new Runnable() {
@@ -252,6 +247,13 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 						closeOder();
 					}
 				});	
+			}
+
+
+
+			@Override
+			public void startDropCup() {
+				mc_startDropCup();
 			}
         	
         });
@@ -858,6 +860,15 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					t_payType.setText(R.string.hasDirtyCup);
 				}
 			});
+	    	
+	    }
+	    void mc_startDropCup(){
+	    	myHandler.post(new Runnable() {		
+	    		@Override
+	    		public void run() {
+	    			t_payType.setText(R.string.startDropCup);
+	    		}
+	    	});
 	    	
 	    }
 	    /**

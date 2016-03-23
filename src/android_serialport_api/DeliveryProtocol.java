@@ -224,7 +224,7 @@ public class DeliveryProtocol {
 				cmd_dropCup();
 			}
 			else if(query_what==Query_cupToken){ //查询咖啡是否拿走
-				dealCloseCallBack();
+				tradeFinishCallBack();
 			}
 		}else{ //有杯子，继续检测
 			
@@ -499,13 +499,18 @@ public class DeliveryProtocol {
 		void hasDirtyCup();
 		void powderDroped();
 		void sendTimeOut();
-		void dealFinish();
+		void tradeFinish();
+		void startDropCup();
 
 	}
-	private void dealCloseCallBack(){
-//		cancelQueryTimer();
+	
+	private void tradeFinishCallBack(){
 		if(callBack!=null)
-			callBack.dealFinish();
+			callBack.tradeFinish();
+	}
+	private void startDropCupCallBack(){
+		if(callBack!=null)
+			callBack.startDropCup();
 	}
 	private void cupDropedCallBack(){
 		cancelQueryTimer();
@@ -578,6 +583,7 @@ public class DeliveryProtocol {
 	 */
 	public void cmd_dropCup(){
 		curState=Cmd_dropCup;
+		startDropCupCallBack();
 		packCmd(Cmd_dropCup,(byte) 0);
 	}
 	/*
