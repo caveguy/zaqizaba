@@ -202,7 +202,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	myMachine=new MachineProtocol(getActivity());
     	mcSetCallBack();
         deliveryController=new DeliveryProtocol(getActivity());
-        deliveryController.setCallBack(new CallBack(){
+        deliveryController.setCallBack(new DeliveryProtocol.CallBack(){
 
         	
 			@Override
@@ -332,18 +332,14 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			}
 			@Override
 			public void onReceiveTranspTransfer(String arg0) {
-				mylog.log_d("onReceiveTranspTransfer ="+arg0);	
-				
+				mylog.log_i("onReceiveTranspTransfer ="+arg0);	
+				updateMsgCallBack(arg0);
 			}
 
         	
         };
         deviceInterfaceAdapter = new CoffeeDeviceInterfaceAdapter(getActivity(),myHandler,coffeeDeviceEvent);
-        
-
-        
-
-    	
+	
     }
 
     
@@ -1016,7 +1012,25 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			super.onDestroy();
 		}
 		
+		///////////////////////回调接口////////////////////////////////
+
+		CallBack callBack=null;
+		public  void setCallBack(CallBack call) {
+			// TODO Auto-generated method stub
+			callBack = call;
+		}
+
+		public interface CallBack {
+			
+			void updateMsg(String msg);
+
+		}
 		
+		private void updateMsgCallBack(String msg){
+			if(callBack!=null)
+				callBack.updateMsg(msg);
+		}
+
 		
 		
 		

@@ -7,6 +7,7 @@ import java.util.TimerTask;
 
 import com.example.coffemachinev2.R;
 import com.loopj.android.http.MySSLSocketFactory;
+import com.tt.util.SharePreferenceUtil;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -33,27 +34,44 @@ public class MassageFragment extends Fragment {
 	SimpleDateFormat formatDate = new SimpleDateFormat ("yyyy年MM月dd日;HH:mm;");
 	SimpleDateFormat formatTime = new SimpleDateFormat ("HH:mm");
 	private final int Msg_updateTime=1001;
-	
+	SharePreferenceUtil sharePreferenceUtil;
 	private final String Tag="MsgFrag";
+	private final String MsgKey1="key1";
+	private final String MsgKey2="key2";
+	private final String MsgKey3="key3";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_msg, container, false);
-
+        sharePreferenceUtil=new SharePreferenceUtil(getActivity(), "Message");
         t_time=(TextView)rootView.findViewById(R.id.t_time);
         t_week=(TextView)rootView.findViewById(R.id.t_week);
         t_date=(TextView)rootView.findViewById(R.id.t_date);
         t_msg1=(TextView)rootView.findViewById(R.id.t_msg1);
         t_msg2=(TextView)rootView.findViewById(R.id.t_msg2);
         t_msg3=(TextView)rootView.findViewById(R.id.t_msg3);
-
+        setMessage();
         curDate = new Date(System.currentTimeMillis());//获取当前时间
         
         clockTime.schedule(new ClockTimerTask(), 1000,60*1000);
         return rootView;
     }
 
-    
+    void setMessage(){
+    	String msg=sharePreferenceUtil.getStringValue(MsgKey1);
+    	if(msg!=null){
+    		setMsg1(msg);
+    	}
+    	 msg=sharePreferenceUtil.getStringValue(MsgKey2);
+     	if(msg!=null){
+    		setMsg2(msg);
+    	}
+	   	 msg=sharePreferenceUtil.getStringValue(MsgKey3);
+	    	if(msg!=null){
+	   		setMsg3(msg);
+	   	}
+    }
     class ClockTimerTask extends TimerTask{
 
 		@Override

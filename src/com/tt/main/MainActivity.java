@@ -10,10 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.coffemachinev2.R;
+import com.tt.main.CoffeeFragment.CallBack;
 import com.tt.util.LogCatHelper;
 
 public class MainActivity extends Activity {
-
+	MassageFragment massageFrag;
+	CoffeeFragment coffeeFrag;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,10 +25,29 @@ public class MainActivity extends Activity {
         	
             getFragmentManager().beginTransaction()
             .add(R.id.frag_video, new VideoFragment()).commit();
+            
+            massageFrag=new MassageFragment();
             getFragmentManager().beginTransaction()
-                    .add(R.id.frag_msg, new MassageFragment()) .commit();  
+                    .add(R.id.frag_msg,massageFrag) .commit(); 
+            coffeeFrag=new CoffeeFragment();
             getFragmentManager().beginTransaction()
-            .add(R.id.frag_work, new CoffeeFragment()) .commit();
+            .add(R.id.frag_work, coffeeFrag) .commit();
+            coffeeFrag.setCallBack(new CallBack(){
+
+				@Override
+				public void updateMsg(String msg) {
+					String msgs[]=msg.split(";");
+					if(msgs.length>0);
+						massageFrag.setMsg1(msgs[0]);	
+					if(msgs.length>1);
+						massageFrag.setMsg2(msgs[1]);	
+					if(msgs.length>2);
+						massageFrag.setMsg1(msgs[2]);	
+						
+				}
+
+            });
+
         }
     }
 
