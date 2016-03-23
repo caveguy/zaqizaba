@@ -74,6 +74,13 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	Timer closeTimer=null;
 	long cur_goodId=-1;
 	boolean isTrading=false; //正在交易状态，
+	byte finish=0;  //出粉跟出咖啡完成标志
+	private byte CoffeeFinish=0x01;//咖啡完成
+	private byte PowderFinish=0x02;//出粉完成
+	private byte AllFinish=(byte) (CoffeeFinish|PowderFinish);
+	
+	
+	
 	
 	CloseTimeTask closeTask=null;
 	private final int WeixinPay=2;
@@ -90,6 +97,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     TTLog mylog=null;
 	int oldCheckedId=0;
 	byte status;
+	private String oldMcString=null;
 	//Handler myHandler;
 	private final String Tag="CoffeeFrag";
     @Override
@@ -108,7 +116,6 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     }
 
     void initView(View view){
-
     	myToast =new ToastShow(getActivity());
     	btn_pay1=(CheckBox)view.findViewById(R.id.radio_pay1);
     	btn_pay2=(CheckBox)view.findViewById(R.id.radio_pay2);
@@ -234,6 +241,17 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			public void sendTimeOut() {
 				mc_toAssistControllerTimeOut();
 				
+			}
+			@Override
+			public void dealFinish() {
+				cancelCloseTimer();
+				mylog.log_i("***cup was taken away,deal finished ****");
+				myHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						closeOder();
+					}
+				});	
 			}
         	
         });
@@ -400,9 +418,19 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				// TODO Auto-generated method stub
 				 if(cmd==1){
 					String dispString= ParseReceiveCommand.getDispStringId(getActivity());
-					if(dispString.equals(getString(R.string.cmd1_pressRinse))){
-						myMachine.sendCleanCmd();
+					if(dispString!=oldMcString){
+						mylog.log_i("****Machine String****"+dispString);
+						if(dispString.equals(getString(R.string.cmd1_pressRinse))){
+							myMachine.sendCleanCmd();
+						}
+						else if(dispString.equals(getString(R.string.cmd1_ready))){
+						 if(isTrading){  //交易状态下，字符串变成准备就绪说明出咖啡完成
+								mc_coffeeDroped();
+							}
+						}
+						
 					}
+					oldMcString=dispString;
 				 }
 				 else if(cmd==0x19){
 					myMachine.initMachine();
@@ -426,7 +454,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		switch(v.getId()){
 		case R.id.btn_cancel:
 			//还需要向服务器上报取消订单
-			cancelOder();
+			closeOder();
 			break;
 		case R.id.btn_other:
 			useOtherPay();
@@ -613,7 +641,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
 		
 		
-		void cancelOder(){
+		void closeOder(){
 			isTrading=false;
 			layout_qr.setVisibility(View.GONE);
 			t_coffeeType.setText(R.string.pleaseChooseCoffee);
@@ -628,6 +656,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		}
 		void setWeixinpay(){		
 			isTrading=true;
+			finish=0;
 			 startCloseTimer(); 
 			askPay(cur_goodId,WeixinPay);
 			t_payType.setText(R.string.chooseWeixin);
@@ -635,6 +664,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		}
 		void setAlipay(){
 			isTrading=true;
+			finish=0;
 			startCloseTimer();
 			askPay(cur_goodId,AliPay);
 			t_payType.setText(R.string.chooseZfb);
@@ -835,9 +865,22 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	     * 
 	     */
 	    void mc_powderDroped(){
+	    	finish|=PowderFinish;
 	    	myHandler.post(new Runnable() {		
 				@Override
 				public void run() {
+					if(finish==AllFinish)
+					t_payType.setText(R.string.finished);
+				}
+			});
+	    }
+	    
+	    void mc_coffeeDroped(){
+	    	finish|=CoffeeFinish;
+	    	myHandler.post(new Runnable() {		
+				@Override
+				public void run() {
+					if(finish==AllFinish)
 					t_payType.setText(R.string.finished);
 				}
 			});
@@ -871,7 +914,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					
 					@Override
 					public void run() {
-						cancelOder(); //超时后关闭交易
+						closeOder(); //超时后关闭交易
 						closeTask=null;
 					}
 				});	

@@ -43,6 +43,7 @@ public class DeliveryProtocol {
 	final byte Cmd_pushPowder=0x30;
 	final byte Cmd_readState=0x50;
 	final byte Cmd_readLower8bits=(byte) 0xb9;
+
 	final byte Cmd_readHIght8bits=(byte) 0xba;//?
 	final byte Cmd_setOutputLower8Bits=(byte) 0xc0;//
 	final byte Cmd_setOutputHight8Bits=(byte) 0xc1;//
@@ -68,11 +69,13 @@ public class DeliveryProtocol {
 	final int SendTimerDuaration=300;
 	final int AckTimerDuaration=200;
 	final int QueryTimerDuaration=1000;
-		
+	final byte Query_dirtyCup=0x11;
+	final byte Query_cupToken=0x22;	
 	
 	boolean isDebug=false;
 	boolean isFinished=false;
 	boolean hasResult=false;
+	//boolean isQueryCupDrop=false;
 	byte curState=0;
 	Timer sendTimer=null;
 	Timer ackTimer=null;
@@ -217,7 +220,12 @@ public class DeliveryProtocol {
 	void dealReply_OutPutState(byte data){
 		if((data&Bit_detectCup)!=0){
 			cancelQueryTimer();
-			cmd_dropCup();
+			if(query_what==Query_dirtyCup){ //查询脏杯子是否拿走
+				cmd_dropCup();
+			}
+			else if(query_what==Query_cupToken){ //查询咖啡是否拿走
+				dealCloseCallBack();
+			}
 		}else{ //有杯子，继续检测
 			
 		}
@@ -463,7 +471,8 @@ public class DeliveryProtocol {
 	void onQueryTime(){
 		if(!hasResult){
 			switch(query_what){
-			case Cmd_readLower8bits:
+			case Query_dirtyCup:
+			case Query_cupToken:
 				cmd_ReadCupIsToke();
 				break;
 			case Cmd_readState:
@@ -490,9 +499,14 @@ public class DeliveryProtocol {
 		void hasDirtyCup();
 		void powderDroped();
 		void sendTimeOut();
+		void dealFinish();
 
 	}
-	
+	private void dealCloseCallBack(){
+//		cancelQueryTimer();
+		if(callBack!=null)
+			callBack.dealFinish();
+	}
 	private void cupDropedCallBack(){
 		cancelQueryTimer();
 		if(callBack!=null)
@@ -523,13 +537,18 @@ public class DeliveryProtocol {
 		if(callBack!=null)
 			callBack.hasDirtyCup();
 		//cmd_ReadCupIsToke();
-		startQueryTimer(Cmd_readLower8bits);
+		startQueryTimer(Query_dirtyCup);
 		
 	}
+	/*
+	 * 
+	 * 落粉完成 ，此时应该开始查询杯子是否被取走
+	 */
 	private void dropPowderCallBack(){
 		cancelQueryTimer();
 		if(callBack!=null)
 			callBack.powderDroped();
+		startQueryTimer(Query_cupToken);
 		
 	}
 	

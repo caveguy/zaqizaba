@@ -78,6 +78,14 @@ public class ProtocolTestFragment extends Fragment implements OnClickListener {
 				// TODO Auto-generated method stub
 				
 			}
+
+
+
+			@Override
+			public void dealFinish() {
+				// TODO Auto-generated method stub
+				
+			}
         	
         });
         et_water=(EditText)rootView.findViewById(R.id.et_leftWater);
