@@ -110,10 +110,10 @@
     <string name="cancel">"取消"</string>
     <string name="pleaseChooseCoffee">"请选择咖啡"</string>
     <string name="pleaseChoosePay">"请选择支付方式"</string>
-    <string name="chooseWeixin">"使用微信支付"</string>
-    <string name="chooseZfb">"使用支付宝支付"</string>
-    <string name="chooseAppeal">"使用Appeal支付"</string>
-    <string name="chooseCard">"使用Card支付"</string>
+    <string name="chooseWeixin">"请使用微信支付"</string>
+    <string name="chooseZfb">"请使用支付宝支付"</string>
+    <string name="chooseAppeal">"请使用Appeal支付"</string>
+    <string name="chooseCard">"请使用Card支付"</string>
     <string name="toAssisTimeOut">"与辅助板通信超时"</string>
     <string name="dropPowder">"落杯成功，正在制作咖啡"</string>
     <string name="startDropCup">"正在落杯"</string>

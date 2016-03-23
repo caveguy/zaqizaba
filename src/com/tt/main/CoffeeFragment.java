@@ -73,20 +73,30 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	Button btn_cancel,btn_other;
 	Timer closeTimer=null;
 	long cur_goodId=-1;
-	boolean isTrading=false; //正在交易状态，
-	byte finish=0;  //出粉跟出咖啡完成标志
-	private byte CoffeeFinish=0x01;//咖啡完成
-	private byte PowderFinish=0x02;//出粉完成
-	private byte AllFinish=(byte) (CoffeeFinish|PowderFinish);
+	String tPayDisp=null;
+//	boolean isTrading=false; //正在交易状态，
 	
+
+	byte makingStep=0;  //出粉跟出咖啡完成标志
+	int tradeStep=0;    //整个交易步骤
+	private final int StepNone=0;  
+	private final int StepPay=1; //等待支付
+	private final int StepMaking=2; //正在制作
+	private final int StepTakingCup=3; //等待取走
+	private final byte CoffeeFinish=0x01;//咖啡完成
+	private final byte PowderFinish=0x02;//出粉完成
+	private final byte AllFinish=(byte) (CoffeeFinish|PowderFinish);
+	private final int CloseCnt_pay=60*2;
+	private final int CloseCnt_TakingCup=30;
 	
 	
 	
 	CloseTimeTask closeTask=null;
 	private final int WeixinPay=2;
 	private final int AliPay=1;
-	private final int Cmd_mcDisp=1002;
-	private final int CloseTime=1000*60*3;
+	private final int Handler_mcDisp=1002;
+	private final int Handler_qr=1001;
+	private final int Handler_tPay=1003;
 	HashMap<Integer,Long> goodId=new HashMap<Integer,Long>();
 	HashMap<Long,String>	goodName=new HashMap<Long,String>();
 	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
@@ -164,7 +174,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     		myHandler.post(new Runnable() {
     			@Override
     			public void run() {
-    	    		if(!isTrading)//支付窗
+    	    		//if(!isTrading)//支付窗
+    	    		if(tradeStep==StepNone)//支付窗
     	    			layout_mask.setVisibility(View.VISIBLE);
     			}
     		});
@@ -239,7 +250,6 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			}
 			@Override
 			public void tradeFinish() {
-				cancelCloseTimer();
 				mylog.log_i("***cup was taken away,deal finished ****");
 				myHandler.post(new Runnable() {
 					@Override
@@ -298,6 +308,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					public void run() {
 						
 						 myToast.toastShow("支付失败");	
+						 layout_qr.setVisibility(View.GONE);
+						 cancelCloseTimer();
 					}
 				});	
 			}
@@ -311,6 +323,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 						t_payType.setText(R.string.paySuccess);
 						myToast.toastShow(R.string.paySuccess);
 						layout_qr.setVisibility(View.GONE);
+						cancelCloseTimer();
 						//cancelCloseTimer(); //不能取消，否则按钮状态没有清除
 						
 					}
@@ -359,14 +372,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				null, filePath);
 
 		if (blCreated) {
-		//	displayType();
-			//creatResultThread();//只有在二维码生成成功后才会启动是否支付成功的查询。
 			myToast.toastShow(R.string.createQrSuccess);
-			Message msg=new Message();
-			msg.what=1000;
-			msg.obj=filePath;
-			myHandler.sendMessage(msg);
-			//img_qr.setImageBitmap(BitmapFactory.decodeFile(filePath));
+			sendMsgToHandler(Handler_qr,filePath);
 			
 
 		} else {
@@ -426,7 +433,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 							myMachine.sendCleanCmd();
 						}
 						else if(dispString.equals(getString(R.string.cmd1_ready))){
-						 if(isTrading){  //交易状态下，字符串变成准备就绪说明出咖啡完成
+						 if(tradeStep!=StepNone){  //交易状态下，字符串变成准备就绪说明出咖啡完成
 								mc_coffeeDroped();
 							}
 						}
@@ -644,32 +651,43 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		
 		
 		void closeOder(){
-			isTrading=false;
+			//isTrading=false;
+			cancelCloseTimer();
+			tradeStep=StepNone;
 			layout_qr.setVisibility(View.GONE);
 			t_coffeeType.setText(R.string.pleaseChooseCoffee);
 			t_payType.setText(R.string.pleaseChoosePay);
+			
 			setCoffeeIconRadio(0);
 			setPayIconRadio(0);
 		}
 		void useOtherPay(){
+			cancelCloseTimer();
 			layout_qr.setVisibility(View.GONE);
 			t_payType.setText(R.string.pleaseChoosePay);
+			
 			setPayIconRadio(0);
 		}
 		void setWeixinpay(){		
-			isTrading=true;
-			finish=0;
-			 startCloseTimer(); 
+			//isTrading=true;
+			makingStep=0;
+			tradeStep=StepPay;
+			 startCloseTimer(CloseCnt_pay); 
 			askPay(cur_goodId,WeixinPay);
-			t_payType.setText(R.string.chooseWeixin);
+			tPayDisp=getActivity().getString(R.string.chooseWeixin);
+	    	String dsp=tPayDisp+"("+CloseCnt_pay+"s)";
+			t_payType.setText(dsp);
 			layout_qr.setVisibility(View.VISIBLE);
 		}
 		void setAlipay(){
-			isTrading=true;
-			finish=0;
-			startCloseTimer();
+			//isTrading=true;
+			makingStep=0;
+			tradeStep=StepPay;
+			startCloseTimer(CloseCnt_pay);
 			askPay(cur_goodId,AliPay);
-			t_payType.setText(R.string.chooseZfb);
+			tPayDisp=getActivity().getString(R.string.chooseZfb);
+			String dsp=tPayDisp+"("+CloseCnt_pay+"s)";
+			t_payType.setText(dsp);
 			layout_qr.setVisibility(View.VISIBLE);
 		}
 		void setAppealPay(){
@@ -763,16 +781,28 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		
 		}
 	}	
+	
+		private void sendMsgToHandler(int what,String dsp){
+			Message msg=new Message();
+			msg.what=what;
+			msg.obj=dsp;
+			myHandler.sendMessage(msg);
+		}
+	
+	
 	    private MyHandler myHandler = new MyHandler(getActivity()){
 	        @Override
 	        public void myHandleMessage(Message msg) {
 	        	
 	    		switch (msg.what) {
-				case 1000:
+				case Handler_qr:
 					img_qr.setImageBitmap(BitmapFactory.decodeFile(msg.obj.toString()));
 					break;
-				case Cmd_mcDisp:
+				case Handler_mcDisp:
 					myToast.toastShow(msg.obj.toString());
+					break;
+				case Handler_tPay:
+					t_payType.setText(msg.obj.toString());
 
 					break;
 	        }
@@ -782,6 +812,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    
 	    
 	    void mc_dropCup(){
+	    	tradeStep=StepMaking; //进入制作阶段
 	    	deliveryController.cmd_dropCup();
 	    }
 	    /**
@@ -871,30 +902,34 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	});
 	    	
 	    }
+
+	   void stepTakingCup(){
+	   		tradeStep=StepTakingCup;
+	   		tPayDisp=getActivity().getString(R.string.finished);
+	    	String dsp=tPayDisp+"("+CloseCnt_TakingCup+"s)";
+			sendMsgToHandler(Handler_tPay, dsp);
+	   		//sendMsgToHandler(Handler_tPay, tPayDisp); 
+	   		startCloseTimer(CloseCnt_TakingCup);
+	   }
+	    
 	    /**
 	     * 出粉完成
 	     * 
 	     */
 	    void mc_powderDroped(){
-	    	finish|=PowderFinish;
-	    	myHandler.post(new Runnable() {		
-				@Override
-				public void run() {
-					if(finish==AllFinish)
-					t_payType.setText(R.string.finished);
-				}
-			});
+	    	makingStep|=PowderFinish;
+	    	if(makingStep==AllFinish){
+	    		stepTakingCup();
+	    	}   
+	    	
 	    }
 	    
 	    void mc_coffeeDroped(){
-	    	finish|=CoffeeFinish;
-	    	myHandler.post(new Runnable() {		
-				@Override
-				public void run() {
-					if(finish==AllFinish)
-					t_payType.setText(R.string.finished);
-				}
-			});
+	    	makingStep|=CoffeeFinish;
+	    	if(makingStep==AllFinish){
+	    		stepTakingCup();
+	    	}  	
+
 	    }
 	    void mc_dropCupTimeOut(){
 	    	
@@ -918,40 +953,53 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
 	    
 	    class CloseTimeTask extends TimerTask{
+	    	
+	    	int closeCnt=0;
 			@Override
 			public void run() {
-				isTrading=false;
+				//isTrading=false;
 				myHandler.post(new Runnable() {
 					
 					@Override
 					public void run() {
-						closeOder(); //超时后关闭交易
-						closeTask=null;
+						if(closeTask.closeCnt-->0){
+							String dsp=tPayDisp+"("+closeCnt+"s)";
+							sendMsgToHandler(Handler_tPay, dsp);
+
+						}else{
+							closeOder(); //超时后关闭交易
+						}
 					}
 				});	
 			}
 	    	
 	    }
 	    
-	    void startCloseTimer(){
+	    void startCloseTimer(int cnt){
+	    	
 	    	if(closeTimer==null){
 	    		closeTimer=new Timer();
 	    	}
 	    	if(closeTask==null){
 	    		closeTask=new CloseTimeTask();
-	    		closeTimer.schedule(closeTask, CloseTime);
+	    		closeTask.closeCnt=cnt;
+	    		closeTimer.schedule(closeTask, 1000,1000);
 	    	}else{
 	    		if(closeTask.cancel()){
 	    			closeTask=new CloseTimeTask();
-	    			closeTimer.schedule(closeTask, CloseTime);
+	    			//closeTimer.schedule(closeTask, CloseTime);
+	    			closeTask.closeCnt=cnt;
+	    			closeTimer.schedule(closeTask, 1000,1000);
 	    		}
 	    	}
 	    	
 	    	
 	    }
 	    void cancelCloseTimer(){
-	    	if(closeTask!=null)
+	    	if(closeTask!=null){
 	    		closeTask.cancel();
+	    		closeTask=null;
+	    	}
 	    }
 		public void cleanTimer(){
 			if(closeTimer!=null){
