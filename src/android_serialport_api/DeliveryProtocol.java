@@ -29,8 +29,9 @@ public class DeliveryProtocol {
 	
 	final byte Cmd_handshake=0x11;
 	final byte Cmd_dropCup=0x21;
-	final byte Cmd_redLight=0x22;
-	final byte Cmd_greedLight=0x23;
+	final byte Cmd_Light=0x22;
+	
+//	final byte Cmd_greedLight=0x23;
 	final byte Cmd_setLeftPowder=0x2a;
 	final byte Cmd_setLeftWater=0x2b;
 	final byte Cmd_setLeftPreWater=0x27;
@@ -72,6 +73,8 @@ public class DeliveryProtocol {
 	final byte Query_dirtyCup=0x11;
 	final byte Query_cupToken=0x22;	
 	
+	final byte RedLight=BIT0;
+	final byte GreenLight=BIT1;
 	boolean isDebug=false;
 	boolean isFinished=false;
 	boolean hasResult=false;
@@ -505,6 +508,7 @@ public class DeliveryProtocol {
 	}
 	
 	private void tradeFinishCallBack(){
+		cmd_cancelLight(); //交易结束后关灯
 		if(callBack!=null)
 			callBack.tradeFinish();
 	}
@@ -584,6 +588,7 @@ public class DeliveryProtocol {
 	public void cmd_dropCup(){
 		curState=Cmd_dropCup;
 		startDropCupCallBack();
+		cmd_redLight();//从开始落杯开始显示红灯
 		packCmd(Cmd_dropCup,(byte) 0);
 	}
 	/*
@@ -644,6 +649,18 @@ public class DeliveryProtocol {
 		packCmd(Cmd_setRightWater,(byte) time);
 		packCmd(Cmd_pushPowder,BIT3);
 	}
+	
+	public void cmd_redLight(){
+		packCmd(Cmd_Light,RedLight);
+	}
+	public void cmd_cancelLight(){
+		packCmd(Cmd_Light,(byte)0);
+	}
+	
+	public void cmd_greenLight(){
+		packCmd(Cmd_Light,GreenLight);
+	}
+	
 	
 	//程序结束时调用
 	public void cleanTimer(){

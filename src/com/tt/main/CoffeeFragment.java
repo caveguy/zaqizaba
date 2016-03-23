@@ -921,9 +921,14 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	});
 	    	
 	    }
-
+/**
+ * 咖啡制作完成
+ * 等待取杯
+ */
 	   void stepTakingCup(){
 	   		tradeStep=StepTakingCup;
+	   		deliveryController.cmd_cancelLight();
+	   		deliveryController.cmd_greenLight();
 	   		tPayDisp=getActivity().getString(R.string.finished);
 	    	String dsp=tPayDisp+"("+CloseCnt_TakingCup+"s)";
 			sendMsgToHandler(Handler_tPay, dsp);
