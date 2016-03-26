@@ -206,7 +206,16 @@ public class MachineProtocol {
 //			}
 //		}
 	}
-
+	/**
+	 * 
+	 * 设置特浓
+	 * @param flow:流量，ml
+	 */
+	public void setFlow(byte flow) {
+		Send_Command.setCoffeeType(Send_Command.CoffeeType.tenong,flow);
+	}
+	
+	
 	public void setEspressoCoffee() {
 		Send_Command.setCoffeeType(Send_Command.CoffeeType.tenong,0x1e);
 	}

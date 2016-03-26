@@ -67,16 +67,18 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	private final byte AllFinish=(byte) (CoffeeFinish|PowderFinish);
 	private final int CloseCnt_pay=60*2;
 	private final int CloseCnt_TakingCup=30;
-	
+	private boolean dispDevLayout=false;
 
 	private final int WeixinPay=2;
 	private final int AliPay=1;
 	private final int Handler_mcDisp=1002;
 	private final int Handler_qr=1001;
 	private final int Handler_tPay=1003;
+	private final int Handler_tMask=1004;
 	private final long NoGoodSelected=-1;
 	CloseTimeTask closeTask=null;
 	TextView t_coffeeType,t_payType;
+	TextView t_mcDetail;
 	DeliveryProtocol deliveryController=null;
 	private MachineProtocol myMachine=null;	
 	ToastShow myToast;
@@ -85,7 +87,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	CheckBox btn_coffee1,btn_coffee2,btn_coffee3,btn_coffee4,btn_coffee5,btn_coffee6;
 	CheckBox btn_pay1,btn_pay2,btn_pay3,btn_pay4;
 	ImageView img_qr;
-	Button btn_cancel,btn_other;
+	Button btn_cancel,btn_other,btn_clean,btn_mskCancel;
 	Timer closeTimer=null;
 	long cur_goodId=-1;
 	String tPayDisp=null;
@@ -116,7 +118,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
         initView(rootView);
         initMachines();
   //      myHandler =new Handler();
-
+//        Button mybutton = null;
+//        mybutton.setText("hello");
         
         return rootView;
     }
@@ -152,6 +155,12 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	t_coffeeType=(TextView)view.findViewById(R.id.t_coffeeType);
     	t_payType=(TextView)view.findViewById(R.id.t_payType);
     	layout_mask=(LinearLayout)view.findViewById(R.id.layout_mask);
+    	btn_mskCancel=(Button)view.findViewById(R.id.btn_mskCancel);
+    	btn_clean=(Button)view.findViewById(R.id.btn_clean);
+    	btn_mskCancel.setOnClickListener(this);
+    	btn_clean.setOnClickListener(this);
+    	
+    	t_mcDetail=(TextView)view.findViewById(R.id.t_mcDetail);
     	//setPayEnable(false);
     }
     
@@ -419,6 +428,10 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				// TODO Auto-generated method stub
 				 if(cmd==1){
 					String dispString= ParseReceiveCommand.getDispStringId(getActivity());
+					if(layout_mask.VISIBLE==View.VISIBLE){
+						sendMsgToHandler(Handler_tMask, dispString)	;
+						
+					}
 					if(dispString!=oldMcString){
 						mylog.log_i("****Machine String****"+dispString);
 						if(dispString.equals(getString(R.string.cmd1_pressRinse))){
@@ -445,7 +458,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
 			@Override
 			public void onWork() {
-				setEnble(true);
+				if(!dispDevLayout){
+					setEnble(true);
+				}
 			}
 		});
 	}
@@ -463,6 +478,11 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		case R.id.btn_hand:
 			mylog.log_i("btn_hand!!");
 			deliveryController.cmd_handShake();
+			break;
+		case R.id.btn_clean:
+			myMachine.sendCleanCmd();
+		case R.id.btn_mskCancel:
+			leaveDevMode();
 			break;
 //		case R.id.btn_dropCup:
 //			Log.e(Tag,"btn_dropCup!!");
@@ -822,8 +842,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					break;
 				case Handler_tPay:
 					t_payType.setText(msg.obj.toString());
-
 					break;
+				case Handler_tMask:
+					t_mcDetail.setText(msg.obj.toString());
 	        }
 	        };
 	    };
@@ -1039,6 +1060,14 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			myMachine.cleanTimer();
 			cleanTimer();
 			super.onDestroy();
+		}
+		void enterDevMode(){
+			dispDevLayout=true;
+			layout_mask.setVisibility(View.VISIBLE);
+		}
+		void leaveDevMode(){
+			dispDevLayout=false;
+			layout_mask.setVisibility(View.GONE);
 		}
 		
 		///////////////////////回调接口////////////////////////////////

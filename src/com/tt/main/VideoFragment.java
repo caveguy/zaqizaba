@@ -23,12 +23,15 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.coffemachinev2.R;
+import com.tt.main.CoffeeFragment.CallBack;
 
-public class VideoFragment extends Fragment 
+public class VideoFragment extends Fragment  implements OnClickListener
 
 {
 	private final String TAG = "VideoFrag";
@@ -37,6 +40,7 @@ public class VideoFragment extends Fragment
 	private int currentPosition = 0;
 	private boolean isPlaying;
 	private MediaPlayer mediaPlayer=null;
+	ImageView img_logo;
 //	String fileName = "ad.mp4";
 	Timer myTimer=null;
 	int which_file=0;
@@ -52,6 +56,8 @@ public class VideoFragment extends Fragment
         surfaceHolder = sv.getHolder();
      // 为SurfaceHolder添加回调
         surfaceHolder.addCallback(callback);
+        img_logo=(ImageView)rootView.findViewById(R.id.img_logo);
+        img_logo.setOnClickListener(this);
         new FindThread().start();
         myTimer=new Timer();
         myTimer.schedule(new MyTimerTask(), 5000, 60*1000);
@@ -278,6 +284,7 @@ public class VideoFragment extends Fragment
 			if(!isPlaying()){
 				play(which_file);
 			}
+			clickCnt=0;
 		}
 		
 	}
@@ -301,6 +308,39 @@ public class VideoFragment extends Fragment
 		}
 		super.onDestroy();
 	}
+
+	@Override
+	public void onClick(View v) {
+		switch(v.getId()){
+		case R.id.img_logo:
+			clickLogo();
+		}
+		
+	}
+	private int clickCnt=0;
+	void clickLogo(){
+		if(clickCnt++>6){
+			clickCnt=0;
+			clickCallBack();
+		}
+	}
+	///////////////////////回调接口////////////////////////////////
+
+	CallBack callBack=null;
+	public  void setCallBack(CallBack call) {
+		// TODO Auto-generated method stub
+		callBack = call;
+	}
+
+	public interface CallBack {
+		
+		void logoClicked();
+
+	}
 	
+	private void clickCallBack(){
+		if(callBack!=null)
+			callBack.logoClicked();
+	}
 
 }

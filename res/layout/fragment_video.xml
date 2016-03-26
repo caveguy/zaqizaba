@@ -3,21 +3,22 @@
     android:layout_height="match_parent"
 
     >
-android:background="@drawable/bg_video" 
     <SurfaceView
         android:id="@+id/sv"
         android:layout_width="match_parent"
         
         android:layout_height="match_parent" />
     
+    
     <ImageView 
-        
+        android:id="@+id/img_logo"
          android:layout_width="wrap_content"  
    		 android:layout_height="wrap_content" 
    		 android:layout_alignParentTop="true"
    		 android:layout_alignParentRight="true" 
    		 android:layout_marginRight="@dimen/marginRight_logo"
-        android:src="@drawable/logo2"       
+        android:src="@drawable/logo2" 
+        android:clickable="true"      
         />
 
 </RelativeLayout>

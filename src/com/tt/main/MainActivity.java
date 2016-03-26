@@ -22,10 +22,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         LogCatHelper.getInstance(this).start();
         if (savedInstanceState == null) {
-        	
-            getFragmentManager().beginTransaction()
-            .add(R.id.frag_video, new VideoFragment()).commit();
-            
+
             massageFrag=new MassageFragment();
             getFragmentManager().beginTransaction()
                     .add(R.id.frag_msg,massageFrag) .commit(); 
@@ -41,6 +38,18 @@ public class MainActivity extends Activity {
 
             });
 
+        	VideoFragment videoFragment=new VideoFragment();
+        	
+            getFragmentManager().beginTransaction()
+            .add(R.id.frag_video, videoFragment).commit();
+            videoFragment.setCallBack(new VideoFragment.CallBack() {
+				
+				@Override
+				public void logoClicked() {
+					coffeeFrag.enterDevMode();
+				}
+			});
+            
         }
     }
 

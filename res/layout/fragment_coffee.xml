@@ -385,12 +385,36 @@
     android:background="@color/mask"
     android:visibility="gone"
     android:clickable="true"
+    android:orientation="vertical"
      >
-   	         <TextView 
-	    	 android:layout_width="wrap_content"
+   	         <TextView
+   	        android:id="@+id/t_maintain"
+	    	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="@dimen/maintain_text_size"
 	        android:text="@string/maintain"/> 
+	        
+   	         <TextView
+   	        android:id="@+id/t_mcDetail"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/icon_text_size"
+	        android:text="@string/comErr"
+	        /> 
+	         <Button
+   	        android:id="@+id/btn_clean"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/size_payTitle"
+	        android:text="@string/clean"
+	        /> 
+	        <Button
+   	        android:id="@+id/btn_mskCancel"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/size_payTitle"
+	        android:text="@string/cancel"
+	        /> 
  </LinearLayout>
 	
 	
