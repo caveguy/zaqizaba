@@ -401,6 +401,28 @@
 	        android:textSize="@dimen/icon_text_size"
 	        android:text="@string/comErr"
 	        /> 
+	        
+   	     <RadioGroup 
+   	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+   	        android:orientation="horizontal" 
+   	         
+   	         >
+   	         <RadioButton 
+   	         android:id="@+id/radio_cup1"
+   	         android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+   	        android:text="自动落杯"   
+   	             />
+   	         	         <RadioButton 
+   	         android:id="@+id/radio_cup2"
+   	         android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+   	        android:text="手动放杯"   
+   	             />   
+   	         
+   	         
+   	     </RadioGroup>
 	         <Button
    	        android:id="@+id/btn_clean"
 	    	android:layout_width="wrap_content"
@@ -413,7 +435,7 @@
 	    	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="@dimen/size_payTitle"
-	        android:text="@string/cancel"
+	        android:text="@string/hide"
 	        /> 
  </LinearLayout>
 	

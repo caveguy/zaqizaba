@@ -32,6 +32,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android_serialport_api.DeliveryProtocol;
@@ -95,6 +96,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	int tradeStep=0;    //整个交易步骤
 	boolean isDeliverEnable=false;  //辅助板是否工作正常
 	boolean isMcEnable=false;      //咖啡机是否工作正常
+	boolean dropcupMode=true ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
+	RadioButton radioCup1,radioCup2;
 	
 	
 	HashMap<Integer,Long> goodId=new HashMap<Integer,Long>();
@@ -163,6 +166,15 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	btn_clean.setOnClickListener(this);
     	
     	t_mcDetail=(TextView)view.findViewById(R.id.t_mcDetail);
+    	radioCup1=(RadioButton)view.findViewById(R.id.radio_cup1);
+    	radioCup2=(RadioButton)view.findViewById(R.id.radio_cup2);
+    	if(dropcupMode){
+    		radioCup1.setChecked(true);	
+    	}else{
+    		radioCup2.setChecked(true);
+    	}
+    	radioCup1.setOnCheckedChangeListener(this);
+    	radioCup2.setOnCheckedChangeListener(this);
     	//setPayEnable(false);
     }
     
@@ -264,6 +276,13 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				// TODO Auto-generated method stub
 				
 			}
+
+
+
+			@Override
+			public void cupReady() {
+				mc_makeCoffee(getCurType());
+			}
         	
         });
         
@@ -306,7 +325,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 						
 					}
 				});
-				mc_dropCup();
+				startMaking();
+				
 			}
 			@Override
 			public void onReceiveTranspTransfer(String arg0) {
@@ -325,7 +345,14 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
         deviceInterfaceAdapter = new CoffeeDeviceInterfaceAdapter(getActivity(),myHandler,coffeeDeviceEvent);
 	
     }
-
+    void startMaking(){
+    	if(dropcupMode){
+    		mc_dropCup();
+    	}else{
+    		mc_readCup();
+    	}
+    }
+    
     void updatePrice(){
         new QueryDeviceGoodsAsyncTask(){
             @Override
@@ -613,7 +640,20 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					setCoffeeType(-1);
 				}
 				break;
-			
+			case R.id.radio_cup1:
+				if(isChecked){
+					dropcupMode=true;
+				}else{
+					dropcupMode=false;
+				}
+				break;
+			case R.id.radio_cup2:
+				if(!isChecked){
+					dropcupMode=true;
+				}else{
+					dropcupMode=false;
+				}
+				break;
 			}
 			
 		}
@@ -858,6 +898,16 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	tradeStep=StepMaking; //进入制作阶段
 	    	deliveryController.cmd_dropCup();
 	    }
+	    void mc_readCup(){
+	    	tradeStep=StepMaking; //进入制作阶段
+	    	myHandler.post(new Runnable() {		
+				@Override
+				public void run() {
+					t_payType.setText(R.string.putCup);
+				}
+			});
+	    	deliveryController.cmd_isCupReady();
+	    }
 	    /**
 	     * 制作咖啡接口
 	     *此函数触发出粉/出咖啡 
@@ -909,21 +959,14 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					t_payType.setText(R.string.noCup);
 				}
 			});
-	    	
-	    }
-	    /**
-	     * 卡杯了
-	     * 提示用户手动取杯，并通知服务器
-	     */
-	    void mc_cupStucked(){
-	    	myHandler.post(new Runnable() {		
+	    	myHandler.postDelayed(new Runnable() {		
 				@Override
 				public void run() {
-					t_payType.setText(R.string.cupStuck);
+					mc_readCup();
 				}
-			});
-	    	
+			},2000);
 	    }
+
 	    /**
 	     * 
 	     * 有脏杯子没有取走，提示用户拿走脏杯子
@@ -982,6 +1025,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    }
 	    void mc_dropCupTimeOut(){
 	    	mc_cupStuck();
+	    	
 	    }
 	    void mc_cupStuck(){
 	    	myHandler.post(new Runnable() 
@@ -991,14 +1035,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					t_payType.setText(R.string.cupStuck);
 				}
 			});
-	    	myHandler.postDelayed(new Runnable() 
-	    	{		
-				@Override
-				public void run() {
-					mc_makeCoffee(getCurType());
-				}
-			},1000*5);
-	    	
+	    	deliveryController.cmd_isCupReady();
 	    }
 	    /**
 	     * 跟辅助板通信超时
@@ -1025,7 +1062,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					
 					@Override
 					public void run() {
-						if(closeTask.closeCnt-->0){
+						if(closeCnt-->0){
 							String dsp=tPayDisp+"("+closeCnt+"s)";
 							sendMsgToHandler(Handler_tPay, dsp);
 
@@ -1082,6 +1119,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			dispDevLayout=true;
 			layout_mask.setVisibility(View.VISIBLE);
 			btn_mskCancel.setVisibility(View.VISIBLE);
+			radioCup1.setVisibility(View.VISIBLE);
+			radioCup2.setVisibility(View.VISIBLE);
 		}
 		void leaveDevMode(){
 			dispDevLayout=false;
@@ -1107,6 +1146,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	    		{
 	    	    			layout_mask.setVisibility(View.VISIBLE);
 	    	    			btn_mskCancel.setVisibility(View.GONE);
+	    	    			radioCup1.setVisibility(View.GONE);
+	    	    			radioCup2.setVisibility(View.GONE);
 	    	    		}
 	    			}
 	    		});

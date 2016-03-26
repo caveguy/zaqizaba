@@ -72,6 +72,7 @@ public class DeliveryProtocol {
 	final int QueryTimerDuaration=1000;
 	final byte Query_dirtyCup=0x11;
 	final byte Query_cupToken=0x22;	
+	final byte Query_hasCup=0x33;
 	
 	final byte RedLight=BIT0;
 	final byte GreenLight=BIT1;
@@ -221,16 +222,21 @@ public class DeliveryProtocol {
 	}
 	
 	void dealReply_OutPutState(byte data){
-		if((data&Bit_detectCup)!=0){
-			cancelQueryTimer();
+		if((data&Bit_detectCup)!=0){  //没有杯子
+			
 			if(query_what==Query_dirtyCup){ //查询脏杯子是否拿走
+				cancelQueryTimer();
 				cmd_dropCup();
 			}
 			else if(query_what==Query_cupToken){ //查询咖啡是否拿走
+				cancelQueryTimer();
 				tradeFinishCallBack();
 			}
 		}else{ //有杯子，继续检测
-			
+			if(query_what==Query_hasCup){
+				cancelQueryTimer();
+				cupReadyCallBack();
+			}
 		}
 	
 	}
@@ -476,6 +482,7 @@ public class DeliveryProtocol {
 			switch(query_what){
 			case Query_dirtyCup:
 			case Query_cupToken:
+			case Query_hasCup:	  //
 				cmd_ReadCupIsToke();
 				break;
 			case Cmd_readState:
@@ -506,7 +513,8 @@ public class DeliveryProtocol {
 		void startDropCup();
 		void onDisable();
 		void onEnable();
-
+		void cupReady();//为了不落杯的程序准备
+	//	void cupNotReady();//为了不落杯的程序准备
 	}
 	
 	private void tradeFinishCallBack(){
@@ -524,6 +532,19 @@ public class DeliveryProtocol {
 			callBack.cupDroped();
 		
 	}
+	private void cupReadyCallBack(){
+
+		if(callBack!=null)
+			callBack.cupReady();
+		
+	}
+//	private void cupNotReadyCallBack(){
+//		//cancelQueryTimer();
+//		if(callBack!=null)
+//			callBack.cupNotReady();
+//		
+//	}
+	
 	private void noCupCallBack(){
 		cancelQueryTimer();
 		if(callBack!=null){
@@ -588,6 +609,7 @@ public class DeliveryProtocol {
 	}
 	/*
 	 * 落杯
+	 * 正常流程开始的第一个函数
 	 */
 	public void cmd_dropCup(){
 		curState=Cmd_dropCup;
@@ -603,9 +625,10 @@ public class DeliveryProtocol {
 	}
 	/*
 	 * 查询杯子是否放好
+	 * 为不需要落杯的程序准备
 	 */
 	public void cmd_isCupReady(){
-		packCmd(Cmd_readLower8bits,(byte) 0);
+		startQueryTimer(Query_hasCup);
 	}
 	/*
 	 * 设置出粉
