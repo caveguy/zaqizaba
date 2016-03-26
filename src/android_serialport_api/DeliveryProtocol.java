@@ -139,7 +139,7 @@ public class DeliveryProtocol {
 	//	Log.e("rec","getCheckSun(data,4)="+getCheckSun(data,4));
 		//if(data[0]==(byte)0xaa){
 		if(data[0]==(byte)0xaa&&data[3]==getCheckSun(data,4)){
-			Log.e("rec","rec right!!");
+			//Log.e("rec","rec right!!");
 				getAck();//收到回复
 				byte reply=data[2];	
 				switch(data[1]){
@@ -504,11 +504,13 @@ public class DeliveryProtocol {
 		void sendTimeOut();
 		void tradeFinish();
 		void startDropCup();
+		void onDisable();
+		void onEnable();
 
 	}
 	
 	private void tradeFinishCallBack(){
-		cmd_cancelLight(); //交易结束后关灯
+	//	cmd_cancelLight(); //交易结束后关灯
 		if(callBack!=null)
 			callBack.tradeFinish();
 	}
@@ -524,8 +526,10 @@ public class DeliveryProtocol {
 	}
 	private void noCupCallBack(){
 		cancelQueryTimer();
-		if(callBack!=null)
+		if(callBack!=null){
+			callBack.onDisable();
 			callBack.noCupDrop();
+		}
 		
 	}
 	private void dropCupTimeOutCallBack(){
@@ -588,13 +592,19 @@ public class DeliveryProtocol {
 	public void cmd_dropCup(){
 		curState=Cmd_dropCup;
 		startDropCupCallBack();
-		cmd_redLight();//从开始落杯开始显示红灯
+	//	cmd_redLight();//从开始落杯开始显示红灯
 		packCmd(Cmd_dropCup,(byte) 0);
 	}
 	/*
 	 * 查询杯子是否拿走
 	 */
 	public void cmd_ReadCupIsToke(){
+		packCmd(Cmd_readLower8bits,(byte) 0);
+	}
+	/*
+	 * 查询杯子是否放好
+	 */
+	public void cmd_isCupReady(){
 		packCmd(Cmd_readLower8bits,(byte) 0);
 	}
 	/*

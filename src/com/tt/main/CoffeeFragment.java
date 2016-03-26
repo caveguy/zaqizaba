@@ -93,6 +93,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	String tPayDisp=null;
 	byte makingStep=0;  //出粉跟出咖啡完成标志
 	int tradeStep=0;    //整个交易步骤
+	boolean isDeliverEnable=false;  //辅助板是否工作正常
+	boolean isMcEnable=false;      //咖啡机是否工作正常
 	
 	
 	HashMap<Integer,Long> goodId=new HashMap<Integer,Long>();
@@ -164,31 +166,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	//setPayEnable(false);
     }
     
-    
-    void setEnble(boolean enable){
-    	if(enable){	
-    		myHandler.post(new Runnable() {
-    			@Override
-    			public void run() {
-    				layout_mask.setVisibility(View.GONE);
-    			}
-    		});
-    		
-    		
-    	}else{
-    		myHandler.post(new Runnable() {
-    			@Override
-    			public void run() {
-    	    		//if(!isTrading)//支付窗
-    	    		if(tradeStep==StepNone)//支付窗
-    	    			layout_mask.setVisibility(View.VISIBLE);
-    			}
-    		});
-
-    	}
-    }
-    
-    
+ 
     
     Integer getCurType(){
     	Iterator it = goodId.entrySet().iterator(); 
@@ -270,6 +248,22 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			public void startDropCup() {
 				mc_startDropCup();
 			}
+
+
+
+			@Override
+			public void onDisable() {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void onEnable() {
+				// TODO Auto-generated method stub
+				
+			}
         	
         });
         
@@ -282,29 +276,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
                 
              //Toast.makeText(getActivity(), "连接成功", Toast.LENGTH_LONG).show();
                 myToast.toastShow("连接服务器成功");
-                new QueryDeviceGoodsAsyncTask(){
-                    @Override
-                    protected void onPostExecute(QueryDeviceGoodsRsp rsp) {
-                    	
-                    	//try{
-	                        if(rsp.getErrcode()==0){
-	                        	
-	                        	int i=0;
-	                           for(DeviceGoods goods:rsp.getGoods()){
-	                        	   
-	                        	   Long id=goods.getGoodsId();
-	                        	   goodId.put(i++, id);
-	                        	   goodName.put(id,goods.getGoodsName());
-	                        	   goodPrice.put(id, goods.getGoodsPrice());
-	                           }
-	                           myToast.toastShow("rsp.getErrcode() i="+i);
-	                           setGoodMsg();
-	                        }
-//	                    }catch(Exception e){
-//	                    	Log.e(Tag, e.toString());
-//	                    }
-                    }
-                }.execute(deviceInterfaceAdapter.getDevice().getFeedId());
+                updatePrice();
+
             }
 			@Override
 			public void onPayFail(Long arg0) {				
@@ -338,7 +311,13 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			@Override
 			public void onReceiveTranspTransfer(String arg0) {
 				mylog.log_i("onReceiveTranspTransfer ="+arg0);	
-				updateMsgCallBack(arg0);
+				String updatePrice=getActivity().getString(R.string.update_Price);
+				if(arg0.equals(updatePrice)){
+					//更新价格
+					 updatePrice();
+				}else{
+					updateMsgCallBack(arg0);
+				}
 			}
 
         	
@@ -347,7 +326,31 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	
     }
 
-    
+    void updatePrice(){
+        new QueryDeviceGoodsAsyncTask(){
+            @Override
+            protected void onPostExecute(QueryDeviceGoodsRsp rsp) {
+            	
+            	//try{
+                    if(rsp.getErrcode()==0){
+                    	
+                    	int i=0;
+                       for(DeviceGoods goods:rsp.getGoods()){
+                    	   
+                    	   Long id=goods.getGoodsId();
+                    	   goodId.put(i++, id);
+                    	   goodName.put(id,goods.getGoodsName());
+                    	   goodPrice.put(id, goods.getGoodsPrice());
+                       }
+                       //myToast.toastShow("rsp.getErrcode() i="+i);
+                       setGoodMsg();
+                    }
+//                }catch(Exception e){
+//                	Log.e(Tag, e.toString());
+//                }
+            }
+        }.execute(deviceInterfaceAdapter.getDevice().getFeedId());
+    }
     
     
     void setGoodMsg(){
@@ -949,8 +952,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
  */
 	   void stepTakingCup(){
 	   		tradeStep=StepTakingCup;
-	   		deliveryController.cmd_cancelLight();
-	   		deliveryController.cmd_greenLight();
+	   		//deliveryController.cmd_cancelLight();
+	   		//deliveryController.cmd_greenLight();
 	   		tPayDisp=getActivity().getString(R.string.finished);
 	    	String dsp=tPayDisp+"("+CloseCnt_TakingCup+"s)";
 			sendMsgToHandler(Handler_tPay, dsp);
@@ -978,9 +981,23 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
 	    }
 	    void mc_dropCupTimeOut(){
-	    	
+	    	mc_cupStuck();
 	    }
 	    void mc_cupStuck(){
+	    	myHandler.post(new Runnable() 
+	    	{		
+				@Override
+				public void run() {
+					t_payType.setText(R.string.cupStuck);
+				}
+			});
+	    	myHandler.postDelayed(new Runnable() 
+	    	{		
+				@Override
+				public void run() {
+					mc_makeCoffee(getCurType());
+				}
+			},1000*5);
 	    	
 	    }
 	    /**
@@ -1064,11 +1081,40 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		void enterDevMode(){
 			dispDevLayout=true;
 			layout_mask.setVisibility(View.VISIBLE);
+			btn_mskCancel.setVisibility(View.VISIBLE);
 		}
 		void leaveDevMode(){
 			dispDevLayout=false;
 			layout_mask.setVisibility(View.GONE);
 		}
+		
+	    void setEnble(boolean enable){
+	    	if(enable){	
+	    		myHandler.post(new Runnable() {
+	    			@Override
+	    			public void run() {
+	    				layout_mask.setVisibility(View.GONE);
+	    			}
+	    		});
+	    		
+	    		
+	    	}else{
+	    		myHandler.post(new Runnable() {
+	    			@Override
+	    			public void run() {
+	    	    		//if(!isTrading)//支付窗
+	    	    		if(tradeStep==StepNone)//支付窗
+	    	    		{
+	    	    			layout_mask.setVisibility(View.VISIBLE);
+	    	    			btn_mskCancel.setVisibility(View.GONE);
+	    	    		}
+	    			}
+	    		});
+
+	    	}
+	    }
+		
+		
 		
 		///////////////////////回调接口////////////////////////////////
 

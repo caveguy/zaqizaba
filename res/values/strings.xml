@@ -118,6 +118,7 @@
     <string name="dropPowder">"落杯成功，正在制作咖啡"</string>
     <string name="startDropCup">"正在落杯"</string>
     <string name="comErr">"无法与咖啡机通信"</string>
+    <string name="update_Price">"sync_device_goods_price"</string>
 
 
 
