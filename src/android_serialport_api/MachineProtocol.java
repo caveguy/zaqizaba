@@ -217,7 +217,8 @@ public class MachineProtocol {
 	
 	
 	public void setEspressoCoffee() {
-		Send_Command.setCoffeeType(Send_Command.CoffeeType.tenong,0x1e);
+		//Send_Command.setCoffeeType(Send_Command.CoffeeType.tenong,0x1e);
+		Send_Command.setCoffeeType(Send_Command.CoffeeType.tenong,0x3c);
 	}
 
 	public void setAmericanCoffee() {

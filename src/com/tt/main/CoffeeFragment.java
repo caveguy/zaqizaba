@@ -96,7 +96,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	int tradeStep=0;    //整个交易步骤
 	boolean isDeliverEnable=false;  //辅助板是否工作正常
 	boolean isMcEnable=false;      //咖啡机是否工作正常
-	boolean dropcupMode=true ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
+	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
 	RadioButton radioCup1,radioCup2;
 	
 	
@@ -468,7 +468,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 							myMachine.sendCleanCmd();
 						}
 						else if(dispString.equals(getString(R.string.cmd1_ready))){
-						 if(tradeStep!=StepNone){  //交易状态下，字符串变成准备就绪说明出咖啡完成
+						 if(tradeStep!=StepNone&&oldMcString.equals(getString(R.string.cmd1_espresso))){  //交易状态下，字符串变成准备就绪说明出咖啡完成
 								mc_coffeeDroped();
 							}
 						}
@@ -923,28 +923,31 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	switch(type){
 	    	case CoffeeType1://美式
 	    		myMachine.dropCoffee();
-		    	//deliveryController.cmd_pushWater(60);	
-		    	deliveryController.cmd_pushLeftPowder(70, 50,150);//落糖
+		    //	deliveryController.cmd_pushLeftPowder(70, 50,150);//落糖
+		    	deliveryController.cmd_pushLeftPowder(70, 10,50);//落糖
 		    	break;
 	    	case CoffeeType2://卡布
-	    		myMachine.dropCoffee();
-	    		deliveryController.cmd_pushCenterPowder(70, 50,150);
-	    		deliveryController.cmd_pushLeftPowder(70, 50,150);
+	    		myMachine.dropCoffee();		
+	    		deliveryController.cmd_pushCenterPowder(70, 10,30);
+	    		deliveryController.cmd_pushLeftPowder(70, 10,30);
 	    		break;
 	    	case CoffeeType3://意式
 	    		myMachine.dropCoffee();
+	    		makingStep|=PowderFinish;
 	    		break;
 	    	case CoffeeType4://拿铁
 	    		myMachine.dropCoffee();
-	    		deliveryController.cmd_pushRightPowder(70,50,150);
-	    		deliveryController.cmd_pushLeftPowder(70,50,150);
+	    		deliveryController.cmd_pushCenterPowder(70,10,40);
+	    		deliveryController.cmd_pushLeftPowder(70,10,30);
 	    		break;
 	    	case CoffeeType5://糖
-	    		deliveryController.cmd_pushLeftPowder(70, 50,150);
+	    		makingStep|=CoffeeFinish;
+	    		deliveryController.cmd_pushLeftPowder(70, 20,60);
 	    		
 	    		break;
 	    	case CoffeeType6://奶
-	    		deliveryController.cmd_pushCenterPowder(70, 50,150);
+	    		makingStep|=CoffeeFinish;
+	    		deliveryController.cmd_pushCenterPowder(70, 20,60);
 	    		break;
 	    	}
 	    }
@@ -1009,6 +1012,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	     * 
 	     */
 	    void mc_powderDroped(){
+	    	//myToast.toastShow("出粉完成！！！！");
 	    	makingStep|=PowderFinish;
 	    	if(makingStep==AllFinish){
 	    		stepTakingCup();
@@ -1018,6 +1022,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    
 	    void mc_coffeeDroped(){
 	    	makingStep|=CoffeeFinish;
+	    	
 	    	if(makingStep==AllFinish){
 	    		stepTakingCup();
 	    	}  	
