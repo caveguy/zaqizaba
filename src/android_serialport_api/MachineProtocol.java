@@ -23,7 +23,7 @@ public class MachineProtocol {
 	private OutputStream mOutputStream;
 	private InputStream mInputStream;
 	private ReadThread mReadThread; 
-	boolean isDebug=false;
+	boolean isDebug=true;
 	ArrayList<byte[]> sendList=new ArrayList<byte[]>();
 	byte[] sendData=null;
 	int queryCnt=0;

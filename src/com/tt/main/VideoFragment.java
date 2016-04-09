@@ -79,7 +79,7 @@ public class VideoFragment extends Fragment  implements OnClickListener
 
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
-			Log.e(TAG, "SurfaceHolder 被创建");
+			Log.i(TAG, "SurfaceHolder 被创建");
 
 				play(which_file++);
 
@@ -126,7 +126,7 @@ public class VideoFragment extends Fragment  implements OnClickListener
 			path=allVideoList.get(which_file);
 			}
 
-		Log.e(TAG, "path="+path);
+		Log.i(TAG, "path="+path);
 		
 		
 		
@@ -139,13 +139,13 @@ public class VideoFragment extends Fragment  implements OnClickListener
 			if(mediaPlayer==null){
 				mediaPlayer = new MediaPlayer();
 				mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-				Log.e(TAG, "setDisplay");
+				Log.i(TAG, "setDisplay");
 				mediaPlayer.setDisplay(surfaceHolder);
 				mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
 
 					@Override
 					public void onPrepared(MediaPlayer mp) {
-						Log.e(TAG, "装载完成");
+						Log.i(TAG, "装载完成");
 						mediaPlayer.start();
 						// 按照初始位置播放
 						mediaPlayer.seekTo(0);
@@ -158,7 +158,7 @@ public class VideoFragment extends Fragment  implements OnClickListener
 
 					@Override
 					public void onCompletion(MediaPlayer mp) {
-						Log.e(TAG, "播放完成");
+						Log.i(TAG, "播放完成");
 						play(which_file++);
 					}
 				});
@@ -178,7 +178,7 @@ public class VideoFragment extends Fragment  implements OnClickListener
 			}
 			mediaPlayer.reset();
 			mediaPlayer.setDataSource(file.getAbsolutePath());
-			Log.e(TAG, "开始装载");
+			Log.i(TAG, "开始装载");
 			mediaPlayer.prepareAsync();
 
 			

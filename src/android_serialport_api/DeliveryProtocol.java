@@ -68,7 +68,7 @@ public class DeliveryProtocol {
 //	final byte DropPowder_finish =(byte) 0x07;
 //	final byte DropCup_nocup =(byte) 0x01;
 	final int SendTimerDuaration=300;
-	final int AckTimerDuaration=200;
+	final int AckTimerDuaration=250;
 	final int QueryTimerDuaration=1000;
 	final byte Query_dirtyCup=0x11;
 	final byte Query_cupToken=0x22;	
@@ -76,7 +76,8 @@ public class DeliveryProtocol {
 	
 	final byte RedLight=BIT0;
 	final byte GreenLight=BIT1;
-	boolean isDebug=false;
+	final int Max_ackRetryCnt=3;
+	boolean isDebug=true;
 	boolean isFinished=false;
 	boolean hasResult=false;
 	//boolean isQueryCupDrop=false;
@@ -88,14 +89,15 @@ public class DeliveryProtocol {
 	AckTimerTask ackTimerTask=null;
 	QueryTimerTask queryTimerTask=null;
 	byte query_what=0;
-	
+	boolean inQueryState=false;  //是否处在查询状态，
+	boolean inAckState=false;  //是否处在应答状态，
 	
 	//int canNext=0;
 	ArrayList<byte[]> sendList=new ArrayList<byte[]>();
 	
 	void getAck(){
 		hasAck=true;
-
+		inAckState=false;	
 	//	canNext++;
 		if(ackTimerTask!=null){
 			ackTimerTask.cancel();
@@ -359,9 +361,11 @@ public class DeliveryProtocol {
 	
 
 	private void startAckTimer(){
-		if(ackTimerTask!=null){
-			ackTimerTask.cancel();
-			ackTimerTask=null;
+		inAckState=true;
+		if(ackTimerTask!=null){	
+			if(ackTimerTask.cancel()){
+				ackTimerTask=null;
+			}
 		}
 		hasAck=false;
 		ackCnt=0;
@@ -374,17 +378,7 @@ public class DeliveryProtocol {
 		ackTimer.schedule(ackTimerTask, AckTimerDuaration);
 	}
 
-
-//	private void startAckTimer(){
-//		hasAck=false;
-//		ackCnt=0;
-//		Log.e("ioctrl","startAckTimer############");
-//		if(ackTimer==null){
-//			ackTimer=new Timer();
-//		}
-//		
-//		ackTimer.schedule(new AckTimerTask(), ackTime);
-//	}	
+	
 
 	private void startSendTimer(){
 
@@ -397,9 +391,11 @@ public class DeliveryProtocol {
 	
 	private void startQueryTimer(byte cmd){
 		query_what=cmd;
+		inQueryState=true;
 		if(queryTimer==null){
 			queryTimer=new Timer();
 		}
+		
 		if(queryTimerTask==null){
 			queryTimerTask=new QueryTimerTask();
 			queryTimer.schedule(queryTimerTask, QueryTimerDuaration,QueryTimerDuaration);
@@ -408,21 +404,24 @@ public class DeliveryProtocol {
 	}	
 	
 	private void cancelQueryTimer(){
+		inQueryState=false;
 		if(queryTimerTask!=null){
-			queryTimerTask.cancel();
-			queryTimerTask=null;
+			if(queryTimerTask.cancel()){//只有任务确实被取消了，才能让任务为null
+				queryTimerTask=null;
+			}
 		}
 	}
 	
 	class AckTimerTask  extends TimerTask{
 		@Override
 		public void run() {
-			if(!hasAck){
+			if(!hasAck&&inAckState){
 			//	Log.e("io","AckTimerTask !hasAck");
 				ackCnt++;
 				
-				if(ackCnt>10){
+				if(ackCnt>Max_ackRetryCnt){
 					ackTimer.cancel();
+					inAckState=false;
 					sendTimeOutCallBack(); //发送超时
 				}else{
 					reSendData();
@@ -437,7 +436,10 @@ public class DeliveryProtocol {
 	class QueryTimerTask  extends TimerTask{
 		@Override
 		public void run() {
-			onQueryTime();
+			if(inQueryState){
+				onQueryTime();
+			}
+			
 		}	
 	}
 	void writeToUartCached(byte[] data){

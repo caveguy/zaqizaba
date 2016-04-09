@@ -120,6 +120,7 @@
     <string name="comErr">"无法与咖啡机通信"</string>
     <string name="putCup">"请放纸杯"</string>
     <string name="hide">隐藏</string>
+    <string name="version">v0.8-160409-2</string>
     <string name="update_Price">"sync_device_goods_price"</string>
 
 
