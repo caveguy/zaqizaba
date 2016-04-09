@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.coffemachinev2.R;
@@ -41,10 +42,11 @@ public class VideoFragment extends Fragment  implements OnClickListener
 	private boolean isPlaying;
 	private MediaPlayer mediaPlayer=null;
 	ImageView img_logo;
+	RelativeLayout layout_video=null;
 //	String fileName = "ad.mp4";
 	Timer myTimer=null;
 	int which_file=0;
-	
+	private int clickCnt=0;
 	 List<String> allVideoList = new ArrayList<String>();// 视频信息集合
 	
     @Override
@@ -58,6 +60,8 @@ public class VideoFragment extends Fragment  implements OnClickListener
         surfaceHolder.addCallback(callback);
         img_logo=(ImageView)rootView.findViewById(R.id.img_logo);
         img_logo.setOnClickListener(this);
+        layout_video=(RelativeLayout)rootView.findViewById(R.id.layout_video);
+        layout_video.setOnClickListener(this);
         new FindThread().start();
         myTimer=new Timer();
         myTimer.schedule(new MyTimerTask(), 5000, 60*1000);
@@ -284,7 +288,7 @@ public class VideoFragment extends Fragment  implements OnClickListener
 			if(!isPlaying()){
 				play(which_file);
 			}
-			clickCnt=0;
+			//clickCnt=0;
 		}
 		
 	}
@@ -314,10 +318,14 @@ public class VideoFragment extends Fragment  implements OnClickListener
 		switch(v.getId()){
 		case R.id.img_logo:
 			clickLogo();
+			break;
+		case R.id.layout_video:
+			clickCnt=0;
+			break;
 		}
 		
 	}
-	private int clickCnt=0;
+
 	void clickLogo(){
 		if(clickCnt++>6){
 			clickCnt=0;

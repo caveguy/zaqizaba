@@ -13,6 +13,11 @@ public  class  ParseReceiveCommand {
 	//public static int queryCnt=0;
 
 	
+	public static byte getWindow(){
+		return cmd19_windowSetting[0];
+	}
+	
+	
     public static String getDispStringId(Context context){
     	switch(cmd1_data0){
 	    	case 0x1:

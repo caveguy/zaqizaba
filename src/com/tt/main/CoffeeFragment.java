@@ -87,6 +87,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	LinearLayout layout_mask;
 	CheckBox btn_coffee1,btn_coffee2,btn_coffee3,btn_coffee4,btn_coffee5,btn_coffee6;
 	CheckBox btn_pay1,btn_pay2,btn_pay3,btn_pay4;
+	CheckBox btn_debug;
 	ImageView img_qr;
 	Button btn_cancel,btn_other,btn_clean,btn_mskCancel;
 	Timer closeTimer=null;
@@ -98,8 +99,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	boolean isMcEnable=false;      //咖啡机是否工作正常
 	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
 	RadioButton radioCup1,radioCup2;
-	
-	
+	boolean isDebug=false;
+	byte mcWindowLast=0;
 	HashMap<Integer,Long> goodId=new HashMap<Integer,Long>();
 	HashMap<Long,String>	goodName=new HashMap<Long,String>();
 	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
@@ -162,6 +163,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	layout_mask=(LinearLayout)view.findViewById(R.id.layout_mask);
     	btn_mskCancel=(Button)view.findViewById(R.id.btn_mskCancel);
     	btn_clean=(Button)view.findViewById(R.id.btn_clean);
+    	btn_debug=(CheckBox)view.findViewById(R.id.btn_debug);
+    	btn_debug.setOnCheckedChangeListener(this);
+    	
     	btn_mskCancel.setOnClickListener(this);
     	btn_clean.setOnClickListener(this);
     	
@@ -467,17 +471,23 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 						if(dispString.equals(getString(R.string.cmd1_pressRinse))){
 							myMachine.sendCleanCmd();
 						}
-						else if(dispString.equals(getString(R.string.cmd1_ready))){
-						 if(tradeStep!=StepNone&&oldMcString.equals(getString(R.string.cmd1_espresso))){  //交易状态下，字符串变成准备就绪说明出咖啡完成
-								mc_coffeeDroped();
-							}
-						}
+//						else if(dispString.equals(getString(R.string.cmd1_ready))){
+//						 if(tradeStep!=StepNone&&oldMcString.equals(getString(R.string.cmd1_espresso))){  //交易状态下，字符串变成准备就绪说明出咖啡完成
+//								mc_coffeeDroped();
+//							}
+//						}
 						
 					}
 					oldMcString=dispString;
 				 }
 				 else if(cmd==0x19){
-					myMachine.initMachine();
+					 byte windowstate=ParseReceiveCommand.getWindow();
+					 myToast.toastShow("cmd0x19="+windowstate);
+					 if(windowstate==2&&mcWindowLast==5){
+						 mc_coffeeDroped();
+					 }					 
+					 mcWindowLast=windowstate;
+					//myMachine.initMachine();
 				 }
 			}
 
@@ -654,7 +664,16 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					dropcupMode=false;
 				}
 				break;
+			case R.id.btn_debug:
+				if(isChecked){
+					isDebug=true;
+				}else{
+					isDebug=false;
+				}
+				break;
 			}
+
+		
 			
 		}
 
@@ -717,6 +736,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				t_coffeeType.setText(R.string.pleaseChooseCoffee);
 				//setPayEnable(false);
 				return ;
+			}else if(isDebug){
+				startMaking();
 			}
 			//setPayEnable(true);
 			if(goodId.containsKey(type)){
@@ -752,7 +773,6 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		}
 		void setWeixinpay(){		
 			//isTrading=true;
-			makingStep=0;
 			tradeStep=StepPay;
 			 startCloseTimer(CloseCnt_pay); 
 			askPay(cur_goodId,WeixinPay);
@@ -763,7 +783,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		}
 		void setAlipay(){
 			//isTrading=true;
-			makingStep=0;
+		//	makingStep=0;
 			tradeStep=StepPay;
 			startCloseTimer(CloseCnt_pay);
 			askPay(cur_goodId,AliPay);
@@ -913,6 +933,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	     *此函数触发出粉/出咖啡 
 	     */
 	    void mc_makeCoffee(int type){
+	    	makingStep=0;
 	    	//test
 	    	myHandler.post(new Runnable() {		
 				@Override
