@@ -226,11 +226,11 @@ public class DeliveryProtocol {
 		if((data&Bit_detectCup)!=0){  //没有杯子
 			
 			if(query_what==Query_dirtyCup){ //查询脏杯子是否拿走
-				cancelQueryTimerTask();
+				
 				cmd_dropCup();
 			}
 			else if(query_what==Query_cupToken){ //查询咖啡是否拿走
-				cancelQueryTimerTask();
+				
 				tradeFinishCallBack();
 			}
 		}else{ //有杯子，继续检测
@@ -550,6 +550,7 @@ public class DeliveryProtocol {
 	private void tradeFinishCallBack(){
 	//	cmd_cancelLight(); //交易结束后关灯
 		Log.d(TAG,"!!!!tradeFinishCallBack");
+		cancelQueryTimerTask();
 		if(callBack!=null)
 			callBack.tradeFinish();
 	}
@@ -656,6 +657,7 @@ public class DeliveryProtocol {
 	 */
 	public void cmd_dropCup(){
 		curState=Cmd_dropCup;
+		cancelQueryTimerTask();
 		startDropCupCallBack();
 	//	cmd_redLight();//从开始落杯开始显示红灯
 		packCmd(Cmd_dropCup,(byte) 0);

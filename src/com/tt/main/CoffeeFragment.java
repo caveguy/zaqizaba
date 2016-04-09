@@ -19,6 +19,7 @@ import tp.device.coffee.task.QueryDeviceGoodsAsyncTask;
 import tp.device.coffee.task.RefundApplyAsyncTask;
 import tp.lib.TPConstants;
 import android.app.Fragment;
+import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Message;
@@ -77,6 +78,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	private final int Handler_tPay=1003;
 	private final int Handler_tMask=1004;
 	private final long NoGoodSelected=-1;
+	private Context context=null;
 	CloseTimeTask closeTask=null;
 	TextView t_coffeeType,t_payType;
 	TextView t_mcDetail;
@@ -105,7 +107,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	HashMap<Long,String>	goodName=new HashMap<Long,String>();
 	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
 	  //存放商品信息
-	
+	 private MyHandler myHandler =null;
     private CoffeeDeviceInterfaceAdapter deviceInterfaceAdapter;
     private CoffeeDeviceEvent coffeeDeviceEvent;
     TTLog mylog=null;
@@ -114,13 +116,14 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	private String oldMcString=null;
 	//Handler myHandler;
 	private final String Tag="CoffeeFrag";
+	
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_coffee, container, false);
-        
+        context= getActivity().getApplicationContext();
         mylog=new TTLog(Tag,true);
-        
         initView(rootView);
         initMachines();
   //      myHandler =new Handler();
@@ -131,7 +134,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     }
 
     void initView(View view){
-    	myToast =new ToastShow(getActivity());
+    	myToast =new ToastShow(context);
     	btn_pay1=(CheckBox)view.findViewById(R.id.radio_pay1);
     	btn_pay2=(CheckBox)view.findViewById(R.id.radio_pay2);
     	btn_pay3=(CheckBox)view.findViewById(R.id.radio_pay3);
@@ -179,6 +182,28 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	}
     	radioCup1.setOnCheckedChangeListener(this);
     	radioCup2.setOnCheckedChangeListener(this);
+    	
+	     myHandler = new MyHandler(context){
+	        @Override
+	        public void myHandleMessage(Message msg) {
+	        	
+	    		switch (msg.what) {
+				case Handler_qr:
+					img_qr.setImageBitmap(BitmapFactory.decodeFile(msg.obj.toString()));
+					break;
+				case Handler_mcDisp:
+					myToast.toastShow(msg.obj.toString());
+					break;
+				case Handler_tPay:
+					t_payType.setText(msg.obj.toString());
+					break;
+				case Handler_tMask:
+					t_mcDetail.setText(msg.obj.toString());
+	        }
+	        };
+	    };
+    	
+    	
     	//setPayEnable(false);
     }
     
@@ -198,9 +223,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     }
     
     void initMachines(){
-    	myMachine=new MachineProtocol(getActivity());
+    	myMachine=new MachineProtocol(context);
     	mcSetCallBack();
-        deliveryController=new DeliveryProtocol(getActivity());
+        deliveryController=new DeliveryProtocol(context);
         deliveryController.setCallBack(new DeliveryProtocol.CallBack(){
 
         	
@@ -335,7 +360,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			@Override
 			public void onReceiveTranspTransfer(String arg0) {
 				mylog.log_i("onReceiveTranspTransfer ="+arg0);	
-				String updatePrice=getActivity().getString(R.string.update_Price);
+				String updatePrice=context.getString(R.string.update_Price);
 				if(arg0.equals(updatePrice)){
 					//更新价格
 					 updatePrice();
@@ -346,7 +371,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
         	
         };
-        deviceInterfaceAdapter = new CoffeeDeviceInterfaceAdapter(getActivity(),myHandler,coffeeDeviceEvent);
+        deviceInterfaceAdapter = new CoffeeDeviceInterfaceAdapter(context,myHandler,coffeeDeviceEvent);
 	
     }
     void startMaking(){
@@ -399,7 +424,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     
 	public void getQtImage(String url) {
 
-		final String filePath = getActivity().getCacheDir() + File.pathSeparator + "qtImage"
+		final String filePath = context.getCacheDir() + File.pathSeparator + "qtImage"
 				+ ".jpg";
 		int widthPix = 600;
 		int heightPix = 600;
@@ -461,7 +486,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			public void onParsed(int cmd) {
 				// TODO Auto-generated method stub
 				 if(cmd==1){
-					String dispString= ParseReceiveCommand.getDispStringId(getActivity());
+					String dispString= ParseReceiveCommand.getDispStringId(context);
 					if(layout_mask.VISIBLE==View.VISIBLE){
 						sendMsgToHandler(Handler_tMask, dispString)	;
 						
@@ -776,7 +801,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			tradeStep=StepPay;
 			 startCloseTimer(CloseCnt_pay); 
 			askPay(cur_goodId,WeixinPay);
-			tPayDisp=getActivity().getString(R.string.chooseWeixin);
+			tPayDisp=context.getString(R.string.chooseWeixin);
 	    	String dsp=tPayDisp+"("+CloseCnt_pay+"s)";
 			t_payType.setText(dsp);
 			layout_qr.setVisibility(View.VISIBLE);
@@ -787,7 +812,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			tradeStep=StepPay;
 			startCloseTimer(CloseCnt_pay);
 			askPay(cur_goodId,AliPay);
-			tPayDisp=getActivity().getString(R.string.chooseZfb);
+			tPayDisp=context.getString(R.string.chooseZfb);
 			String dsp=tPayDisp+"("+CloseCnt_pay+"s)";
 			t_payType.setText(dsp);
 			layout_qr.setVisibility(View.VISIBLE);
@@ -892,25 +917,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		}
 	
 	
-	    private MyHandler myHandler = new MyHandler(getActivity()){
-	        @Override
-	        public void myHandleMessage(Message msg) {
-	        	
-	    		switch (msg.what) {
-				case Handler_qr:
-					img_qr.setImageBitmap(BitmapFactory.decodeFile(msg.obj.toString()));
-					break;
-				case Handler_mcDisp:
-					myToast.toastShow(msg.obj.toString());
-					break;
-				case Handler_tPay:
-					t_payType.setText(msg.obj.toString());
-					break;
-				case Handler_tMask:
-					t_mcDetail.setText(msg.obj.toString());
-	        }
-	        };
-	    };
+
 
 	    
 	    
@@ -1021,7 +1028,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	   		tradeStep=StepTakingCup;
 	   		//deliveryController.cmd_cancelLight();
 	   		//deliveryController.cmd_greenLight();
-	   		tPayDisp=getActivity().getString(R.string.finished);
+	   		tPayDisp=context.getString(R.string.finished);
+	   		
 	    	String dsp=tPayDisp+"("+CloseCnt_TakingCup+"s)";
 			sendMsgToHandler(Handler_tPay, dsp);
 	   		//sendMsgToHandler(Handler_tPay, tPayDisp); 

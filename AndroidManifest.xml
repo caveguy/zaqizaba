@@ -8,6 +8,7 @@
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.READ_LOGS" />  
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>  
     <uses-sdk
         android:minSdkVersion="17"
         android:targetSdkVersion="19" />
@@ -34,6 +35,13 @@
  				<category android:name="android.intent.category.DEFAULT" />	
             </intent-filter>
         </activity>
+        <receiver android:name="com.tt.main.NetChangedReciever">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+        
+        
     </application>
 
 </manifest>
