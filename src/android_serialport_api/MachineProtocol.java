@@ -173,7 +173,7 @@ public class MachineProtocol {
 		stringBuilder.append(String.format("%02X ", byteChar));
 		
 	}
-	Log.e(tag, "##" + stringBuilder.toString() + "\n");
+	Log.i(tag, "##" + stringBuilder.toString() + "\n");
 
  }
 	

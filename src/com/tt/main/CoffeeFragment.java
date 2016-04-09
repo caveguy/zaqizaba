@@ -482,7 +482,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				 }
 				 else if(cmd==0x19){
 					 byte windowstate=ParseReceiveCommand.getWindow();
-					 myToast.toastShow("cmd0x19="+windowstate);
+					// myToast.toastShow("cmd0x19="+windowstate);
 					 if(windowstate==2&&mcWindowLast==5){
 						 mc_coffeeDroped();
 					 }					 
@@ -1026,6 +1026,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			sendMsgToHandler(Handler_tPay, dsp);
 	   		//sendMsgToHandler(Handler_tPay, tPayDisp); 
 	   		startCloseTimer(CloseCnt_TakingCup);
+	   		deliveryController.cmd_QueryCupToken();
 	   }
 	    
 	    /**
@@ -1143,6 +1144,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		}
 		void enterDevMode(){
 			dispDevLayout=true;
+			myToast.toastShow("enter dev mode");
 			layout_mask.setVisibility(View.VISIBLE);
 			btn_mskCancel.setVisibility(View.VISIBLE);
 			radioCup1.setVisibility(View.VISIBLE);

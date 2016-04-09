@@ -79,7 +79,7 @@ public class DeliveryProtocol {
 	final int Max_ackRetryCnt=3;
 	boolean isDebug=true;
 	boolean isFinished=false;
-	boolean hasResult=false;
+	//boolean hasResult=false;
 	//boolean isQueryCupDrop=false;
 	byte curState=0;
 	Timer sendTimer=null;
@@ -88,20 +88,17 @@ public class DeliveryProtocol {
 	final String TAG="DeliveryProtocol";
 	AckTimerTask ackTimerTask=null;
 	QueryTimerTask queryTimerTask=null;
+	SendTimerTask sendTimerTask=null;
 	byte query_what=0;
-	boolean inQueryState=false;  //是否处在查询状态，
-	boolean inAckState=false;  //是否处在应答状态，
+//	boolean inQueryState=false;  //是否处在查询状态，
+//	boolean inAckState=false;  //是否处在应答状态，
 	
 	//int canNext=0;
 	ArrayList<byte[]> sendList=new ArrayList<byte[]>();
 	
 	void getAck(){
-		hasAck=true;
-		inAckState=false;	
-	//	canNext++;
-		if(ackTimerTask!=null){
-			ackTimerTask.cancel();
-		}
+		hasAck=true;	
+		cancelAckTimerTask();
 	}
 	public DeliveryProtocol(Context c){
 		context=c;
@@ -137,12 +134,12 @@ public class DeliveryProtocol {
 	private void parseInput(byte[] data,int num){
 		if(num<4)
 			return ;
-		//Log.e("protocol","parseInput!!!num="+num);
-		//Log.e("rec","data[3]="+(int)data[3]);
-	//	Log.e("rec","getCheckSun(data,4)="+getCheckSun(data,4));
+		//Log.d("protocol","parseInput!!!num="+num);
+		//Log.d("rec","data[3]="+(int)data[3]);
+	//	Log.d("rec","getCheckSun(data,4)="+getCheckSun(data,4));
 		//if(data[0]==(byte)0xaa){
 		if(data[0]==(byte)0xaa&&data[3]==getCheckSun(data,4)){
-			//Log.e("rec","rec right!!");
+			//Log.d("rec","rec right!!");
 				getAck();//收到回复
 				byte reply=data[2];	
 				switch(data[1]){
@@ -224,19 +221,21 @@ public class DeliveryProtocol {
 	}
 	
 	void dealReply_OutPutState(byte data){
+		
+		Log.d(TAG, "dealReply_OutPutState!! data="+data);
 		if((data&Bit_detectCup)!=0){  //没有杯子
 			
 			if(query_what==Query_dirtyCup){ //查询脏杯子是否拿走
-				cancelQueryTimer();
+				cancelQueryTimerTask();
 				cmd_dropCup();
 			}
 			else if(query_what==Query_cupToken){ //查询咖啡是否拿走
-				cancelQueryTimer();
+				cancelQueryTimerTask();
 				tradeFinishCallBack();
 			}
 		}else{ //有杯子，继续检测
 			if(query_what==Query_hasCup){
-				cancelQueryTimer();
+				cancelQueryTimerTask();
 				cupReadyCallBack();
 			}
 		}
@@ -289,7 +288,7 @@ public class DeliveryProtocol {
 		stringBuilder.append(String.format("%02X ", byteChar));
 		
 	}
-	Log.e(tag, "##" + stringBuilder.toString() + "\n");
+	Log.i(tag, "##" + stringBuilder.toString() + "\n");
 
  }
 //	private final ReentrantLock lock = new ReentrantLock();	
@@ -361,67 +360,92 @@ public class DeliveryProtocol {
 	
 
 	private void startAckTimer(){
-		inAckState=true;
-		if(ackTimerTask!=null){	
-			if(ackTimerTask.cancel()){
-				ackTimerTask=null;
-			}
-		}
+		cancelAckTimerTask();
+		
+		
 		hasAck=false;
 		ackCnt=0;
-	//	Log.e("ioctrl","startAckTimer############");
+	//	Log.d("ioctrl","startAckTimer############");
 		if(ackTimer==null){
 			ackTimer=new Timer();
 		}
 
 		ackTimerTask=new AckTimerTask();
+		ackTimerTask.inAckState=true;
 		ackTimer.schedule(ackTimerTask, AckTimerDuaration);
 	}
 
-	
+
 
 	private void startSendTimer(){
 
 		if(sendTimer==null){
 			sendTimer=new Timer();
 		}
-		
-		sendTimer.schedule(new sendTimerTask(), SendTimerDuaration,SendTimerDuaration);
+		sendTimerTask=new SendTimerTask();
+		sendTimerTask.inSendState=true;
+		sendTimer.schedule(sendTimerTask, SendTimerDuaration,SendTimerDuaration);
 	}	
 	
 	private void startQueryTimer(byte cmd){
+		
+		Log.d(TAG, "startQueryTimer query_what="+cmd);
 		query_what=cmd;
-		inQueryState=true;
 		if(queryTimer==null){
 			queryTimer=new Timer();
 		}
-		
-		if(queryTimerTask==null){
-			queryTimerTask=new QueryTimerTask();
-			queryTimer.schedule(queryTimerTask, QueryTimerDuaration,QueryTimerDuaration);
-		}
-		
-	}	
-	
-	private void cancelQueryTimer(){
-		inQueryState=false;
 		if(queryTimerTask!=null){
 			if(queryTimerTask.cancel()){//只有任务确实被取消了，才能让任务为null
 				queryTimerTask=null;
 			}
 		}
+		//if(queryTimerTask==null){
+			queryTimerTask=new QueryTimerTask();
+			queryTimerTask.inQueryState=true;
+			queryTimer.schedule(queryTimerTask, QueryTimerDuaration,QueryTimerDuaration);
+		//}
+		
+	}	
+	
+	private void cancelQueryTimerTask(){
+		Log.d(TAG, "cancelQueryTimerTask!! ");
+		if(queryTimerTask!=null){
+			queryTimerTask.inQueryState=false;
+			if(queryTimerTask.cancel()){//只有任务确实被取消了，才能让任务为null
+				queryTimerTask=null;
+			}
+		}
+	}
+	private void cancelAckTimerTask(){
+		
+		if(ackTimerTask!=null){
+			ackTimerTask.inAckState=false;
+			if(ackTimerTask.cancel()){//只有任务确实被取消了，才能让任务为null
+				ackTimerTask=null;
+			}
+		}
+	}
+	private void cancelSendTimerTask(){
+		
+		if(sendTimerTask!=null){
+			sendTimerTask.inSendState=false;
+			if(sendTimerTask.cancel()){//只有任务确实被取消了，才能让任务为null
+				sendTimerTask=null;
+			}
+		}
 	}
 	
+	
 	class AckTimerTask  extends TimerTask{
+		boolean inAckState=false;
 		@Override
 		public void run() {
 			if(!hasAck&&inAckState){
-			//	Log.e("io","AckTimerTask !hasAck");
+			//	Log.d("io","AckTimerTask !hasAck");
 				ackCnt++;
 				
 				if(ackCnt>Max_ackRetryCnt){
-					ackTimer.cancel();
-					inAckState=false;
+					cancelAckTimerTask();
 					sendTimeOutCallBack(); //发送超时
 				}else{
 					reSendData();
@@ -434,12 +458,14 @@ public class DeliveryProtocol {
 
 	
 	class QueryTimerTask  extends TimerTask{
+		
+		boolean inQueryState=false;
 		@Override
 		public void run() {
+			Log.d(TAG,"onQueryTime inQueryState="+inQueryState+"query_what="+query_what);
 			if(inQueryState){
 				onQueryTime();
 			}
-			
 		}	
 	}
 	void writeToUartCached(byte[] data){
@@ -450,10 +476,13 @@ public class DeliveryProtocol {
 	
 	
 	
-	class sendTimerTask  extends TimerTask{
+	class SendTimerTask  extends TimerTask{
+		boolean inSendState=false;
 		@Override
 		public void run() {
-			onSendTime();
+			if(inSendState){
+				onSendTime();
+			}
 		}	
 	}
 	
@@ -480,7 +509,7 @@ public class DeliveryProtocol {
 	    }
 	}
 	void onQueryTime(){
-		if(!hasResult){
+	
 			switch(query_what){
 			case Query_dirtyCup:
 			case Query_cupToken:
@@ -491,7 +520,6 @@ public class DeliveryProtocol {
 				cmd_readState();
 				break;
 			}
-		}
 	}
 	
 	///////////////////////回调接口////////////////////////////////
@@ -521,34 +549,38 @@ public class DeliveryProtocol {
 	
 	private void tradeFinishCallBack(){
 	//	cmd_cancelLight(); //交易结束后关灯
+		Log.d(TAG,"!!!!tradeFinishCallBack");
 		if(callBack!=null)
 			callBack.tradeFinish();
 	}
 	private void startDropCupCallBack(){
+		Log.d(TAG,"!!!!startDropCupCallBack");
 		if(callBack!=null)
 			callBack.startDropCup();
 	}
 	private void cupDropedCallBack(){
-		cancelQueryTimer();
+		Log.d(TAG,"!!!!cupDropedCallBack");
+		cancelQueryTimerTask();
 		if(callBack!=null)
 			callBack.cupDroped();
 		
 	}
 	private void cupReadyCallBack(){
-
+		Log.d(TAG,"!!!!cupReadyCallBack");
 		if(callBack!=null)
 			callBack.cupReady();
 		
 	}
 //	private void cupNotReadyCallBack(){
-//		//cancelQueryTimer();
+//		//cancelQueryTimerTask();
 //		if(callBack!=null)
 //			callBack.cupNotReady();
 //		
 //	}
 	
 	private void noCupCallBack(){
-		cancelQueryTimer();
+		Log.d(TAG,"!!!!noCupCallBack");
+		cancelQueryTimerTask();
 		if(callBack!=null){
 			callBack.onDisable();
 			callBack.noCupDrop();
@@ -556,19 +588,22 @@ public class DeliveryProtocol {
 		
 	}
 	private void dropCupTimeOutCallBack(){
-		cancelQueryTimer();
+		Log.d(TAG,"!!!!dropCupTimeOutCallBack");
+		cancelQueryTimerTask();
 		if(callBack!=null)
 			callBack.dropCupTimeOut();
 		
 	}
 	private void cupStuckCallBack(){
-		cancelQueryTimer();
+		Log.d(TAG,"!!!!cupStuckCallBack");
+		cancelQueryTimerTask();
 		if(callBack!=null)
 			callBack.cupStuck();
 		
 	}
 	private void hasDirtyCupCallBack(){
-		cancelQueryTimer();
+		Log.d(TAG,"!!!!hasDirtyCupCallBack");
+		cancelQueryTimerTask();
 		
 		if(callBack!=null)
 			callBack.hasDirtyCup();
@@ -581,14 +616,20 @@ public class DeliveryProtocol {
 	 * 落粉完成 ，此时应该开始查询杯子是否被取走
 	 */
 	private void dropPowderCallBack(){
-		cancelQueryTimer();
-		if(callBack!=null)
+		Log.d(TAG,"!!!!dropPowderCallBack");
+		cancelQueryTimerTask();
+		if(callBack!=null){
 			callBack.powderDroped();
-		startQueryTimer(Query_cupToken);
+		}
+	//	startQueryTimer(Query_cupToken);
 		
 	}
 	
+
+	
+	
 	private void sendTimeOutCallBack(){
+		Log.d(TAG,"!!!!sendTimeOutCallBack");
 		if(callBack!=null)
 			callBack.sendTimeOut();
 		
@@ -622,9 +663,14 @@ public class DeliveryProtocol {
 	/*
 	 * 查询杯子是否拿走
 	 */
-	public void cmd_ReadCupIsToke(){
+	private void cmd_ReadCupIsToke(){
 		packCmd(Cmd_readLower8bits,(byte) 0);
 	}
+	
+	public void  cmd_QueryCupToken(){
+		startQueryTimer(Query_cupToken);
+	}
+	
 	/*
 	 * 查询杯子是否放好
 	 * 为不需要落杯的程序准备
@@ -702,6 +748,10 @@ public class DeliveryProtocol {
 	
 	//程序结束时调用
 	public void cleanTimer(){
+		Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!cleanTimer");
+		cancelQueryTimerTask();
+		cancelAckTimerTask();
+		cancelSendTimerTask();
 		if(sendTimer!=null){
 			sendTimer.cancel();
 			sendTimer=null;
