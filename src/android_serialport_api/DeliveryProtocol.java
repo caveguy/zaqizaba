@@ -67,9 +67,9 @@ public class DeliveryProtocol {
 	final byte DropCup_busy =(byte) 0x07;
 //	final byte DropPowder_finish =(byte) 0x07;
 //	final byte DropCup_nocup =(byte) 0x01;
-	final int SendTimerDuaration=300;
-	final int AckTimerDuaration=250;
-	final int QueryTimerDuaration=1000;
+	final int SendTimerDuaration=200;
+	final int AckTimerDuaration=150;
+	final int QueryTimerDuaration=500;
 	final byte Query_dirtyCup=0x11;
 	final byte Query_cupToken=0x22;	
 	final byte Query_hasCup=0x33;

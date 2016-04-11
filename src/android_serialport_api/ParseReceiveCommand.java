@@ -19,25 +19,30 @@ public  class  ParseReceiveCommand {
 	
 	
     public static String getDispStringId(Context context){
+    	String msg;
     	switch(cmd1_data0){
 	    	case 0x1:
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_ready);	    		
 	    	case 0x2:
-	    		normalCallBack();
-	    		return context.getString(R.string.cmd1_heating);	    		
+	    		//normalCallBack();
+	    		msg=context.getString(R.string.cmd1_heating);
+	    		faultCallBack(msg);
+	    		return 	msg;   		
 	    	case 0x3:
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_rinsing);    		
 	    	case 0x4:
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_openTab);	    		
-	    	case 0x5:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_close_tab);	    		
+	    	case 0x5:	
+	    		msg=context.getString(R.string.cmd1_close_tab);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x6:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_too_hot);	    		
+	    		msg=context.getString(R.string.cmd1_too_hot);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x7:
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_mild);	    		
@@ -51,41 +56,50 @@ public  class  ParseReceiveCommand {
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_cleaning);	    		
 	    	case 0xb:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_emptying);	    		
+	    		msg=context.getString(R.string.cmd1_emptying);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0xc:
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_decalc_on);    		
 	    	case 0xd:
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_add_tablet);	    		
-	    	case 0xe:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_no_tray);    		
+	    	case 0xe:  
+	    		msg=context.getString(R.string.cmd1_no_tray);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0xf:
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_waiting);
 	    	case 0x10:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_fault);
+	    		msg=context.getString(R.string.cmd1_fault);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x11:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_fault1);
+	    		msg=context.getString(R.string.cmd1_fault1);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x12:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_fault2);
+	    		msg=context.getString(R.string.cmd1_fault2);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x13:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_fault3);
+	    		msg=context.getString(R.string.cmd1_fault3);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x14:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_fault4);
+	    		msg=context.getString(R.string.cmd1_fault4);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x15:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_fault5);
+	    		msg=context.getString(R.string.cmd1_fault5);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x16:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_fault6);
+	    		msg=context.getString(R.string.cmd1_fault6);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x17:
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_standby);
@@ -105,8 +119,9 @@ public  class  ParseReceiveCommand {
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_myCoffee);
 	    	case 0x1d:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_fill_powder);
+	    		msg=context.getString(R.string.cmd1_fill_powder);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x1e:
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_water);
@@ -120,8 +135,9 @@ public  class  ParseReceiveCommand {
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_filterReady);
 	    	case 0x31:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_insertOpenTab);
+	    		msg=context.getString(R.string.cmd1_insertOpenTab);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x32:
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_rinsingFilter);
@@ -132,8 +148,9 @@ public  class  ParseReceiveCommand {
 	    		normalCallBack();//faultCallBack();
 	    		return context.getString(R.string.cmd1_fillWater);
 	    	case 0x35:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_fillingSystem);
+	    		msg=context.getString(R.string.cmd1_fillingSystem);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x36:
 	    		normalCallBack();//faultCallBack();
 	    		return context.getString(R.string.cmd1_fillBeans);//这个要谨慎，因为无豆时也可以打咖啡
@@ -147,30 +164,36 @@ public  class  ParseReceiveCommand {
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_cleanReady);
 	    	case 0x3a:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_emptyTRay);
+	    		msg=context.getString(R.string.cmd1_emptyTRay);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x3b:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_trayMissing);
+	    		msg=context.getString(R.string.cmd1_trayMissing);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x3c:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_chgFilterOpenTab);
+	    		msg=context.getString(R.string.cmd1_chgFilterOpenTab);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x3d:
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_decalcytyReady);
 	    	case 0x3e:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_solventInTank);
+	    		msg=context.getString(R.string.cmd1_solventInTank);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 	    	case 0x3f:
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_addMorePowder);
 	    	case 0x40:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_emptyGround);
+	    		msg=context.getString(R.string.cmd1_emptyGround);
+	    		faultCallBack(msg);
+	    		return 	msg; 
 
 	    	default:
-	    		faultCallBack();
-	    		return context.getString(R.string.cmd1_unknow);
+	    		msg=context.getString(R.string.cmd1_unknow);
+	    		faultCallBack(msg);
+	    		return 	msg; 
     	}
     }
 	
@@ -546,9 +569,9 @@ public  class  ParseReceiveCommand {
 		callBack = call;
 	}
 
-	static void faultCallBack(){
+	static void faultCallBack(String msg){
 		if(callBack!=null){
-			callBack.onFault();	
+			callBack.onFault(msg);	
 		}
 	}
 	static void normalCallBack(){
@@ -566,7 +589,7 @@ public  class  ParseReceiveCommand {
 	
 	public interface CallBack {
 		void onParsed(int cmd);
-		void onFault();
+		void onFault(String msg);
 		void onWork();
 	}
 		

@@ -374,7 +374,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
         deviceInterfaceAdapter = new CoffeeDeviceInterfaceAdapter(context,myHandler,coffeeDeviceEvent);
 	
     }
-    void startMaking(){
+    void startMaking(){   	
+    	cancelCloseTimerTask();
     	if(dropcupMode){
     		mc_dropCup();
     	}else{
@@ -426,8 +427,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
 		final String filePath = context.getCacheDir() + File.pathSeparator + "qtImage"
 				+ ".jpg";
-		int widthPix = 600;
-		int heightPix = 600;
+		int widthPix = 300;
+		int heightPix = 300;
 		boolean blCreated = Encode.createQRImage(url, widthPix, heightPix,
 				null, filePath);
 
@@ -517,8 +518,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			}
 
 			@Override
-			public void onFault() {
+			public void onFault(String msg) {
 				setEnble(false);
+				t_mcDetail.setText(msg);
 			}
 
 			@Override
@@ -1090,6 +1092,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    class CloseTimeTask extends TimerTask{
 	    	
 	    	int closeCnt=0;
+	    	boolean inTask=false;
 			@Override
 			public void run() {
 				//isTrading=false;
@@ -1097,12 +1100,14 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					
 					@Override
 					public void run() {
-						if(closeCnt-->0){
-							String dsp=tPayDisp+"("+closeCnt+"s)";
-							sendMsgToHandler(Handler_tPay, dsp);
-
-						}else{
-							closeOder(); //超时后关闭交易
+						if(inTask){
+							if(closeCnt-->0){
+								String dsp=tPayDisp+"("+closeCnt+"s)";
+								sendMsgToHandler(Handler_tPay, dsp);
+	
+							}else{
+								closeOder(); //超时后关闭交易
+							}
 						}
 					}
 				});	
@@ -1111,25 +1116,34 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    }
 	    
 	    void startCloseTimer(int cnt){
-	    	
+	    	closeTask.inTask=true;
 	    	if(closeTimer==null){
 	    		closeTimer=new Timer();
 	    	}
 	    	if(closeTask==null){
 	    		closeTask=new CloseTimeTask();
 	    		closeTask.closeCnt=cnt;
+	    		
 	    		closeTimer.schedule(closeTask, 1000,1000);
 	    	}else{
 	    		if(closeTask.cancel()){
 	    			closeTask=new CloseTimeTask();
-	    			//closeTimer.schedule(closeTask, CloseTime);
 	    			closeTask.closeCnt=cnt;
 	    			closeTimer.schedule(closeTask, 1000,1000);
 	    		}
-	    	}
-	    	
+	    	}	
 	    	
 	    }
+	    void cancelCloseTimerTask(){
+	    	if(closeTask!=null){
+	    		closeTask.inTask=false;
+	    		if(closeTask.cancel()){
+	    			closeTask=null;
+	    		}
+	    	}
+	    }
+	    
+	    
 	    void cancelCloseTimer(){
 	    	if(closeTask!=null){
 	    		closeTask.cancel();
