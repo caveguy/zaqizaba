@@ -11,8 +11,11 @@ public  class  ParseReceiveCommand {
 	private final static int DataLenthByte=3;
 	static CallBack callBack=null;
 	//public static int queryCnt=0;
-
+	private static  boolean needBeanMake=false;
 	
+	public static void setBeanMake(boolean can){
+		needBeanMake=can;
+	}
 	public static byte getWindow(){
 		return cmd19_windowSetting[0];
 	}
@@ -152,8 +155,14 @@ public  class  ParseReceiveCommand {
 	    		faultCallBack(msg);
 	    		return 	msg; 
 	    	case 0x36:
-	    		normalCallBack();//faultCallBack();
-	    		return context.getString(R.string.cmd1_fillBeans);//这个要谨慎，因为无豆时也可以打咖啡
+	    		if(!needBeanMake){
+	    			normalCallBack();//faultCallBack();
+	    			return context.getString(R.string.cmd1_fillBeans);//这个要谨慎，因为无豆时也可以打咖啡
+	    		}else{
+		    		msg=context.getString(R.string.cmd1_fillBeans);
+		    		faultCallBack(msg);
+		    		return 	msg; 
+	    		}
 	    	case 0x37:
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_selectCupButton);

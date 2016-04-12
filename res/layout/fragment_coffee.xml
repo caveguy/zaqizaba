@@ -403,14 +403,14 @@
 	  	    <TextView
 	    	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:textSize="@dimen/icon_text_size"
+	        android:textSize="@dimen/devState_text_size"
 	        android:text="@string/mcStateLable"
 	        /> 
    	         <TextView
    	        android:id="@+id/t_mcDetail"
 	    	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:textSize="@dimen/icon_text_size"
+	        android:textSize="@dimen/devState_text_size"
 	        android:text="@string/comErr"
 	        /> 
 	       </LinearLayout>
@@ -424,14 +424,14 @@
 	  	    <TextView
 	    	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:textSize="@dimen/icon_text_size"
+	        android:textSize="@dimen/devState_text_size"
 	        android:text="@string/netStateLable"
 	        /> 
    	         <TextView
    	        android:id="@+id/t_netDetail"
 	    	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:textSize="@dimen/icon_text_size"
+	        android:textSize="@dimen/devState_text_size"
 	        android:text="@string/nonet"
 	        /> 
 	       </LinearLayout>
@@ -447,7 +447,7 @@
 	        android:layout_height="wrap_content" 
    	        android:text="自动落杯"   
    	             />
-   	         	         <RadioButton 
+   	         <RadioButton 
    	         android:id="@+id/radio_cup2"
    	         android:layout_width="wrap_content"
 	        android:layout_height="wrap_content" 
@@ -456,12 +456,30 @@
    	         
    	         
    	     </RadioGroup>
-   	     
+   	        <RadioGroup 
+   	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+   	        android:orientation="horizontal" 
+   	         
+   	         >
+   	         <RadioButton 
+   	         android:id="@+id/radio_needBean"
+   	         android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+   	        android:text="@string/needbean"   
+   	             />
+   	        <RadioButton 
+   	         android:id="@+id/radio_noneedBean"
+   	         android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+   	        android:text="@string/noneedbean"   
+   	             />   
+   	           
+   	     </RadioGroup>
    	     	<CheckBox
    	        android:id="@+id/btn_debug"
 	    	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:textSize="@dimen/size_payTitle"
 	        android:text="@string/debug"
 	        /> 	
    	     

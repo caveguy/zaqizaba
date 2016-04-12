@@ -2,7 +2,7 @@
 	
 
 
-	<dimen name="state_text_size">24sp</dimen>
+	<dimen name="state_text_size">18sp</dimen>
 	<dimen name="icon_text_size">18sp</dimen>
 	<dimen name="maintain_text_size">32sp</dimen>
 	<dimen name="padding_fragCoffee">14dp</dimen>

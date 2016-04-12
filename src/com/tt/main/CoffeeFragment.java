@@ -82,7 +82,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	private Context context=null;
 	CloseTimeTask closeTask=null;
 	TextView t_coffeeType,t_payType;
-	TextView t_mcDetail,t_netDetail;
+	TextView t_maintain,t_mcDetail,t_netDetail;
 	DeliveryProtocol deliveryController=null;
 	private MachineProtocol myMachine=null;	
 	ToastShow myToast;
@@ -101,7 +101,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	boolean isDeliverEnable=false;  //辅助板是否工作正常
 	boolean isMcEnable=false;      //咖啡机是否工作正常
 	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
+	boolean needBean=true ;   //
 	RadioButton radioCup1,radioCup2;
+	RadioButton radio_needBean,radio_noBean;
 	boolean isDebug=false;
 	byte mcWindowLast=0;
 	HashMap<Integer,Long> goodId=new HashMap<Integer,Long>();
@@ -207,18 +209,29 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	
     	btn_mskCancel.setOnClickListener(this);
     	btn_clean.setOnClickListener(this);
-    	
+    	t_maintain=(TextView)view.findViewById(R.id.t_maintain);
     	t_mcDetail=(TextView)view.findViewById(R.id.t_mcDetail);
     	t_netDetail=(TextView)view.findViewById(R.id.t_netDetail);
     	radioCup1=(RadioButton)view.findViewById(R.id.radio_cup1);
     	radioCup2=(RadioButton)view.findViewById(R.id.radio_cup2);
+    	radio_needBean=(RadioButton)view.findViewById(R.id.radio_needBean);
+    	radio_noBean=(RadioButton)view.findViewById(R.id.radio_noneedBean);
     	if(dropcupMode){
     		radioCup1.setChecked(true);	
     	}else{
     		radioCup2.setChecked(true);
     	}
+    	if(needBean){
+    		setBeanMode(true);
+    		radio_needBean.setChecked(true);	
+    	}else{
+    		setBeanMode(false);
+    		radio_noBean.setChecked(true);
+    	}
     	radioCup1.setOnCheckedChangeListener(this);
     	radioCup2.setOnCheckedChangeListener(this);
+    	radio_needBean.setOnCheckedChangeListener(this);
+    	radio_noBean.setOnCheckedChangeListener(this);
     	
 	     myHandler = new MyHandler(context){
 	        @Override
@@ -573,8 +586,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			@Override
 			public void onFault(String msg) {
 				isMachineWork=false;
-				setEnble(isMachineWork&&isConnectToServer);
-				
+				if(!dispDevLayout){
+					setEnble(isMachineWork&&isConnectToServer);
+				}
 				sendMsgToHandler(Handler_mcDisp, msg)	;
 					
 				
@@ -750,6 +764,20 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					dropcupMode=false;
 				}
 				break;
+			case R.id.radio_needBean:
+				if(isChecked){
+					setBeanMode(true);
+				}else{
+					setBeanMode(false);
+				}
+				break;
+			case R.id.radio_noneedBean:
+				if(isChecked){
+					setBeanMode(false);
+				}else{
+					setBeanMode(true);
+				}
+				break;
 			case R.id.btn_debug:
 				if(isChecked){
 					isDebug=true;
@@ -762,7 +790,10 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		
 			
 		}
-
+		void setBeanMode(boolean need){
+			needBean=need;
+			ParseReceiveCommand.setBeanMake(need);
+		}
 		void setIconNames(){
 			long id=0;
 			if(goodId.containsKey(0)){
@@ -1228,13 +1259,17 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			dispDevLayout=true;
 			myToast.toastShow("enter dev mode");
 			layout_mask.setVisibility(View.VISIBLE);
+			t_maintain.setText(context.getString(R.string.devMode));
 			btn_mskCancel.setVisibility(View.VISIBLE);
 			radioCup1.setVisibility(View.VISIBLE);
 			radioCup2.setVisibility(View.VISIBLE);
 			btn_debug.setVisibility(View.VISIBLE);
+			radio_needBean.setVisibility(View.VISIBLE);
+			radio_noBean.setVisibility(View.VISIBLE);
 		}
 		void leaveDevMode(){
 			dispDevLayout=false;
+			
 			layout_mask.setVisibility(View.GONE);
 		}
 		
@@ -1255,10 +1290,14 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	    		//if(!isTrading)//支付窗
 	    	    		if(tradeStep==StepNone)//支付窗
 	    	    		{
+	    	    			t_maintain.setText(context.getString(R.string.maintain));
 	    	    			layout_mask.setVisibility(View.VISIBLE);
 	    	    			btn_mskCancel.setVisibility(View.GONE);
+	    	    			
 	    	    			radioCup1.setVisibility(View.GONE);
 	    	    			radioCup2.setVisibility(View.GONE);
+	    	    			radio_needBean.setVisibility(View.GONE);
+	    	    			radio_noBean.setVisibility(View.GONE);
 	    	    			btn_debug.setVisibility(View.GONE);
 	    	    		}
 	    			}
