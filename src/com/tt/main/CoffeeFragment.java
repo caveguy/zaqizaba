@@ -74,10 +74,10 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
 	private final int WeixinPay=2;
 	private final int AliPay=1;
-	private final int Handler_mcDisp=1002;
+	private final int Handler_netDisp=1002;
 	private final int Handler_qr=1001;
 	private final int Handler_tPay=1003;
-	private final int Handler_tMask=1004;
+	private final int Handler_mcDisp=1004;
 	private final long NoGoodSelected=-1;
 	private Context context=null;
 	CloseTimeTask closeTask=null;
@@ -156,13 +156,13 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				Log.e(Tag, "!!!!!!!!!!!!!!netWorkChanged "+connected);
 				myToast.toastShow("netWorkChanged "+connected);
 				if(connected){
-					t_netDetail.setText(context.getString(R.string.hasnet));
+					 sendMsgToHandler(Handler_netDisp, context.getString(R.string.hasnet));
 					initPayServer();
 					if(isConnectToServer)
 						updatePrice();
 				}else{
 					isConnectToServer=false;
-					t_netDetail.setText(context.getString(R.string.nonet));
+					sendMsgToHandler(Handler_netDisp, context.getString(R.string.nonet));
 				}
 			}
 		});
@@ -228,14 +228,14 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				case Handler_qr:
 					img_qr.setImageBitmap(BitmapFactory.decodeFile(msg.obj.toString()));
 					break;
-				case Handler_mcDisp:	
+				case Handler_netDisp:	
 					myToast.toastShow(msg.obj.toString());
 					t_netDetail.setText(msg.obj.toString());
 					break;
 				case Handler_tPay:
 					t_payType.setText(msg.obj.toString());
 					break;
-				case Handler_tMask:
+				case Handler_mcDisp:
 					t_mcDetail.setText(msg.obj.toString());
 	        }
 	        };
@@ -371,7 +371,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
                 
                 isConnectToServer=true;
              //Toast.makeText(getActivity(), "连接成功", Toast.LENGTH_LONG).show();
-                sendMsgToHandler(Handler_mcDisp, context.getString(R.string.connectServer));
+                sendMsgToHandler(Handler_netDisp, context.getString(R.string.connectServer));
               //  myToast.toastShow("连接服务器成功");
                 updatePrice();
 
@@ -542,7 +542,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				 if(cmd==1){
 					String dispString= ParseReceiveCommand.getDispStringId(context);
 					if(layout_mask.VISIBLE==View.VISIBLE){
-						sendMsgToHandler(Handler_tMask, dispString)	;
+						sendMsgToHandler(Handler_mcDisp, dispString)	;
 						
 					}
 					if(dispString!=oldMcString){
@@ -574,7 +574,11 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			public void onFault(String msg) {
 				isMachineWork=false;
 				setEnble(isMachineWork&&isConnectToServer);
-				t_mcDetail.setText(msg);
+				
+				sendMsgToHandler(Handler_mcDisp, msg)	;
+					
+				
+				
 			}
 
 			@Override
