@@ -39,7 +39,6 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android_serialport_api.DeliveryProtocol;
-import android_serialport_api.DeliveryProtocol.CallBack;
 import android_serialport_api.MachineProtocol;
 import android_serialport_api.ParseReceiveCommand;
 import coffee.shop.po.DeviceGoods;
@@ -50,7 +49,6 @@ import coffee.shop.po.response.QueryDeviceGoodsRsp;
 
 import com.example.coffemachinev2.R;
 import com.tt.util.Encode;
-import com.tt.util.StaticCallBacks;
 import com.tt.util.TTLog;
 import com.tt.util.ToastShow;
 
@@ -84,7 +82,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	private Context context=null;
 	CloseTimeTask closeTask=null;
 	TextView t_coffeeType,t_payType;
-	TextView t_mcDetail;
+	TextView t_mcDetail,t_netDetail;
 	DeliveryProtocol deliveryController=null;
 	private MachineProtocol myMachine=null;	
 	ToastShow myToast;
@@ -117,6 +115,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	int oldCheckedId=0;
 	byte status;
 	boolean isConnectToServer=false;
+	boolean isMachineWork=false;
 	private String oldMcString=null;
 	//Handler myHandler;
 	private final String Tag="CoffeeFrag";
@@ -157,6 +156,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				Log.e(Tag, "!!!!!!!!!!!!!!netWorkChanged "+connected);
 				myToast.toastShow("netWorkChanged "+connected);
 				if(connected){
+					t_netDetail.setText(context.getString(R.string.hasnet));
 					initPayServer();
 					if(isConnectToServer)
 						updatePrice();
@@ -206,6 +206,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	btn_clean.setOnClickListener(this);
     	
     	t_mcDetail=(TextView)view.findViewById(R.id.t_mcDetail);
+    	t_netDetail=(TextView)view.findViewById(R.id.t_netDetail);
     	radioCup1=(RadioButton)view.findViewById(R.id.radio_cup1);
     	radioCup2=(RadioButton)view.findViewById(R.id.radio_cup2);
     	if(dropcupMode){
@@ -236,7 +237,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	        };
 	    };
     	
-    	
+	    setEnble(isMachineWork&&isConnectToServer);
     	//setPayEnable(false);
     }
     
@@ -256,6 +257,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     }
     
     void initMachines(){
+    	
     	myMachine=new MachineProtocol(context);
     	mcSetCallBack();
         deliveryController=new DeliveryProtocol(context);
@@ -565,14 +567,16 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
 			@Override
 			public void onFault(String msg) {
-				setEnble(false);
+				isMachineWork=false;
+				setEnble(isMachineWork&&isConnectToServer);
 				t_mcDetail.setText(msg);
 			}
 
 			@Override
 			public void onWork() {
+				isMachineWork=true;
 				if(!dispDevLayout){
-					setEnble(true);
+					setEnble(isMachineWork&&isConnectToServer);
 				}
 			}
 		});
@@ -1218,6 +1222,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			btn_mskCancel.setVisibility(View.VISIBLE);
 			radioCup1.setVisibility(View.VISIBLE);
 			radioCup2.setVisibility(View.VISIBLE);
+			btn_debug.setVisibility(View.VISIBLE);
 		}
 		void leaveDevMode(){
 			dispDevLayout=false;
@@ -1245,6 +1250,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	    			btn_mskCancel.setVisibility(View.GONE);
 	    	    			radioCup1.setVisibility(View.GONE);
 	    	    			radioCup2.setVisibility(View.GONE);
+	    	    			btn_debug.setVisibility(View.GONE);
 	    	    		}
 	    			}
 	    		});

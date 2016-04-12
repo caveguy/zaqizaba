@@ -393,7 +393,19 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="@dimen/maintain_text_size"
 	        android:text="@string/maintain"/> 
-	        
+				  <LinearLayout 
+			    
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:gravity="center"
+			    android:orientation="horizontal"
+			     >
+	  	    <TextView
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/icon_text_size"
+	        android:text="@string/mcStateLable"
+	        /> 
    	         <TextView
    	        android:id="@+id/t_mcDetail"
 	    	android:layout_width="wrap_content"
@@ -401,7 +413,28 @@
 	        android:textSize="@dimen/icon_text_size"
 	        android:text="@string/comErr"
 	        /> 
-	        
+	       </LinearLayout>
+	       			  <LinearLayout 
+			    
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:gravity="center"
+			    android:orientation="horizontal"
+			     >
+	  	    <TextView
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/icon_text_size"
+	        android:text="@string/netStateLable"
+	        /> 
+   	         <TextView
+   	        android:id="@+id/t_netDetail"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/icon_text_size"
+	        android:text="@string/nonet"
+	        /> 
+	       </LinearLayout>
    	     <RadioGroup 
    	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"

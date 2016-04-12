@@ -25,7 +25,7 @@
             android:name="com.tt.main.MainActivity"
             android:label="@string/app_name" 
             android:screenOrientation="landscape"
-            
+			android:configChanges="locale|touchscreen|keyboard|orientation|mcc|mnc|keyboardHidden|uiMode|layoutDirection|fontScale|navigation|screenLayout|screenSize|smallestScreenSize"     
             >
             
             <intent-filter>

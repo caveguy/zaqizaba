@@ -16,6 +16,7 @@ import com.tt.util.LogCatHelper;
 public class MainActivity extends Activity {
 	MassageFragment massageFrag;
 	CoffeeFragment coffeeFrag;
+	VideoFragment.CallBack videocallback;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,16 +40,17 @@ public class MainActivity extends Activity {
             });
 
         	VideoFragment videoFragment=new VideoFragment();
-        	
-            getFragmentManager().beginTransaction()
-            .add(R.id.frag_video, videoFragment).commitAllowingStateLoss();
-            videoFragment.setCallBack(new VideoFragment.CallBack() {
+            videocallback=new VideoFragment.CallBack() {
 				
 				@Override
 				public void logoClicked() {
 					coffeeFrag.enterDevMode();
 				}
-			});
+			};
+            videoFragment.setCallBack(videocallback);	
+            getFragmentManager().beginTransaction()
+            .add(R.id.frag_video, videoFragment).commit();
+
             
         }
     }

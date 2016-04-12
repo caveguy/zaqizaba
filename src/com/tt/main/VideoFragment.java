@@ -13,10 +13,8 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
-import android.media.MediaPlayer.OnSeekCompleteListener;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.style.LineHeightSpan.WithDensity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -27,10 +25,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.coffemachinev2.R;
-import com.tt.main.CoffeeFragment.CallBack;
 
 public class VideoFragment extends Fragment  implements OnClickListener
 
@@ -353,6 +349,7 @@ public class VideoFragment extends Fragment  implements OnClickListener
 	}
 	
 	private void clickCallBack(){
+		Log.e(TAG,"!!!!clickCallBack");
 		if(callBack!=null)
 			callBack.logoClicked();
 	}

@@ -360,16 +360,13 @@ public class DeliveryProtocol {
 	
 
 	private void startAckTimer(){
-		cancelAckTimerTask();
-		
-		
 		hasAck=false;
 		ackCnt=0;
 	//	Log.d("ioctrl","startAckTimer############");
 		if(ackTimer==null){
 			ackTimer=new Timer();
 		}
-
+		cancelAckTimerTask();
 		ackTimerTask=new AckTimerTask();
 		ackTimerTask.inAckState=true;
 		ackTimer.schedule(ackTimerTask, AckTimerDuaration);
@@ -388,17 +385,19 @@ public class DeliveryProtocol {
 	}	
 	
 	private void startQueryTimer(byte cmd){
-		
 		Log.d(TAG, "startQueryTimer query_what="+cmd);
 		query_what=cmd;
 		if(queryTimer==null){
 			queryTimer=new Timer();
 		}
-		if(queryTimerTask!=null){
-			if(queryTimerTask.cancel()){//只有任务确实被取消了，才能让任务为null
-				queryTimerTask=null;
-			}
-		}
+//		if(queryTimerTask!=null){
+//			if(queryTimerTask.cancel()){//只有任务确实被取消了，才能让任务为null
+//				queryTimerTask=null;
+//			}
+//		}
+		cancelQueryTimerTask();
+		
+		
 		//if(queryTimerTask==null){
 			queryTimerTask=new QueryTimerTask();
 			queryTimerTask.inQueryState=true;

@@ -103,7 +103,7 @@ public class LogCatHelper {
 			// cmds = "logcat *:e *:w | grep \"(" + mPID + ")\"";
 			// cmds = "logcat  | grep \"(" + mPID + ")\"";//打印所有日志信息
 			// cmds = "logcat -s way";//打印标签过滤信息
-			cmds = "logcat *:e *:i | grep \"(" + mPID + ")\"";
+			cmds = "logcat *:e *:i *:d | grep \"(" + mPID + ")\"";
 
 		}
 
