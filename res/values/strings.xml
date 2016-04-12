@@ -125,8 +125,9 @@
     <string name="mcStateLable">机器状态：</string>
     <string name="netStateLable">网络状态：</string>
     <string name="nonet">无法连接到服务器</string>
-    <string name="hasnet">已连接</string>
-    <string name="version">v0.8-160412-1</string>
+    <string name="hasnet">已连接网络</string>
+    <string name="connectServer">已连接服务器</string>
+    <string name="version">v0.9-160412-2</string>
 
 
 

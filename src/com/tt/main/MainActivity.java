@@ -17,6 +17,7 @@ public class MainActivity extends Activity {
 	MassageFragment massageFrag;
 	CoffeeFragment coffeeFrag;
 	VideoFragment.CallBack videocallback;
+	CoffeeFragment.CallBack coffeecallback;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,16 +29,18 @@ public class MainActivity extends Activity {
             getFragmentManager().beginTransaction()
                     .add(R.id.frag_msg,massageFrag) .commitAllowingStateLoss(); 
             coffeeFrag=new CoffeeFragment();
-            getFragmentManager().beginTransaction()
-            .add(R.id.frag_work, coffeeFrag) .commitAllowingStateLoss();
-            coffeeFrag.setCallBack(new CallBack(){
+            coffeecallback=new CallBack(){
 
 				@Override
 				public void updateMsg(String msg) {
 					massageFrag.setMsg(msg);
 				}
 
-            });
+            };
+            coffeeFrag.setCallBack(coffeecallback);
+            getFragmentManager().beginTransaction()
+            .add(R.id.frag_work, coffeeFrag) .commitAllowingStateLoss();
+
 
         	VideoFragment videoFragment=new VideoFragment();
             videocallback=new VideoFragment.CallBack() {

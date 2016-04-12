@@ -160,6 +160,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					initPayServer();
 					if(isConnectToServer)
 						updatePrice();
+				}else{
+					isConnectToServer=false;
+					t_netDetail.setText(context.getString(R.string.nonet));
 				}
 			}
 		});
@@ -225,8 +228,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				case Handler_qr:
 					img_qr.setImageBitmap(BitmapFactory.decodeFile(msg.obj.toString()));
 					break;
-				case Handler_mcDisp:
+				case Handler_mcDisp:	
 					myToast.toastShow(msg.obj.toString());
+					t_netDetail.setText(msg.obj.toString());
 					break;
 				case Handler_tPay:
 					t_payType.setText(msg.obj.toString());
@@ -364,9 +368,10 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
             public void onLoad() {
                 super.onLoad();
                 /*获得设备商品列表*/
+                
                 isConnectToServer=true;
              //Toast.makeText(getActivity(), "连接成功", Toast.LENGTH_LONG).show();
-                sendMsgToHandler(Handler_mcDisp, "连接服务器成功");
+                sendMsgToHandler(Handler_mcDisp, context.getString(R.string.connectServer));
               //  myToast.toastShow("连接服务器成功");
                 updatePrice();
 
