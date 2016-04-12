@@ -25,10 +25,10 @@ public class MainActivity extends Activity {
 
             massageFrag=new MassageFragment();
             getFragmentManager().beginTransaction()
-                    .add(R.id.frag_msg,massageFrag) .commit(); 
+                    .add(R.id.frag_msg,massageFrag) .commitAllowingStateLoss(); 
             coffeeFrag=new CoffeeFragment();
             getFragmentManager().beginTransaction()
-            .add(R.id.frag_work, coffeeFrag) .commit();
+            .add(R.id.frag_work, coffeeFrag) .commitAllowingStateLoss();
             coffeeFrag.setCallBack(new CallBack(){
 
 				@Override
@@ -41,7 +41,7 @@ public class MainActivity extends Activity {
         	VideoFragment videoFragment=new VideoFragment();
         	
             getFragmentManager().beginTransaction()
-            .add(R.id.frag_video, videoFragment).commit();
+            .add(R.id.frag_video, videoFragment).commitAllowingStateLoss();
             videoFragment.setCallBack(new VideoFragment.CallBack() {
 				
 				@Override

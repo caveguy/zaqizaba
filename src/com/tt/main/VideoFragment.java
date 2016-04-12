@@ -45,6 +45,7 @@ public class VideoFragment extends Fragment  implements OnClickListener
 	RelativeLayout layout_video=null;
 //	String fileName = "ad.mp4";
 	Timer myTimer=null;
+	MyTimerTask timertask=null;
 	int which_file=0;
 	private int clickCnt=0;
 	 List<String> allVideoList = new ArrayList<String>();// 视频信息集合
@@ -64,7 +65,8 @@ public class VideoFragment extends Fragment  implements OnClickListener
         layout_video.setOnClickListener(this);
         new FindThread().start();
         myTimer=new Timer();
-        myTimer.schedule(new MyTimerTask(), 5000, 60*1000);
+        timertask=new MyTimerTask();
+        myTimer.schedule(timertask, 5000, 60*1000);
      	//	play(0);
         return rootView;
     }
@@ -294,6 +296,10 @@ public class VideoFragment extends Fragment  implements OnClickListener
 	}
 	
     public void  cleanTimer(){
+    	if(timertask!=null){
+    		timertask.cancel();
+    		timertask=null;
+    	}
     	if(myTimer!=null){
     		myTimer.cancel();
     		myTimer=null;

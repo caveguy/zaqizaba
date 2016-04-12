@@ -21,6 +21,8 @@ import tp.lib.TPConstants;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -48,6 +50,7 @@ import coffee.shop.po.response.QueryDeviceGoodsRsp;
 
 import com.example.coffemachinev2.R;
 import com.tt.util.Encode;
+import com.tt.util.StaticCallBacks;
 import com.tt.util.TTLog;
 import com.tt.util.ToastShow;
 
@@ -108,15 +111,15 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
 	  //存放商品信息
 	 private MyHandler myHandler =null;
-    private CoffeeDeviceInterfaceAdapter deviceInterfaceAdapter;
-    private CoffeeDeviceEvent coffeeDeviceEvent;
+    private CoffeeDeviceInterfaceAdapter deviceInterfaceAdapter=null;
+    private CoffeeDeviceEvent coffeeDeviceEvent=null;
     TTLog mylog=null;
 	int oldCheckedId=0;
 	byte status;
+	boolean isConnectToServer=false;
 	private String oldMcString=null;
 	//Handler myHandler;
 	private final String Tag="CoffeeFrag";
-	
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -125,7 +128,6 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
         context= getActivity().getApplicationContext();
         mylog=new TTLog(Tag,true);
         initView(rootView);
-        initMachines();
   //      myHandler =new Handler();
 //        Button mybutton = null;
 //        mybutton.setText("hello");
@@ -133,6 +135,37 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
         return rootView;
     }
 
+    
+    
+    
+    @Override
+	public void onStart() {
+    	context= getActivity().getApplicationContext();
+        initMachines();
+		super.onStart();
+	}
+
+
+
+
+	void addNetworkChangedCallback(){
+		
+		
+		NetChangedReciever.setCallBack(new NetChangedReciever.CallBack() {
+			@Override
+			public void netWorkChanged(boolean connected) {
+				Log.e(Tag, "!!!!!!!!!!!!!!netWorkChanged "+connected);
+				myToast.toastShow("netWorkChanged "+connected);
+				if(connected){
+					initPayServer();
+					if(isConnectToServer)
+						updatePrice();
+				}
+			}
+		});
+		
+    	
+    }
     void initView(View view){
     	myToast =new ToastShow(context);
     	btn_pay1=(CheckBox)view.findViewById(R.id.radio_pay1);
@@ -314,16 +347,25 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			}
         	
         });
-        
+        if(hasNetWork()){
+        	initPayServer();
+        }
+
+        addNetworkChangedCallback();
+    }
+    
+    void initPayServer(){
+    	if(coffeeDeviceEvent==null){
         coffeeDeviceEvent = new CoffeeDeviceEvent() {
 
         	@Override
             public void onLoad() {
                 super.onLoad();
                 /*获得设备商品列表*/
-                
+                isConnectToServer=true;
              //Toast.makeText(getActivity(), "连接成功", Toast.LENGTH_LONG).show();
-                myToast.toastShow("连接服务器成功");
+                sendMsgToHandler(Handler_mcDisp, "连接服务器成功");
+              //  myToast.toastShow("连接服务器成功");
                 updatePrice();
 
             }
@@ -371,9 +413,13 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
         	
         };
-        deviceInterfaceAdapter = new CoffeeDeviceInterfaceAdapter(context,myHandler,coffeeDeviceEvent);
-	
+    	}
+    	if(deviceInterfaceAdapter==null){
+    		deviceInterfaceAdapter = new CoffeeDeviceInterfaceAdapter(context,myHandler,coffeeDeviceEvent);
+    	}
     }
+    
+    
     void startMaking(){   	
     	cancelCloseTimerTask();
     	if(dropcupMode){
@@ -494,7 +540,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					}
 					if(dispString!=oldMcString){
 						mylog.log_i("****Machine String****"+dispString);
-						if(dispString.equals(getString(R.string.cmd1_pressRinse))){
+						if(dispString.equals(context.getString(R.string.cmd1_pressRinse))){
 							myMachine.sendCleanCmd();
 						}
 //						else if(dispString.equals(getString(R.string.cmd1_ready))){
@@ -1116,18 +1162,19 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    }
 	    
 	    void startCloseTimer(int cnt){
-	    	closeTask.inTask=true;
+	    	
 	    	if(closeTimer==null){
 	    		closeTimer=new Timer();
 	    	}
 	    	if(closeTask==null){
 	    		closeTask=new CloseTimeTask();
 	    		closeTask.closeCnt=cnt;
-	    		
+	    		closeTask.inTask=true;
 	    		closeTimer.schedule(closeTask, 1000,1000);
 	    	}else{
 	    		if(closeTask.cancel()){
 	    			closeTask=new CloseTimeTask();
+	    			closeTask.inTask=true;
 	    			closeTask.closeCnt=cnt;
 	    			closeTimer.schedule(closeTask, 1000,1000);
 	    		}
@@ -1205,7 +1252,17 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	}
 	    }
 		
-		
+		boolean  hasNetWork(){
+			ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo mobileInfo = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+			NetworkInfo wifiInfo = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+			NetworkInfo ethInfo = manager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
+			//NetworkInfo activeInfo = manager.getActiveNetworkInfo();
+			
+			boolean isConnected=mobileInfo.isConnected()|wifiInfo.isConnected()|ethInfo.isConnected();
+			
+			return isConnected;
+		}
 		
 		///////////////////////回调接口////////////////////////////////
 
