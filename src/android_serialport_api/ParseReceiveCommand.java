@@ -516,7 +516,10 @@ public  class  ParseReceiveCommand {
 		int this_num=0;
 		int  order_num=0;
 		while(left_num>4){
-			int datalength=data[next_start+3];
+			byte datalength=data[next_start+3];
+			if(datalength<0){
+				return 0;
+			}
 			this_num=datalength+5;
 			if(data[next_start]==(byte)0xED&&data[next_start+this_num-1]==(byte)0xEC){
 				byte[] temp_byte=new byte[this_num];
