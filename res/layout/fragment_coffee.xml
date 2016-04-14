@@ -448,6 +448,14 @@
 	        android:text="@string/nonet"
 	        /> 
 	       </LinearLayout>
+	        <TextView
+   	        android:id="@+id/t_refund"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="@color/red_msg"
+	        android:textSize="@dimen/devState_text_size"
+	        android:text="@string/refund"
+	        /> 
    	     <RadioGroup 
    	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
