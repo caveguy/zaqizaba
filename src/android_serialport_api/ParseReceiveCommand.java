@@ -56,8 +56,11 @@ public  class  ParseReceiveCommand {
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_2cpus);	    		
 	    	case 0xa:
-	    		normalCallBack();
-	    		return context.getString(R.string.cmd1_cleaning);	    		
+	    		msg=context.getString(R.string.cmd1_cleaning);
+	    		faultCallBack(msg);
+	    		return 	msg;   		
+//	    		normalCallBack();
+//	    		return context.getString(R.string.cmd1_cleaning);	    		
 	    	case 0xb:
 	    		msg=context.getString(R.string.cmd1_emptying);
 	    		faultCallBack(msg);
