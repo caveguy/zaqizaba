@@ -630,19 +630,25 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				isMachineWork=false;
 				if(!dispDevLayout){
 					setEnable(isMachineWork&&isConnectToServer);
+					sendMsgToHandler(Handler_mcDisp, msg);
 				}
 				if(tradeStep==StepMaking){//在制作过程中出现错误，这个时候应该退款
 					if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
 						appealed=true;
-						closeOder(); //从故障中恢复，直接关闭之前的订单
+						
+						
 						appeal();
+						myHandler.post(new Runnable() {
+							
+							@Override
+							public void run() {
+								closeOder(); //从故障中恢复，直接关闭之前的订单	
+							}
+						});
+						
 					}
 				}
-				
-			//	sendMsgToHandler(Handler_mcDisp, msg)	;
-					
-				
-				
+	
 			}
 
 			@Override
@@ -1485,6 +1491,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	    		//if(tradeStep==StepNone)//支付窗
 	    	    		if(tradeStep!=StepTakingCup&&layout_mask.getVisibility()!=View.VISIBLE)//除了在等待拿走杯子的状态，其他状态都应该能进维护页面
 	    	    		{
+	    	    			
 	    	    			t_maintain.setText(context.getString(R.string.maintain));
 	    	    			layout_mask.setVisibility(View.VISIBLE);
 	    	    			btn_mskCancel.setVisibility(View.GONE);
