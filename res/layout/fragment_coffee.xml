@@ -387,6 +387,8 @@
     android:clickable="true"
     android:orientation="vertical"
      >	
+    
+    
 	 </LinearLayout>
 	  <LinearLayout 
     android:id="@+id/layout_mask"

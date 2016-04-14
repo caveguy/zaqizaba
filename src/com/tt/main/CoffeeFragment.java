@@ -210,14 +210,15 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	t_coffeeType=(TextView)view.findViewById(R.id.t_coffeeType);
     	t_payType=(TextView)view.findViewById(R.id.t_payType);
     	layout_mask=(LinearLayout)view.findViewById(R.id.layout_mask);
+    	layout_mask.setOnClickListener(this);
     	layout_makingMask=(LinearLayout)view.findViewById(R.id.layout_makingMask);
+    	layout_makingMask.setOnClickListener(this);
     	btn_mskCancel=(Button)view.findViewById(R.id.btn_mskCancel);
+    	btn_mskCancel.setOnClickListener(this);
     	btn_clean=(Button)view.findViewById(R.id.btn_clean);
+    	btn_clean.setOnClickListener(this);
     	btn_debug=(CheckBox)view.findViewById(R.id.btn_debug);
     	btn_debug.setOnCheckedChangeListener(this);
-    	
-    	btn_mskCancel.setOnClickListener(this);
-    	btn_clean.setOnClickListener(this);
     	t_maintain=(TextView)view.findViewById(R.id.t_maintain);
     	t_mcDetail=(TextView)view.findViewById(R.id.t_mcDetail);
     	t_version=(TextView)view.findViewById(R.id.t_version);
@@ -639,6 +640,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		case R.id.btn_mskCancel:
 			leaveDevMode();
 			break;
+		case R.id.layout_makingMask:
+			myToast.toastShow(R.string.inMaking);
+			break;
 //		case R.id.btn_dropCup:
 //			Log.e(Tag,"btn_dropCup!!");
 //			deliveryController.cmd_dropCup();
@@ -890,8 +894,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			//isTrading=false;
 			cancelCloseTimerTask();
 			cancelTimeOutTask();
-			tradeStep=StepNone;
-			
+			deliveryController.cancelQueryTimerTask();
+			tradeStep=StepNone;			
 			layout_makingMask.setVisibility(View.GONE);
 			layout_qr.setVisibility(View.GONE);
 			t_coffeeType.setText(R.string.pleaseChooseCoffee);

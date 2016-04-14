@@ -131,6 +131,7 @@
     <string name="noneedbean">无需咖啡豆即可打咖啡</string>
     <string name="devMode">开发者菜单</string>
     <string name="timeOut">制作超时，稍后退回您的付款</string>
-    <string name="version">v0.9-160412-5</string>
+    <string name="inMaking">制作中，请稍等...</string>
+    <string name="version">v0.9.1-160414-1</string>
 
 </resources>

@@ -406,7 +406,7 @@ public class DeliveryProtocol {
 		
 	}	
 	
-	private void cancelQueryTimerTask(){
+	public void cancelQueryTimerTask(){
 		Log.d(TAG, "cancelQueryTimerTask!! ");
 		if(queryTimerTask!=null){
 			queryTimerTask.inQueryState=false;
