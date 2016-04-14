@@ -1223,9 +1223,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	   		//deliveryController.cmd_greenLight();
 	   		//tPayDisp=context.getString(R.string.finished);
 	   		tPayDisp=context.getString(R.string.takeCup);
-	   		
-	    	String dsp=tPayDisp+"("+CloseCnt_TakingCup+"s)";
-			sendMsgToHandler(Handler_tPay, dsp);
+//	    	String dsp=tPayDisp+"("+CloseCnt_TakingCup+"s)";
+//			sendMsgToHandler(Handler_tPay, dsp);
 	   		//sendMsgToHandler(Handler_tPay, tPayDisp); 
 			if(timeOutTask!=null){
 				timeOutTask.closeCnt=CloseCnt_TakingCup;
@@ -1332,10 +1331,11 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 							if(closeCnt-->0){
 								
 								if(tradeStep==StepTakingCup){
-									String dsp2=tPayDisp+"("+closeCnt+"s)";
-									sendMsgToHandler(Handler_tPay, dsp2);
+									
 									String dsp=context.getString(R.string.finished);
 									sendMsgToHandler(Handler_tCoffee, dsp);
+									String dsp2=tPayDisp+"("+closeCnt+"s)";
+									sendMsgToHandler(Handler_tPay, dsp2);
 								}else{
 									String dsp=context.getString(R.string.alLeftTime)+closeCnt+"s";
 									sendMsgToHandler(Handler_tPay, dsp);
