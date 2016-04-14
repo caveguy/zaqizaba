@@ -617,6 +617,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					// myToast.toastShow("cmd0x19="+windowstate);
 					 if(windowstate==2&&mcWindowLast==5){
 						 mc_coffeeDroped();
+						 
+						 
 					 }					 
 					 mcWindowLast=windowstate;
 					//myMachine.initMachine();
@@ -632,11 +634,12 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				if(tradeStep==StepMaking){//在制作过程中出现错误，这个时候应该退款
 					if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
 						appealed=true;
+						closeOder(); //从故障中恢复，直接关闭之前的订单
 						appeal();
 					}
 				}
 				
-				//sendMsgToHandler(Handler_mcDisp, msg)	;
+			//	sendMsgToHandler(Handler_mcDisp, msg)	;
 					
 				
 				
@@ -1466,7 +1469,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    			public void run() {
 	    				if(layout_mask.getVisibility()!=View.GONE){
 	    					layout_mask.setVisibility(View.GONE);
-	    					closeOder(); //从故障中恢复，直接关闭之前的订单
+	    					
 	    				}
 	    			}
 	    		});
