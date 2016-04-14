@@ -252,12 +252,14 @@ public class DeliveryProtocol {
 	}
 	void dealReply_error(byte data){
 		boolean isError=(data&BIT0)!=0;
-		noWaterCallBack(isError);	
 		if(isError){
-			startQueryTimer(Cmd_readErros);
-		}else{
-			cancelQueryTimerTask();
+			noWaterCallBack();
 		}
+//		if(isError){
+//			startQueryTimer(Cmd_readErros);
+//		}else{
+//			cancelQueryTimerTask();
+//		}
 	}
 
 	void dealReply_status(byte data){
@@ -547,7 +549,7 @@ public class DeliveryProtocol {
 		void cupDroped();
 		void cupStuck();
 		void noCupDrop();
-		void noWater(boolean is);
+		void noWater();
 		void dropCupTimeOut();
 		void hasDirtyCup();
 		void powderDroped();
@@ -567,10 +569,10 @@ public class DeliveryProtocol {
 		if(callBack!=null)
 			callBack.tradeFinish();
 	}
-	private void noWaterCallBack(boolean is){
+	private void noWaterCallBack(){
 		Log.d(TAG,"!!!!noWaterCallBack");
 		if(callBack!=null)
-			callBack.noWater(is);
+			callBack.noWater();
 	}
 	private void onEnableCallBack(){
 		Log.d(TAG,"!!!!onEnableCallBack");

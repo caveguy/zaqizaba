@@ -389,8 +389,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
 
 			@Override
-			public void noWater(boolean is) {
-				mc_noWater(is);
+			public void noWater() {
+				mc_noWater();
 			}
         	
         });
@@ -583,7 +583,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				 if(cmd==1){
 					String dispString= ParseReceiveCommand.getDispStringId(context);
 					if(layout_mask.VISIBLE==View.VISIBLE){
-						sendMsgToHandler(Handler_mcDisp, dispString)	;
+						sendMsgToHandler(Handler_mcDisp, dispString);
 						
 					}
 					if(dispString!=oldMcString){
@@ -617,7 +617,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				if(!dispDevLayout){
 					setEnble(isMachineWork&&isConnectToServer);
 				}
-				sendMsgToHandler(Handler_mcDisp, msg)	;
+				//sendMsgToHandler(Handler_mcDisp, msg)	;
 					
 				
 				
@@ -907,6 +907,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			cancelCloseTimerTask();
 			cancelTimeOutTask();
 			deliveryController.cancelQueryTimerTask();
+			deliveryController.cmd_readError();//交易完成之后读取水位
 			tradeStep=StepNone;			
 			layout_makingMask.setVisibility(View.GONE);
 			layout_qr.setVisibility(View.GONE);
@@ -1130,6 +1131,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				@Override
 				public void run() {
 					closeOder();
+					sendMsgToHandler(Handler_mcDisp, ParseReceiveCommand.getDispStringId(context));
 					setEnble(false);
 					//mc_readCup();
 				}
@@ -1139,22 +1141,17 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	     *没有水了
 	     *提示用户，并通知服务器做退款处理
 	     */
-	    void mc_noWater(boolean is){
-	    	hasCup=is;
-	    	if(is){
-	    	myHandler.post(new Runnable() {		
-	    		@Override
-	    		public void run() {
-	    			t_payType.setText(R.string.noWater);
-	    			//closeOder();
-	    			setEnble(false);
-	    		}
-	    	});
+	    void mc_noWater(){
+	    	hasWater=false;
+	    	myHandler.postDelayed(new Runnable() {		
+				@Override
+				public void run() {
+					t_payType.setText(R.string.noWater);
+					sendMsgToHandler(Handler_mcDisp, ParseReceiveCommand.getDispStringId(context));
+					setEnble(false);
+				}
+			},1000);
 
-	    	}else{
-	    		if(hasCup)
-	    			setEnble(true);
-	    	}
 	    }
 
 	    /**
@@ -1359,7 +1356,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		}
 		void enterDevMode(){
 			dispDevLayout=true;
-			hasCup=true;
+			hasCup=true;//清错误
+			hasWater=true;//清错误
 			myToast.toastShow("enter dev mode");
 			layout_makingMask.setVisibility(View.GONE);//当交易卡死在正在制作咖啡时，通过进入调试模式解除触摸锁定
 			layout_mask.setVisibility(View.VISIBLE);
@@ -1380,7 +1378,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		}
 		
 	    void setEnble(boolean enable){
-	    	if(enable&&hasCup){	
+	    	if(enable&&hasCup&&hasWater){	
 	    		myHandler.post(new Runnable() {
 	    			@Override
 	    			public void run() {
