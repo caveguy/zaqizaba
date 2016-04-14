@@ -43,13 +43,14 @@ public class DeliveryProtocol {
 	final byte Cmd_setRightPreWater=0x29;
 	final byte Cmd_pushPowder=0x30;
 	final byte Cmd_readState=0x50;
+	final byte Cmd_readErros=(byte) 0x51;//
 	final byte Cmd_readLower8bits=(byte) 0xb9;
 
 	final byte Cmd_readHIght8bits=(byte) 0xba;//?
 	final byte Cmd_setOutputLower8Bits=(byte) 0xc0;//
 	final byte Cmd_setOutputHight8Bits=(byte) 0xc1;//
 //	final byte Cmd_readBusy=(byte) 0x50;//
-	final byte Cmd_readErros=(byte) 0x51;//
+
 	final byte BIT0=(byte) 0x01;
 	final byte BIT1=(byte) 0x02;
 	final byte BIT2=(byte) 0x04;
@@ -162,6 +163,9 @@ public class DeliveryProtocol {
 					case Cmd_readState:
 						dealReply_status(reply);
 						break;
+					case Cmd_readErros:
+						dealReply_error(reply);
+						break;
 					case Cmd_readLower8bits:
 						dealReply_OutPutState(reply);
 						break;
@@ -245,6 +249,15 @@ public class DeliveryProtocol {
 	
 	void dealReply_set(byte data){
 
+	}
+	void dealReply_error(byte data){
+		boolean isError=(data&BIT0)!=0;
+		noWaterCallBack(isError);	
+		if(isError){
+			startQueryTimer(Cmd_readErros);
+		}else{
+			cancelQueryTimerTask();
+		}
 	}
 
 	void dealReply_status(byte data){
@@ -534,6 +547,7 @@ public class DeliveryProtocol {
 		void cupDroped();
 		void cupStuck();
 		void noCupDrop();
+		void noWater(boolean is);
 		void dropCupTimeOut();
 		void hasDirtyCup();
 		void powderDroped();
@@ -552,6 +566,16 @@ public class DeliveryProtocol {
 		cancelQueryTimerTask();
 		if(callBack!=null)
 			callBack.tradeFinish();
+	}
+	private void noWaterCallBack(boolean is){
+		Log.d(TAG,"!!!!noWaterCallBack");
+		if(callBack!=null)
+			callBack.noWater(is);
+	}
+	private void onEnableCallBack(){
+		Log.d(TAG,"!!!!onEnableCallBack");
+		if(callBack!=null)
+			callBack.onEnable();
 	}
 	private void startDropCupCallBack(){
 		Log.d(TAG,"!!!!startDropCupCallBack");
@@ -643,6 +667,12 @@ public class DeliveryProtocol {
 	 */
 	public void cmd_readState(){
 		packCmd(Cmd_readState,(byte) 0);
+	}
+	/*
+	 *查询错误(缺水)
+	 */
+	public void cmd_readError(){
+		packCmd(Cmd_readErros,(byte) 0);
 	}
 	/*
 	 * 握手

@@ -108,7 +108,10 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	boolean isMcEnable=false;      //咖啡机是否工作正常
 	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
 	boolean needBean=true ;   //
+	
+	//目前辅助板的两种不能工作的状态：
 	boolean hasCup=true;
+	boolean hasWater=true;
 	
 	RadioButton radioCup1,radioCup2;
 	RadioButton radio_needBean,radio_noBean;
@@ -259,8 +262,10 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				case Handler_tPay:
 					t_payType.setText(msg.obj.toString());
 					break;
-				case Handler_mcDisp:
-					String dsp=(hasCup?"":(context.getString(R.string.noCup)+"|"))+msg.obj.toString();
+				case Handler_mcDisp://
+					String dsp=(hasCup?"":(context.getString(R.string.noCup)+"|"))+
+					(hasWater?"":(context.getString(R.string.noWater)+"|"))+
+					msg.obj.toString();
 					t_mcDetail.setText(dsp);
 					break;
 				case Handler_TimeOut:
@@ -379,6 +384,13 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			@Override
 			public void cupReady() {
 				mc_makeCoffee(getCurType());
+			}
+
+
+
+			@Override
+			public void noWater(boolean is) {
+				mc_noWater(is);
 			}
         	
         });
@@ -1122,6 +1134,27 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					//mc_readCup();
 				}
 			},2000);
+	    }
+	    /**
+	     *没有水了
+	     *提示用户，并通知服务器做退款处理
+	     */
+	    void mc_noWater(boolean is){
+	    	hasCup=is;
+	    	if(is){
+	    	myHandler.post(new Runnable() {		
+	    		@Override
+	    		public void run() {
+	    			t_payType.setText(R.string.noWater);
+	    			//closeOder();
+	    			setEnble(false);
+	    		}
+	    	});
+
+	    	}else{
+	    		if(hasCup)
+	    			setEnble(true);
+	    	}
 	    }
 
 	    /**
