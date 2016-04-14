@@ -330,6 +330,19 @@ public class MachineProtocol {
 			sendTimer.cancel();
 			sendTimer=null;
 		}
-
 	}
+	public void closeSerialPort() {
+	if (mSerialPort != null) {
+		mSerialPort.close();
+		mSerialPort = null;
+	}
+}
+	@Override
+	protected void finalize() throws Throwable {
+		cleanTimer();
+		mReadThread.interrupt();
+		closeSerialPort();
+		super.finalize();
+	}	
+	
 }

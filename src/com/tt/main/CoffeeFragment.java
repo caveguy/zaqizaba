@@ -70,24 +70,30 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	private final byte AllFinish=(byte) (CoffeeFinish|PowderFinish);
 	private final int CloseCnt_pay=60*2;
 	private final int CloseCnt_TakingCup=30;
+	private final int TimeOutDuaration=1000*60*3;
+	
 	private boolean dispDevLayout=false;
 
 	private final int WeixinPay=2;
 	private final int AliPay=1;
-	private final int Handler_netDisp=1002;
+	
 	private final int Handler_qr=1001;
+	private final int Handler_netDisp=1002;
 	private final int Handler_tPay=1003;
 	private final int Handler_mcDisp=1004;
+	private final int Handler_TimeOut=1005;
 	private final long NoGoodSelected=-1;
 	private Context context=null;
 	CloseTimeTask closeTask=null;
+	TimerOutTask timeOutTask=null;
 	TextView t_coffeeType,t_payType;
-	TextView t_maintain,t_mcDetail,t_netDetail;
+	TextView t_maintain,t_mcDetail,t_netDetail,t_version;
 	DeliveryProtocol deliveryController=null;
 	private MachineProtocol myMachine=null;	
 	ToastShow myToast;
 	RelativeLayout layout_qr;
 	LinearLayout layout_mask;
+	LinearLayout layout_makingMask;
 	CheckBox btn_coffee1,btn_coffee2,btn_coffee3,btn_coffee4,btn_coffee5,btn_coffee6;
 	CheckBox btn_pay1,btn_pay2,btn_pay3,btn_pay4;
 	CheckBox btn_debug;
@@ -102,6 +108,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	boolean isMcEnable=false;      //咖啡机是否工作正常
 	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
 	boolean needBean=true ;   //
+	boolean hasCup=true;
+	
 	RadioButton radioCup1,radioCup2;
 	RadioButton radio_needBean,radio_noBean;
 	boolean isDebug=false;
@@ -202,6 +210,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	t_coffeeType=(TextView)view.findViewById(R.id.t_coffeeType);
     	t_payType=(TextView)view.findViewById(R.id.t_payType);
     	layout_mask=(LinearLayout)view.findViewById(R.id.layout_mask);
+    	layout_makingMask=(LinearLayout)view.findViewById(R.id.layout_makingMask);
     	btn_mskCancel=(Button)view.findViewById(R.id.btn_mskCancel);
     	btn_clean=(Button)view.findViewById(R.id.btn_clean);
     	btn_debug=(CheckBox)view.findViewById(R.id.btn_debug);
@@ -211,6 +220,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     	btn_clean.setOnClickListener(this);
     	t_maintain=(TextView)view.findViewById(R.id.t_maintain);
     	t_mcDetail=(TextView)view.findViewById(R.id.t_mcDetail);
+    	t_version=(TextView)view.findViewById(R.id.t_version);
     	t_netDetail=(TextView)view.findViewById(R.id.t_netDetail);
     	radioCup1=(RadioButton)view.findViewById(R.id.radio_cup1);
     	radioCup2=(RadioButton)view.findViewById(R.id.radio_cup2);
@@ -249,7 +259,12 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					t_payType.setText(msg.obj.toString());
 					break;
 				case Handler_mcDisp:
-					t_mcDetail.setText(msg.obj.toString());
+					String dsp=(hasCup?"":(context.getString(R.string.noCup)+"|"))+msg.obj.toString();
+					t_mcDetail.setText(dsp);
+					break;
+				case Handler_TimeOut:
+					myToast.toastShow(msg.obj.toString());
+					break;
 	        }
 	        };
 	    };
@@ -397,7 +412,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 						
 						 myToast.toastShow("支付失败");	
 						 layout_qr.setVisibility(View.GONE);
-						 cancelCloseTimer();
+						 cancelCloseTimerTask();
 					}
 				});	
 			}
@@ -411,7 +426,6 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 						t_payType.setText(R.string.paySuccess);
 						myToast.toastShow(R.string.paySuccess);
 						layout_qr.setVisibility(View.GONE);
-						cancelCloseTimer();
 						//cancelCloseTimer(); //不能取消，否则按钮状态没有清除
 						
 					}
@@ -442,6 +456,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     
     void startMaking(){   	
     	cancelCloseTimerTask();
+    	startTimeOutTimer();
     	if(dropcupMode){
     		mc_dropCup();
     	}else{
@@ -657,7 +672,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					setWeixinpay();
 				}
 				else{
-					cancelCloseTimer();
+					cancelCloseTimerTask();
 					layout_qr.setVisibility(View.GONE);
 					t_payType.setText(R.string.pleaseChoosePay);
 				}
@@ -672,7 +687,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					setAlipay();
 				}
 				else{
-					cancelCloseTimer();
+					cancelCloseTimerTask();
 					layout_qr.setVisibility(View.GONE);
 					t_payType.setText(R.string.pleaseChoosePay);
 				}
@@ -873,8 +888,11 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		
 		void closeOder(){
 			//isTrading=false;
-			cancelCloseTimer();
+			cancelCloseTimerTask();
+			cancelTimeOutTask();
 			tradeStep=StepNone;
+			
+			layout_makingMask.setVisibility(View.GONE);
 			layout_qr.setVisibility(View.GONE);
 			t_coffeeType.setText(R.string.pleaseChooseCoffee);
 			t_payType.setText(R.string.pleaseChoosePay);
@@ -883,7 +901,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			setPayIconRadio(0);
 		}
 		void useOtherPay(){
-			cancelCloseTimer();
+			cancelCloseTimerTask();
 			layout_qr.setVisibility(View.GONE);
 			t_payType.setText(R.string.pleaseChoosePay);
 			setPayIconRadio(0);
@@ -1011,17 +1029,26 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	
 
 
-	    
+
 	    
 	    void mc_dropCup(){
 	    	tradeStep=StepMaking; //进入制作阶段
 	    	deliveryController.cmd_dropCup();
+	    	
+	    	myHandler.post(new Runnable() {		
+				@Override
+				public void run() {
+					layout_makingMask.setVisibility(View.VISIBLE);
+				}
+			});
+	    	
 	    }
 	    void mc_readCup(){
 	    	tradeStep=StepMaking; //进入制作阶段
 	    	myHandler.post(new Runnable() {		
 				@Override
 				public void run() {
+					layout_makingMask.setVisibility(View.VISIBLE);
 					t_payType.setText(R.string.putCup);
 				}
 			});
@@ -1076,6 +1103,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	     *提示用户，并通知服务器做退款处理
 	     */
 	    void mc_noCups(){
+	    	hasCup=false;
 	    	myHandler.post(new Runnable() {		
 				@Override
 				public void run() {
@@ -1085,7 +1113,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	myHandler.postDelayed(new Runnable() {		
 				@Override
 				public void run() {
-					mc_readCup();
+					closeOder();
+					setEnble(false);
+					//mc_readCup();
 				}
 			},2000);
 	    }
@@ -1204,7 +1234,27 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			}
 	    	
 	    }
-	    
+	    class TimerOutTask extends TimerTask{
+	    	
+	    	boolean inTask=false;
+			@Override
+			public void run() {
+				//isTrading=false;
+				myHandler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						if(inTask){
+								String dsp=context.getString(R.string.timeOut);
+								sendMsgToHandler(Handler_TimeOut, dsp);
+								closeOder(); //超时后关闭交易
+							
+						}
+					}
+				});	
+			}
+	    	
+	    }
 	    void startCloseTimer(int cnt){
 	    	
 	    	if(closeTimer==null){
@@ -1234,13 +1284,28 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	}
 	    }
 	    
-	    
-	    void cancelCloseTimer(){
-	    	if(closeTask!=null){
-	    		closeTask.cancel();
-	    		closeTask=null;
+
+		private void startTimeOutTimer(){
+
+		//	Log.d("ioctrl","startAckTimer############");
+			if(closeTimer==null){
+				closeTimer=new Timer();
+			}
+			cancelTimeOutTask();
+			timeOutTask=new TimerOutTask();
+			timeOutTask.inTask=true;
+			closeTimer.schedule(timeOutTask, TimeOutDuaration);
+		}
+	    void cancelTimeOutTask(){
+	    	if(timeOutTask!=null){
+	    		timeOutTask.inTask=false;
+	    		if(timeOutTask.cancel()){
+	    			timeOutTask=null;
+	    		}
 	    	}
-	    }
+	    }	    
+
+
 		public void cleanTimer(){
 			if(closeTimer!=null){
 				closeTimer.cancel();
@@ -1250,22 +1315,26 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    
 		@Override
 		public void onDestroy() {
-			deliveryController.cleanTimer();
-			myMachine.cleanTimer();
+//			deliveryController.cleanTimer();
+//			myMachine.cleanTimer();
 			cleanTimer();
 			super.onDestroy();
 		}
 		void enterDevMode(){
 			dispDevLayout=true;
+			hasCup=true;
 			myToast.toastShow("enter dev mode");
+			layout_makingMask.setVisibility(View.GONE);//当交易卡死在正在制作咖啡时，通过进入调试模式解除触摸锁定
 			layout_mask.setVisibility(View.VISIBLE);
 			t_maintain.setText(context.getString(R.string.devMode));
 			btn_mskCancel.setVisibility(View.VISIBLE);
+			btn_clean.setVisibility(View.VISIBLE);
 			radioCup1.setVisibility(View.VISIBLE);
 			radioCup2.setVisibility(View.VISIBLE);
 			btn_debug.setVisibility(View.VISIBLE);
 			radio_needBean.setVisibility(View.VISIBLE);
 			radio_noBean.setVisibility(View.VISIBLE);
+			t_version.setVisibility(View.VISIBLE);
 		}
 		void leaveDevMode(){
 			dispDevLayout=false;
@@ -1274,7 +1343,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 		}
 		
 	    void setEnble(boolean enable){
-	    	if(enable){	
+	    	if(enable&&hasCup){	
 	    		myHandler.post(new Runnable() {
 	    			@Override
 	    			public void run() {
@@ -1293,12 +1362,13 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	    			t_maintain.setText(context.getString(R.string.maintain));
 	    	    			layout_mask.setVisibility(View.VISIBLE);
 	    	    			btn_mskCancel.setVisibility(View.GONE);
-	    	    			
+	    	    			btn_clean.setVisibility(View.GONE);
 	    	    			radioCup1.setVisibility(View.GONE);
 	    	    			radioCup2.setVisibility(View.GONE);
 	    	    			radio_needBean.setVisibility(View.GONE);
 	    	    			radio_noBean.setVisibility(View.GONE);
 	    	    			btn_debug.setVisibility(View.GONE);
+	    	    			t_version.setVisibility(View.GONE);
 	    	    		}
 	    			}
 	    		});

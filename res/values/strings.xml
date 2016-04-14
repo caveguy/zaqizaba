@@ -94,7 +94,7 @@
     <string name="createQrFailed">获取二维码成功</string>
     <string name="missingParas">"物品名称和单价不能为空"</string>
     <string name="request">"我们会尽快核实，属实将返回您的付款"</string>
-    <string name="noCup">"抱歉，机器中无纸杯"</string>
+    <string name="noCup">"机器中无纸杯"</string>
     <string name="hasCup">"落杯成功"</string>
     <string name="cupStuck">"杯子卡住了，请掏出卡住杯子"</string>
     <string name="finished">"咖啡制作完成，请取杯"</string>
@@ -130,8 +130,7 @@
     <string name="needbean">需要咖啡豆才能打咖啡</string>
     <string name="noneedbean">无需咖啡豆即可打咖啡</string>
     <string name="devMode">开发者菜单</string>
-    <string name="version">v0.9-160412-3</string>
-
-
+    <string name="timeOut">制作超时，稍后退回您的付款</string>
+    <string name="version">v0.9-160412-5</string>
 
 </resources>

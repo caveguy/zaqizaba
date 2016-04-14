@@ -61,9 +61,12 @@ public class LogCatHelper {
 	}
 
 	public void start() {
-		if (mLogDumper == null)
+		if (mLogDumper == null){
 			mLogDumper = new LogDumper(String.valueOf(mPId), PATH_LOGCAT);
-		mLogDumper.start();
+			mLogDumper.start();
+		}else{
+			mLogDumper.reRun();
+		}
 	}
 
 	public void stop() {
@@ -107,6 +110,10 @@ public class LogCatHelper {
 
 		}
 
+		public void reRun(){
+			mRunning=true;
+			run();
+		}
 		public void stopLogs() {
 			mRunning = false;
 		}

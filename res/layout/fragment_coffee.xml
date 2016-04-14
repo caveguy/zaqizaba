@@ -377,6 +377,17 @@
    		   	
    		   	
 	  </RelativeLayout>
+	  
+	  <LinearLayout 
+    android:id="@+id/layout_makingMask"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:visibility="gone"
+    android:clickable="true"
+    android:orientation="vertical"
+     >	
+	 </LinearLayout>
 	  <LinearLayout 
     android:id="@+id/layout_mask"
     android:layout_width="match_parent"
