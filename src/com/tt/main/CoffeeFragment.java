@@ -70,7 +70,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	private final byte AllFinish=(byte) (CoffeeFinish|PowderFinish);
 	private final int CloseCnt_pay=60*2;
 	private final int CloseCnt_TakingCup=30;
-	private final int TimeOutDuaration=1000*60*3;
+	private final int TimeOutDuaration=80;
 	
 	private boolean dispDevLayout=false;
 
@@ -80,6 +80,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	private final int Handler_qr=1001;
 	private final int Handler_netDisp=1002;
 	private final int Handler_tPay=1003;
+	private final int Handler_tCoffee=1006;
 	private final int Handler_mcDisp=1004;
 	private final int Handler_TimeOut=1005;
 	private final long NoGoodSelected=-1;
@@ -102,6 +103,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	Timer closeTimer=null;
 	long cur_goodId=-1;
 	String tPayDisp=null;
+	String tCoffeeDisp=null;
 	byte makingStep=0;  //出粉跟出咖啡完成标志
 	int tradeStep=0;    //整个交易步骤
 	boolean isDeliverEnable=false;  //辅助板是否工作正常
@@ -262,6 +264,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				case Handler_tPay:
 					t_payType.setText(msg.obj.toString());
 					break;
+				case Handler_tCoffee:
+					t_coffeeType.setText(msg.obj.toString());
+					break;
 				case Handler_mcDisp://
 					String dsp=(hasCup?"":(context.getString(R.string.noCup)+"|"))+
 					(hasWater?"":(context.getString(R.string.noWater)+"|"))+
@@ -383,6 +388,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 
 			@Override
 			public void cupReady() {
+				resumeTimeOutTime();
 				mc_makeCoffee(getCurType());
 			}
 
@@ -469,7 +475,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
     
     void startMaking(){   	
     	cancelCloseTimerTask();
-    	startTimeOutTimer();
+    	startTimeOutTimer(TimeOutDuaration);
     	if(dropcupMode){
     		mc_dropCup();
     	}else{
@@ -891,9 +897,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			if(goodId.containsKey(type)){
 				cur_goodId=goodId.get(type);
 			
-				String disp="已选择"+goodName.get(cur_goodId)+"|￥"+goodPrice.get(cur_goodId).toString();
-				
-				t_coffeeType.setText(disp);
+				tCoffeeDisp="已选择"+goodName.get(cur_goodId)+"|￥"+goodPrice.get(cur_goodId).toString();
+				t_coffeeType.setText(tCoffeeDisp);
 				t_payType.setText(R.string.pleaseChoosePay);
 				
 			}
@@ -1066,7 +1071,9 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				@Override
 				public void run() {
 					layout_makingMask.setVisibility(View.VISIBLE);
-					t_payType.setText(R.string.putCup);
+					//t_payType.setText(R.string.putCup);
+					pauseTimeOutTime();
+					t_coffeeType.setText(R.string.putCup);
 				}
 			});
 	    	deliveryController.cmd_isCupReady();
@@ -1081,7 +1088,14 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	myHandler.post(new Runnable() {		
 				@Override
 				public void run() {
-					t_payType.setText(R.string.dropPowder);
+					
+//					tPayDisp=context.getString(R.string.dropPowder);
+//					t_payType.setText(tPayDisp);
+					tCoffeeDisp=context.getString(R.string.dropPowder);
+					t_coffeeType.setText(tCoffeeDisp);
+					
+					
+					//t_payType.setText(R.string.dropPowder);
 				}
 			});
 	    	switch(type){
@@ -1124,7 +1138,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	myHandler.post(new Runnable() {		
 				@Override
 				public void run() {
-					t_payType.setText(R.string.noCup);
+				//	t_payType.setText(R.string.noCup);
+					t_coffeeType.setText(R.string.noCup);
 				}
 			});
 	    	myHandler.postDelayed(new Runnable() {		
@@ -1162,16 +1177,23 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	myHandler.post(new Runnable() {		
 				@Override
 				public void run() {
-					t_payType.setText(R.string.hasDirtyCup);
+					//t_payType.setText(R.string.hasDirtyCup);
+					t_coffeeType.setText(R.string.hasDirtyCup);
+					pauseTimeOutTime();
 				}
 			});
 	    	
 	    }
+	    
+	    
+	    
 	    void mc_startDropCup(){
+	    	resumeTimeOutTime();
 	    	myHandler.post(new Runnable() {		
 	    		@Override
 	    		public void run() {
-	    			t_payType.setText(R.string.startDropCup);
+	    		//	t_payType.setText(R.string.startDropCup);
+	    			t_coffeeType.setText(R.string.startDropCup);
 	    		}
 	    	});
 	    	
@@ -1184,15 +1206,25 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	   		tradeStep=StepTakingCup;
 	   		//deliveryController.cmd_cancelLight();
 	   		//deliveryController.cmd_greenLight();
-	   		tPayDisp=context.getString(R.string.finished);
+	   		//tPayDisp=context.getString(R.string.finished);
+	   		tPayDisp=context.getString(R.string.takeCup);
 	   		
 	    	String dsp=tPayDisp+"("+CloseCnt_TakingCup+"s)";
 			sendMsgToHandler(Handler_tPay, dsp);
 	   		//sendMsgToHandler(Handler_tPay, tPayDisp); 
-	   		startCloseTimer(CloseCnt_TakingCup);
+			if(timeOutTask!=null){
+				timeOutTask.closeCnt=CloseCnt_TakingCup;
+			}
+	   		//startCloseTimer(CloseCnt_TakingCup);
 	   		deliveryController.cmd_QueryCupToken();
 	   }
 	    
+	   
+//	   void addedCloseTask(int cnt){
+//			if(timeOutTask!=null){
+//				timeOutTask.closeCnt=CloseCnt_TakingCup;
+//			}
+//	   }
 	    /**
 	     * 出粉完成
 	     * 
@@ -1223,7 +1255,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	{		
 				@Override
 				public void run() {
-					t_payType.setText(R.string.cupStuck);
+				//	t_payType.setText(R.string.cupStuck);
+					t_coffeeType.setText(R.string.cupStuck);
 				}
 			});
 	    	deliveryController.cmd_isCupReady();
@@ -1236,7 +1269,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	myHandler.post(new Runnable() {		
 				@Override
 				public void run() {
-					t_payType.setText(R.string.toAssisTimeOut);
+					//t_payType.setText(R.string.toAssisTimeOut);
+					t_coffeeType.setText(R.string.toAssisTimeOut);
 				}
 			});
 	    	
@@ -1271,6 +1305,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    class TimerOutTask extends TimerTask{
 	    	
 	    	boolean inTask=false;
+	    	int closeCnt=0;
 			@Override
 			public void run() {
 				//isTrading=false;
@@ -1279,16 +1314,38 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					@Override
 					public void run() {
 						if(inTask){
-								String dsp=context.getString(R.string.timeOut);
-								sendMsgToHandler(Handler_TimeOut, dsp);
+							if(closeCnt-->0){
+								
+								if(tradeStep==StepTakingCup){
+									String dsp2=tPayDisp+"("+closeCnt+"s)";
+									sendMsgToHandler(Handler_tPay, dsp2);
+									String dsp=context.getString(R.string.finished);
+									sendMsgToHandler(Handler_tCoffee, dsp);
+								}else{
+									String dsp=context.getString(R.string.alLeftTime)+closeCnt+"s";
+									sendMsgToHandler(Handler_tPay, dsp);
+								}
+	
+							}else{
 								closeOder(); //超时后关闭交易
-							
+							}
 						}
+						
+//						
+//						
+//						if(inTask){
+//								String dsp=context.getString(R.string.timeOut);
+//								sendMsgToHandler(Handler_TimeOut, dsp);
+//								closeOder(); //超时后关闭交易
+//							
+//						}
 					}
 				});	
 			}
 	    	
 	    }
+
+	    
 	    void startCloseTimer(int cnt){
 	    	
 	    	if(closeTimer==null){
@@ -1318,8 +1375,15 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	    	}
 	    }
 	    
-
-		private void startTimeOutTimer(){
+	    void pauseTimeOutTime(){
+	    	if(timeOutTask!=null)
+	    		timeOutTask.inTask=false;
+	    }
+	    void resumeTimeOutTime(){
+	    	if(timeOutTask!=null)
+	    		timeOutTask.inTask=true;
+	    }
+		private void startTimeOutTimer(int cnt){
 
 		//	Log.d("ioctrl","startAckTimer############");
 			if(closeTimer==null){
@@ -1328,7 +1392,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			cancelTimeOutTask();
 			timeOutTask=new TimerOutTask();
 			timeOutTask.inTask=true;
-			closeTimer.schedule(timeOutTask, TimeOutDuaration);
+			timeOutTask.closeCnt=cnt;
+			closeTimer.schedule(timeOutTask, 1000,1000);
 		}
 	    void cancelTimeOutTask(){
 	    	if(timeOutTask!=null){

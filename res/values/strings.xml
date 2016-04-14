@@ -97,7 +97,8 @@
     <string name="noCup">"机器中无纸杯"</string>
     <string name="hasCup">"落杯成功"</string>
     <string name="cupStuck">"杯子卡住了，请掏出卡住杯子"</string>
-    <string name="finished">"咖啡制作完成，请取杯"</string>
+    <string name="finished">"制作完成"</string>
+    <string name="takeCup">"请取杯"</string>
     <string name="hasDirtyCup">"请移除已有杯子"</string>
     <string name="maintain">"系统维护..."</string>
     <string name="coffee_type1">"意式咖啡|￥5"</string>
@@ -133,6 +134,7 @@
     <string name="timeOut">制作超时，稍后退回您的付款</string>
     <string name="inMaking">制作中，请稍等...</string>
     <string name="noWater">系统缺水</string>
-    <string name="version">v0.9.1-160414-2</string>
+    <string name="alLeftTime">总剩余时间约：</string>
+    <string name="version">v0.9.2-160414-3</string>
 
 </resources>
