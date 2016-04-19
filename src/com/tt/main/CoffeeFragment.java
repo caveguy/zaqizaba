@@ -18,8 +18,10 @@ import tp.device.coffee.task.MakeOrderAsyncTask;
 import tp.device.coffee.task.QueryDeviceGoodsAsyncTask;
 import tp.device.coffee.task.RefundApplyAsyncTask;
 import tp.lib.TPConstants;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -30,6 +32,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -123,6 +127,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 	HashMap<Integer,Long> goodId=new HashMap<Integer,Long>();
 	HashMap<Long,String>	goodName=new HashMap<Long,String>();
 	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
+	HashMap<Long,String[]>	goodFormula=new HashMap<Long,String[]>();//配方
 	  //存放商品信息
 	 private MyHandler myHandler =null;
     private CoffeeDeviceInterfaceAdapter deviceInterfaceAdapter=null;
@@ -172,6 +177,7 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 				Log.e(Tag, "!!!!!!!!!!!!!!netWorkChanged "+connected);
 				myToast.toastShow("netWorkChanged "+connected);
 				if(connected){
+					isConnectToServer=true;
 					 sendMsgToHandler(Handler_netDisp, context.getString(R.string.hasnet));
 					initPayServer();
 					if(isConnectToServer)
@@ -276,7 +282,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 					t_mcDetail.setText(dsp);
 					break;
 				case Handler_TimeOut:
-					myToast.toastShow(msg.obj.toString());
+					dispRetryDialog();//超时后显示是否重做对话框
+					//myToast.toastShow(R.string.);
 					break;
 	        }
 	        };
@@ -503,6 +510,13 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
                     	   goodId.put(i++, id);
                     	   goodName.put(id,goods.getGoodsName());
                     	   goodPrice.put(id, goods.getGoodsPrice());
+                    	   //配方列表
+//                    	   String formula=goods.getConfig();
+//                    	   String[] formulas=formula.split(";");
+ //                   	   int int_formula[];
+//                    	   goodFormula.put(id, formulas);
+                    	   
+                    	   
                        }
                        //myToast.toastShow("rsp.getErrcode() i="+i);
                        setGoodMsg();
@@ -1332,11 +1346,12 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			@Override
 			public void run() {
 				//isTrading=false;
+				if(inTask){
 				myHandler.post(new Runnable() {
 					
 					@Override
 					public void run() {
-						if(inTask){
+						
 							if(closeCnt-->0){
 								
 								if(tradeStep==StepTakingCup){
@@ -1351,24 +1366,19 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 								}
 	
 							}else{
-								closeOder(); //超时后关闭交易
+								tradeTimeOut();	
 							}
 						}
-						
-//						
-//						
-//						if(inTask){
-//								String dsp=context.getString(R.string.timeOut);
-//								sendMsgToHandler(Handler_TimeOut, dsp);
-//								closeOder(); //超时后关闭交易
-//							
-//						}
-					}
-				});	
+					});	
+				}
 			}
 	    	
 	    }
-
+//交易超时应该退款
+	    void tradeTimeOut(){
+	    	//这个时候应该可以选择重试或者退款！！！
+	    	sendMsgToHandler(Handler_TimeOut, "");
+	    }
 	    
 	    void startCloseTimer(int cnt){
 	    	
@@ -1525,6 +1535,39 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			
 			return isConnected;
 		}
+		
+		protected void dispRetryDialog() {
+			  AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			  builder.setMessage(R.string.alert_timeout);
+			  builder.setTitle(R.string.alert_title);
+			  builder.setPositiveButton(R.string.retry,new AlertDialog.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					startMaking();
+					dialog.dismiss();
+				}
+			});
+			  builder.setNegativeButton(R.string.giveup, new AlertDialog.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					closeOder();
+					appeal();
+					dialog.dismiss();
+				}
+			});
+			
+
+			  AlertDialog alertDialog=builder.create();
+			  	Window win = alertDialog.getWindow();  
+				LayoutParams params = new LayoutParams();  
+			
+				params.x = 300;//设置x坐标  
+				params.y = 0;//设置y坐标  
+				win.setAttributes(params);
+				alertDialog.show();
+			 }
+		
 		
 		///////////////////////回调接口////////////////////////////////
 

@@ -136,6 +136,10 @@
     <string name="noWater">系统缺水</string>
     <string name="alLeftTime">总剩余时间约：</string>
     <string name="refund">如已支付我们将核实后退回您的付款</string>
-    <string name="version">v0.9.2-160414-4</string>
+    <string name="alert_timeout">制作超时</string>
+    <string name="alert_title">错误</string>
+    <string name="retry">重试</string>
+    <string name="giveup">申请退款</string>
+    <string name="version">v0.9.2-160419-1</string>
 
 </resources>

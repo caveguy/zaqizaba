@@ -736,6 +736,9 @@ public class DeliveryProtocol {
 	public void cmd_pushLeftPowder(){
 		packCmd(Cmd_pushPowder,BIT0);
 	}
+	
+	
+	
 	//糖
 	public void cmd_pushLeftPowder(int power,int preWater,int water){
 		curState=Cmd_pushPowder;
