@@ -1,0 +1,41 @@
+<resources>
+
+
+	<dimen name="state_text_size">48sp</dimen>
+	<dimen name="devState_text_size">24sp</dimen>
+	<dimen name="icon_text_size">36sp</dimen>
+	<dimen name="maintain_text_size">36sp</dimen>
+	<dimen name="padding_fragCoffee">14dp</dimen>
+	<dimen name="size_time">48sp</dimen>
+	<dimen name="size_week">40sp</dimen>
+	<dimen name="size_date">40sp</dimen>
+	<dimen name="size_msg1">48sp</dimen>
+	<dimen name="size_msg2">48sp</dimen>
+	<dimen name="size_msg3">56sp</dimen>
+	<dimen name="size_payTitle">26sp</dimen>
+	<dimen name="left_time">64sp</dimen>
+	<dimen name="top_time">44dp</dimen>
+	<dimen name="right_msg">72dp</dimen>
+	<dimen name="top_msg">48dp</dimen>
+	<dimen name="bottom_msg">48dp</dimen>
+	<dimen name="bottom_time">48dp</dimen>
+	<dimen name="padding_payIcon">30dp</dimen>
+	<dimen name="padding_type">14dp</dimen>
+
+	<dimen name="marginTop_payTile">10dp</dimen>
+	<dimen name="paddingBotton_iconCoffee">12dp</dimen>
+	<dimen name="size_coffee_title">32sp</dimen>
+		<dimen name="padding_qr_frag">60dp</dimen>
+	<dimen name="paddingTop_qr_img">60dp</dimen>
+	<dimen name="size_qr_img">300dp</dimen>
+	<dimen name="margin_qr_img">60dp</dimen>
+	<dimen name="size_other_btnw">160dp</dimen>
+	<dimen name="size_other_btnh">100dp</dimen>
+ 	<dimen name="marginLeft_btn_other">60dp</dimen>
+ 	<dimen name="marginTop_btn_cancel">40dp</dimen>
+	<dimen name="marginBottom_qr_frag">420dp</dimen>	
+	<dimen name="marginBottom_btnCancel">20dp</dimen>
+	<dimen name="size_cancelBtn">32dp</dimen>	
+	<dimen name="padding_btnCancel">10dp</dimen>
+	<dimen name="marginRight_logo">5dp</dimen>
+</resources>

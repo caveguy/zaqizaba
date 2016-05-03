@@ -28,18 +28,18 @@ public class MainActivity extends Activity {
             massageFrag=new MassageFragment();
             getFragmentManager().beginTransaction()
                     .add(R.id.frag_msg,massageFrag) .commitAllowingStateLoss(); 
-            coffeeFrag=new CoffeeFragment();
-            coffeecallback=new CallBack(){
-
-				@Override
-				public void updateMsg(String msg) {
-					massageFrag.setMsg(msg);
-				}
-
-            };
-            coffeeFrag.setCallBack(coffeecallback);
-            getFragmentManager().beginTransaction()
-            .add(R.id.frag_work, coffeeFrag) .commitAllowingStateLoss();
+//            coffeeFrag=new CoffeeFragment();
+//            coffeecallback=new CallBack(){
+//
+//				@Override
+//				public void updateMsg(String msg) {
+//					massageFrag.setMsg(msg);
+//				}
+//
+//            };
+//            coffeeFrag.setCallBack(coffeecallback);
+//            getFragmentManager().beginTransaction()
+//            .add(R.id.frag_work, coffeeFrag) .commitAllowingStateLoss();
 
 
         	VideoFragment videoFragment=new VideoFragment();
@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
 				
 				@Override
 				public void logoClicked() {
-					coffeeFrag.enterDevMode();
+				//	coffeeFrag.enterDevMode();
 				}
 			};
             videoFragment.setCallBack(videocallback);	

@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_timer"
+    android:background="@drawable/bg_msg2"
     >
 
 <LinearLayout
@@ -38,22 +38,7 @@
      android:layout_weight="1"
      android:text="2016年3月11日"/>  
        
-       
- 
-    
-</LinearLayout>
-
-<LinearLayout
-    android:layout_alignParentRight="true"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent" 
-    android:gravity="right" 
-        android:layout_marginRight="@dimen/right_msg"
-    android:layout_marginTop="@dimen/top_msg"
-    android:layout_marginBottom="@dimen/bottom_msg"
-     android:orientation="vertical"
-    >
-    	<TextView 
+         	<TextView 
 	 android:id="@+id/t_msg1"   
    	 android:layout_width="wrap_content"
      android:layout_height="match_parent"
@@ -76,7 +61,8 @@
      android:textSize="@dimen/size_msg3"
      android:textColor="@color/red_msg"
      android:layout_weight="5"
-     android:text="Have a nice day"/>
+     android:text="Have a nice day"/>  
+ 
     
 </LinearLayout>
 

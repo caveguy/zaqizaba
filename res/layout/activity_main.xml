@@ -1,46 +1,49 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
     
-    <!--左边广告区域  -->
-	<LinearLayout 
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:layout_weight="7"  
-	    android:orientation="vertical"
-	    > 
-	        <!--视频fragment  -->
-		   <LinearLayout 
-		    android:id="@+id/frag_video"
+    <!--上半部广告区域  -->
+		<LinearLayout 
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent"
-		    android:layout_weight="13"  
 		    android:orientation="vertical"
 		    > 
-		 </LinearLayout>
-		  <!--时间及信息fragment  -->
+			   <LinearLayout 
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:layout_weight="1"  
+			    android:orientation="horizontal"
+			    > 
+		        <!--视频fragment  -->
+			   <LinearLayout 
+			    android:id="@+id/frag_video"
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:layout_weight="1"  
+			    android:orientation="vertical"
+			    > 
+			 </LinearLayout>
+			  <!--时间及信息fragment  -->
+			<LinearLayout 
+			    android:id="@+id/frag_msg"
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:layout_weight="2" 
+			    android:orientation="vertical">  
+			 </LinearLayout>
+	  	</LinearLayout>   
+    <!--业务部分,占下面三分之一  -->	 
 		<LinearLayout 
-		    android:id="@+id/frag_msg"
+			android:id="@+id/frag_work"
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent"
-		    android:layout_weight="32" 
+		    android:layout_weight="2" 
 		    android:orientation="vertical">  
 		 </LinearLayout>
-	    
-	    
 	 </LinearLayout>
-    <!--右边业务区域  -->	 
-	<LinearLayout 
-		android:id="@+id/frag_work"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:layout_weight="8" 
-	    android:orientation="vertical">  
-	 </LinearLayout>
-	 
 
-  </LinearLayout>
+  </FrameLayout>
   
 
