@@ -1561,8 +1561,8 @@ public class CoffeeFragment extends Fragment implements OnClickListener,android.
 			  AlertDialog alertDialog=builder.create();
 			  	Window win = alertDialog.getWindow();  
 				LayoutParams params = new LayoutParams();  
-			
-				params.x = 300;//设置x坐标  
+				
+				params.x = 600;//设置x坐标  
 				params.y = 0;//设置y坐标  
 				win.setAttributes(params);
 				alertDialog.show();

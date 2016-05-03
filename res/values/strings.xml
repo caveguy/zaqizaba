@@ -140,6 +140,6 @@
     <string name="alert_title">错误</string>
     <string name="retry">重试</string>
     <string name="giveup">申请退款</string>
-    <string name="version">v0.9.2-160419-1</string>
+    <string name="version">v2.0.3-160503-1</string>
 
 </resources>
