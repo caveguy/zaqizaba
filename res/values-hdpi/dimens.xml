@@ -7,18 +7,20 @@
 	<dimen name="icon_text_size">18sp</dimen>
 	<dimen name="maintain_text_size">32sp</dimen>
 	<dimen name="padding_fragCoffee">14dp</dimen>
-	<dimen name="size_time">24sp</dimen>
-	<dimen name="size_week">20sp</dimen>
-	<dimen name="size_date">20sp</dimen>
-	<dimen name="size_msg1">24sp</dimen>
-	<dimen name="size_msg2">24sp</dimen>
-	<dimen name="size_msg3">32sp</dimen>
 	<dimen name="size_payTitle">10sp</dimen>
 	<dimen name="left_time">32sp</dimen>
 	<dimen name="top_time">22dp</dimen>
-	<dimen name="right_msg">36dp</dimen>
-	<dimen name="top_msg">24dp</dimen>
-	<dimen name="bottom_msg">24dp</dimen>
+
+	<dimen name="msg_margin_left">30dp</dimen>
+	<dimen name="msg_margin_top">20dp</dimen>
+	<dimen name="weather_margin_top">14dp</dimen>
+	<dimen name="msg_text_margin_left">16dp</dimen>
+	<dimen name="msg_text_margin_left2">46dp</dimen>
+	<dimen name="size_msg_text">16sp</dimen>
+	<dimen name="size_msg_text_tile">16sp</dimen>
+	
+	
+	
 	<dimen name="bottom_time">24dp</dimen>
 	<dimen name="padding_payIcon">16dp</dimen>
 	<dimen name="padding_type">7dp</dimen>

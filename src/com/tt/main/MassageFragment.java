@@ -19,13 +19,13 @@ import com.tt.util.SharePreferenceUtil;
 
 public class MassageFragment extends Fragment {
 
-	TextView t_time,t_week,t_date;
-	TextView t_msg1,t_msg2,t_msg3;
+	TextView t_time,t_date;
+	TextView t_msg1,t_msg2;//t_msg3;
 	
 	Timer clockTime =new Timer();
 	Date curDate=null;
-	SimpleDateFormat formatDate = new SimpleDateFormat ("yyyy年MM月dd日;HH:mm;");
-	SimpleDateFormat formatTime = new SimpleDateFormat ("HH:mm");
+	SimpleDateFormat formatDate = new SimpleDateFormat ("yyyy.MM.dd;HH:mm;");
+//	SimpleDateFormat formatTime = new SimpleDateFormat ("HH:mm");
 	private final int Msg_updateTime=1001;
 	private final int Msg_updateMsg=1002;
 	SharePreferenceUtil sharePreferenceUtil;
@@ -40,11 +40,11 @@ public class MassageFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_msg, container, false);
         sharePreferenceUtil=new SharePreferenceUtil(getActivity(), "Message");
         t_time=(TextView)rootView.findViewById(R.id.t_time);
-        t_week=(TextView)rootView.findViewById(R.id.t_week);
+       // t_week=(TextView)rootView.findViewById(R.id.t_week);
         t_date=(TextView)rootView.findViewById(R.id.t_date);
         t_msg1=(TextView)rootView.findViewById(R.id.t_msg1);
         t_msg2=(TextView)rootView.findViewById(R.id.t_msg2);
-        t_msg3=(TextView)rootView.findViewById(R.id.t_msg3);
+      // t_msg3=(TextView)rootView.findViewById(R.id.t_msg3);
         setMessage();
         curDate = new Date(System.currentTimeMillis());//获取当前时间
         
@@ -61,10 +61,10 @@ public class MassageFragment extends Fragment {
      	if(msg!=null){
      		t_msg2.setText(msg);
     	}
-	   	 msg=sharePreferenceUtil.getStringValue(MsgKey3);
-	    if(msg!=null){
-	    	t_msg3.setText(msg);
-	   	}
+//	   	 msg=sharePreferenceUtil.getStringValue(MsgKey3);
+//	    if(msg!=null){
+//	    	t_msg3.setText(msg);
+//	   	}
     }
     class ClockTimerTask extends TimerTask{
 
@@ -113,12 +113,12 @@ public class MassageFragment extends Fragment {
 					String date=(String) msg.obj;
 					String[] times=date.split(";");
 					if(times.length==3){
-						t_date.setText(times[0]);
-						
 						t_time.setText(times[1]);
+						
 						Integer num= new Integer(times[2]);
 						String week=getWeek(num);
-						t_week.setText(week);
+						t_date.setText(times[0]+"/"+week);
+						//t_week.setText(week);
 						
 					}
 					break;
@@ -132,10 +132,10 @@ public class MassageFragment extends Fragment {
 						sharePreferenceUtil.setStringValue(MsgKey2,msgs[1]);
 						t_msg2.setText(msgs[1]);
 					}
-					if(msgs.length>2){
-						sharePreferenceUtil.setStringValue(MsgKey3,msgs[2]);
-						t_msg3.setText(msgs[2]);
-					}
+//					if(msgs.length>2){
+//						sharePreferenceUtil.setStringValue(MsgKey3,msgs[2]);
+//						t_msg3.setText(msgs[2]);
+//					}
 					break;
 			}
 			
