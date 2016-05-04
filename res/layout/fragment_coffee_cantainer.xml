@@ -1,0 +1,21 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   android:background="@drawable/bg_type"
+
+ 
+    >
+
+	<com.tt.view.MainViewPager 
+       android:id="@+id/viewPaper"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:layout_marginTop="@dimen/coffee_page_margin_top"
+       android:layout_marginBottom="@dimen/coffee_page_margin_bottom"
+       android:layout_marginRight="@dimen/coffee_page_margin_side"
+       android:layout_marginLeft="@dimen/coffee_page_margin_side"
+       ></com.tt.view.MainViewPager>
+
+	
+	
+</FrameLayout>

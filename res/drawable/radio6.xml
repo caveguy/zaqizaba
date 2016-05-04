@@ -2,8 +2,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">   
     <item   
     android:state_checked="false"   
-    android:drawable="@drawable/icon_type_6" />   
+    android:drawable="@drawable/icon_dev" />   
     <item   
     android:state_checked="true"   
-    android:drawable="@drawable/icon_type_6p" />   
+    android:drawable="@drawable/icon_dev" />   
 </selector>  

@@ -105,8 +105,8 @@
     <string name="coffee_type2">"美式咖啡|￥8"</string>
     <string name="coffee_type3">"卡布奇诺|￥15"</string>
     <string name="coffee_type4">"拿铁|￥18"</string>
-    <string name="coffee_type5">"糖|￥1"</string>
-    <string name="coffee_type6">"奶|￥2"</string>
+    <string name="coffee_type5">"白开水|￥1"</string>
+    <string name="coffee_type6">"开发中"</string>
     <string name="t_otherPay">"使用其他\n付款方式"</string>
     <string name="cancel">"取消"</string>
     <string name="pleaseChooseCoffee">"请选择咖啡"</string>

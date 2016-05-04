@@ -1,0 +1,78 @@
+
+		<LinearLayout 
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:layout_weight="1"
+		    android:orientation="horizontal" xmlns:android="http://schemas.android.com/apk/res/android">
+	        <CheckBox     
+	            android:id="@+id/radio_1"  
+	            android:layout_width="match_parent"     
+	            android:layout_height="match_parent"  
+	            
+	            android:textSize="@dimen/size_coffee_title"  
+	            android:textColor="@color/brown_title"    
+	            android:gravity="bottom|center_horizontal"  
+	            android:text="@string/coffee_type1" 
+	            android:layout_weight="1"  
+	            android:button="@null"
+				android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
+				android:layout_marginLeft="@dimen/icon_coffee_margin_side"
+				android:layout_marginRight="@dimen/icon_coffee_margin_side"
+	            android:background="@drawable/radio1" 
+	            />
+
+	          
+	        <CheckBox     
+	            android:id="@+id/radio_2"  
+	            android:layout_width="match_parent"     
+	            android:layout_height="match_parent"  
+	            android:text="@string/coffee_type2"  
+	            android:textSize="@dimen/size_coffee_title"    
+	            android:textColor="@color/brown_title"    
+	            android:gravity="bottom|center_horizontal" 
+	            android:layout_weight="1"  
+	            android:button="@null"  
+	            android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
+	            android:layout_marginLeft="@dimen/icon_coffee_margin_side"
+	            android:layout_marginRight="@dimen/icon_coffee_margin_side"
+	            android:background="@drawable/radio2" 
+	            android:adjustViewBounds="true" 
+	            /> 
+	        <CheckBox     
+	            android:id="@+id/radio_3"  
+	            android:layout_width="match_parent"     
+	            android:layout_height="match_parent"  
+	            android:text="@string/coffee_type3"  
+	            android:textSize="@dimen/size_coffee_title"    
+	            android:textColor="@color/brown_title"    
+	            android:gravity="bottom|center_horizontal"  
+	            android:layout_weight="1"  
+	            android:button="@null"  
+	            android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
+	            android:layout_marginLeft="@dimen/icon_coffee_margin_side"
+	            android:layout_marginRight="@dimen/icon_coffee_margin_side"
+	            android:background="@drawable/radio3"
+	            android:adjustViewBounds="true"  
+	            /> 
+	             <CheckBox     
+	            android:id="@+id/radio_4"  
+	            android:layout_width="match_parent"     
+	            android:layout_height="match_parent"  
+	            android:text="@string/coffee_type4"  
+	            android:textSize="@dimen/size_coffee_title"   
+	            android:textColor="@color/brown_title"    
+	            android:gravity="bottom|center_horizontal"  
+	            android:layout_weight="1"  
+	            android:button="@null" 
+	            android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
+	            android:layout_marginLeft="@dimen/icon_coffee_margin_side"
+	            android:layout_marginRight="@dimen/icon_coffee_margin_side"
+	            android:background="@drawable/radio4"  
+	            />            
+	     </LinearLayout>     
+	      
+
+
+	  
+
+	  

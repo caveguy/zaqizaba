@@ -8,7 +8,7 @@ import com.tt.util.LogCatHelper;
 
 public class MainActivity extends Activity {
 	MassageFragment massageFrag;
-	CoffeeFragment coffeeFrag;
+	MainFragment coffeeFrag;
 	VideoFragment.CallBack videocallback;
 	CoffeeFragment.CallBack coffeecallback;
     @Override
@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
             massageFrag=new MassageFragment();
             getFragmentManager().beginTransaction()
                     .add(R.id.frag_msg,massageFrag) .commitAllowingStateLoss(); 
-//            coffeeFrag=new CoffeeFragment();
+            coffeeFrag=new MainFragment();
 //            coffeecallback=new CallBack(){
 //
 //				@Override
@@ -30,9 +30,9 @@ public class MainActivity extends Activity {
 //				}
 //
 //            };
-//            coffeeFrag.setCallBack(coffeecallback);
-//            getFragmentManager().beginTransaction()
-//            .add(R.id.frag_work, coffeeFrag) .commitAllowingStateLoss();
+          //  coffeeFrag.setCallBack(coffeecallback);
+            getFragmentManager().beginTransaction()
+            .add(R.id.frag_work, coffeeFrag) .commitAllowingStateLoss();
 
 
         	VideoFragment videoFragment=new VideoFragment();

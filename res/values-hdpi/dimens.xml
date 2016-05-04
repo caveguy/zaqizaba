@@ -12,12 +12,18 @@
 	<dimen name="top_time">22dp</dimen>
 
 	<dimen name="msg_margin_left">30dp</dimen>
-	<dimen name="msg_margin_top">20dp</dimen>
-	<dimen name="weather_margin_top">14dp</dimen>
+	<dimen name="msg_margin_top">12dp</dimen>
+	<dimen name="msg_item_margin_top">10dp</dimen>
+	<dimen name="weather_margin_top">16dp</dimen>
 	<dimen name="msg_text_margin_left">16dp</dimen>
 	<dimen name="msg_text_margin_left2">46dp</dimen>
 	<dimen name="size_msg_text">16sp</dimen>
 	<dimen name="size_msg_text_tile">16sp</dimen>
+	<dimen name="icon_coffee_margin_side">10dp</dimen>
+	<dimen name="coffee_page_margin_top">12dp</dimen>
+	<dimen name="coffee_page_margin_bottom">20dp</dimen>
+	<dimen name="coffee_page_margin_side">10dp</dimen>
+	<dimen name="coffee_icon_text_padding_bottom">10dp</dimen>
 	
 	
 	

@@ -2,8 +2,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">   
     <item   
     android:state_checked="false"   
-    android:drawable="@drawable/icon_type_2" />   
+    android:drawable="@drawable/icon_meishi" />   
     <item   
     android:state_checked="true"   
-    android:drawable="@drawable/icon_type_2p" />   
+    android:drawable="@drawable/icon_meishi_b" />   
 </selector>  

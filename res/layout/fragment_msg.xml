@@ -10,7 +10,7 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:gravity="left|center_vertical"
-	    
+	    android:layout_marginTop="@dimen/msg_item_margin_top"
 	    android:orientation="horizontal">
 	    <ImageView  
 	   	 android:layout_width="wrap_content"
@@ -29,6 +29,7 @@
     <LinearLayout 
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
+	    android:layout_marginTop="@dimen/msg_item_margin_top"
 	    android:gravity="left|center_vertical"
 	    android:orientation="horizontal">
 	    <ImageView  
@@ -48,6 +49,7 @@
 	    <LinearLayout 
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
+	    android:layout_marginTop="@dimen/msg_item_margin_top"
 	    android:gravity="left|center_vertical"
 	    android:orientation="horizontal">
 	    <ImageView  
@@ -89,6 +91,7 @@
     <LinearLayout 
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
+	    android:layout_marginTop="@dimen/msg_item_margin_top"
 	    android:gravity="left|center_vertical"
 	    android:orientation="horizontal">
 	    <ImageView  
@@ -132,6 +135,7 @@
    	 android:layout_width="wrap_content"
      android:layout_height="wrap_content"
      android:textSize="@dimen/size_msg_text_tile"
+     android:layout_marginTop="@dimen/msg_item_margin_top"
      android:layout_marginLeft="@dimen/msg_text_margin_left2"
      android:textColor="@color/white"
      android:text="新品上市，优惠价8元"/>  
@@ -140,6 +144,7 @@
    	 android:layout_width="wrap_content"
      android:layout_height="wrap_content"
      android:textSize="@dimen/size_msg_text_tile"
+     android:layout_marginTop="@dimen/msg_item_margin_top"
      android:layout_marginLeft="@dimen/msg_text_margin_left2"
      android:textColor="@color/white"
      android:text="新品大促，买一赠一"/>    
