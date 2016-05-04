@@ -5,24 +5,17 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.example.coffemachinev2.R;
-import com.loopj.android.http.MySSLSocketFactory;
-import com.tt.util.SharePreferenceUtil;
-
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android_serialport_api.DeliveryProtocol;
-import android_serialport_api.DeliveryProtocol.CallBack;
+
+import com.example.coffemachinev3.R;
+import com.tt.util.SharePreferenceUtil;
 
 public class MassageFragment extends Fragment {
 

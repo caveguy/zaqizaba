@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.widget.Toast;
 
 public class NetChangedReciever extends BroadcastReceiver {
 	public static CallBack callBack=null;

@@ -1,16 +1,9 @@
 package com.tt.main;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.example.coffemachinev2.R;
-import com.tt.main.CoffeeFragment.CallBack;
+import com.example.coffemachinev3.R;
 import com.tt.util.LogCatHelper;
 
 public class MainActivity extends Activity {

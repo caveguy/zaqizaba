@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.coffemachinev2.R;
+import com.example.coffemachinev3.R;
 public class ToastShow {
 	  private Context context;
 	  private Toast toast = null;

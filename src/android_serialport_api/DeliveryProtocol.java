@@ -11,7 +11,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
-import com.example.coffemachinev2.R;
+import com.example.coffemachinev3.R;
 
 public class DeliveryProtocol {
 	Context context;

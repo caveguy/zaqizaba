@@ -51,7 +51,7 @@ import coffee.shop.po.request.MakeOrderReq;
 import coffee.shop.po.response.MakeOrderRsp;
 import coffee.shop.po.response.QueryDeviceGoodsRsp;
 
-import com.example.coffemachinev2.R;
+import com.example.coffemachinev3.R;
 import com.tt.util.Encode;
 import com.tt.util.TTLog;
 import com.tt.util.ToastShow;

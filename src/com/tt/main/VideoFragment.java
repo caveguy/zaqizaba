@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.example.coffemachinev2.R;
+import com.example.coffemachinev3.R;
 
 public class VideoFragment extends Fragment  implements OnClickListener
 

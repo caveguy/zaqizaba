@@ -2,7 +2,7 @@ package android_serialport_api;
 
 import android.content.Context;
 
-import com.example.coffemachinev2.R;
+import com.example.coffemachinev3.R;
 
 
 public  class  ParseReceiveCommand {
