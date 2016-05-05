@@ -9,12 +9,13 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.RadioButton;
 
 import com.example.coffemachinev3.R;
-import com.tt.view.DialogHelper;
-import com.tt.view.DialogHelper.ConfirmListener;
+
 
 /**
  * @项目名称 :CellNote
@@ -26,7 +27,7 @@ import com.tt.view.DialogHelper.ConfirmListener;
  * @创建日期 :2013-1-28
  * @修改记录 :
  */
-public class SugarDialog {
+public class SugarDialog implements OnClickListener{
 	/**默认的对话框视图*/
 	public static int DIALOG_UI = R.layout.dialog_sweetness ;
 	
@@ -37,7 +38,7 @@ public class SugarDialog {
 	public static final int OK = 0;
 	/**取消按钮点击*/
 	public static final int CANNEL = 1;
-	
+	private int choose;
 	protected Context context;
 	protected Dialog dialog;
 	protected Button okBtn;
@@ -47,6 +48,7 @@ public class SugarDialog {
 	protected String title;
 	protected String message;
 	int place=0;
+	CheckBox radio1,radio2,radio3,radio4;
 	protected ConfirmListener listener;
 	
 	public SugarDialog(Context context){
@@ -71,15 +73,28 @@ public class SugarDialog {
 	
 	protected void createDialog(){
 		View view = View.inflate(context, getMainXML(), null);
-		
-		//((TextView)view.findViewById(R.id.dialog_title)).setText(title);
-		
-		//如果message为null，不显示
-//		TextView messageTV = (TextView)view.findViewById(R.id.dialog_message);
-//		if(message == null)
-//			((LinearLayout)view).removeView(messageTV);
-//		else
-//			messageTV.setText(message);
+		initView( view);
+
+	}
+	
+
+    void initView(View view){
+
+    	radio1=(CheckBox)view.findViewById(R.id.radio_1);
+    	radio2=(CheckBox)view.findViewById(R.id.radio_2);
+    	radio3=(CheckBox)view.findViewById(R.id.radio_3);
+    	radio4=(CheckBox)view.findViewById(R.id.radio_4);
+
+//    	radio1.setOnCheckedChangeListener(this);
+//    	radio2.setOnCheckedChangeListener(this);
+//    	radio3.setOnCheckedChangeListener(this);
+//    	radio4.setOnCheckedChangeListener(this);
+    	radio1.setOnClickListener(this);
+    	radio2.setOnClickListener(this);
+    	radio3.setOnClickListener(this);
+    	radio4.setOnClickListener(this);
+    	radio1.setChecked(true);
+
 		
 		dialog = new Dialog(context);
 		dialog.show();
@@ -123,7 +138,8 @@ public class SugarDialog {
 		win.setContentView(view);
 		
 		initButton(view);
-	}
+    }
+	
 	
 	public void show(){
 		if(dialog == null)
@@ -194,15 +210,75 @@ public class SugarDialog {
 	 */
 	public void afterClickOK(){
 		if(listener != null)
-			listener.onConfirmClick(OK, null);
+			listener.onConfirmClick(OK, choose);
 	}
-	/**
-	 * @方法名称 :getLiveView
-	 * @功能描述 :得到一个扩展的视图，可以产生不同组合的对话框，子类可以重写这个方法
-	 * @return
-	 * @return :View
-	 */
-	public View getLiveView(){
-		return null;
+
+	
+	public interface ConfirmListener{
+		
+		/**
+		 * @方法名称 :onConfirmClick
+		 * @功能描述 :当confirm对话框中的按钮被点击时
+		 * @param position
+		 * @return :void
+		 */
+		public void onConfirmClick(int position, int choose);
+	}
+
+
+	void setIconRadio(int id){
+		switch(id){
+			case R.id.radio_1:
+				choose=0;
+				radio2.setChecked(false);
+				radio3.setChecked(false);
+				radio4.setChecked(false);
+				break;
+			case R.id.radio_2:
+				choose=1;
+				radio1.setChecked(false);
+				radio3.setChecked(false);
+				radio4.setChecked(false);
+				break;
+			case R.id.radio_3:
+				choose=2;
+				radio1.setChecked(false);
+				radio2.setChecked(false);
+				radio4.setChecked(false);
+				break;
+			case R.id.radio_4:
+				choose=3;
+				radio1.setChecked(false);
+				radio2.setChecked(false);
+				radio3.setChecked(false);
+				break;
+			case 0:
+				radio1.setChecked(false);
+				radio2.setChecked(false);
+				radio3.setChecked(false);
+				radio4.setChecked(false);	
+				break;
+		
+		}
+	}
+//	@Override
+//	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//		int id =buttonView.getId();
+//		if(isChecked){
+//			setIconRadio(id);
+//		}else{
+//			buttonView.setChecked(true);
+//		}
+//	}
+	@Override
+	public void onClick(View v) {
+		int id =v.getId();
+		CheckBox box=(CheckBox)v;
+		if(!box.isChecked()){
+			box.setChecked(true);
+		}else{
+			setIconRadio(id);
+		}
+		
 	}
 }
