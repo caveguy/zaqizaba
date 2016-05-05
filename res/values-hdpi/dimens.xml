@@ -26,6 +26,18 @@
 	<dimen name="icon_coffee_margin_out_side">5dp</dimen>
 	<dimen name="coffee_icon_text_padding_bottom">10dp</dimen>
 	<dimen name="arrow_margin">3dp</dimen>
+	<dimen name="dialog_title_size">18sp</dimen>
+	<dimen name="dialog_width">300dp</dimen>
+	<dimen name="dialog_marginleft_l">100dp</dimen>
+	<dimen name="dialog_paddingside">16dp</dimen>
+	<dimen name="dialog_radio_padding">8dp</dimen>
+	<dimen name="dialog_radio_margin_side">12dp</dimen>
+	<dimen name="dialog_button_marginside">20dp</dimen>
+	<dimen name="dialog_margin_bottom">150dp</dimen>
+	<dimen name="dialog1_leftMargin">80dp</dimen>
+	<dimen name="dialog2_leftMargin">80dp</dimen>
+	<dimen name="dialog3_leftMargin">460dp</dimen>
+	<dimen name="dialog4_leftMargin">460dp</dimen>
 	
 	
 	

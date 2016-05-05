@@ -36,6 +36,8 @@ public class MainFragment extends Fragment {
 	PageIndicator mIndicator;
 	ToastShow myToast;
 	Context context;
+	
+	SugarDialog sugarDialog;
 //	private PageIndicator mIndicator;
 	public static RelativeLayout mainbg;
 	CallBack back;
@@ -160,13 +162,16 @@ public class MainFragment extends Fragment {
 //				mainbg.setBackgroundResource(res);
 //			}
 //		});
+		
+		
 		 page1 = CoffeeFragmentPage1.newInstance();
 		 page2 = CoffeeFragmentPage2.newInstance();
 		 page1.setCheckedCallBack(new CheckedCallBack() {
 			
 			@Override
 			public void onCallback(int id) {
-	
+				sugarDialog=new SugarDialog(context,id);
+				sugarDialog.show();
 			}
 		});
 //		fragments.add(leftFragment);

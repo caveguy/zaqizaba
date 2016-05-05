@@ -28,7 +28,6 @@ public class NetChangedReciever extends BroadcastReceiver {
 		NetworkInfo wifiInfo = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 		NetworkInfo ethInfo = manager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
 		NetworkInfo activeInfo = manager.getActiveNetworkInfo();
-		
 		boolean isConnected=mobileInfo.isConnected()|wifiInfo.isConnected()|ethInfo.isConnected();
 		
 		return isConnected;
