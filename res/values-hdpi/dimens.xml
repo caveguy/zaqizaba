@@ -20,10 +20,12 @@
 	<dimen name="size_msg_text">16sp</dimen>
 	<dimen name="size_msg_text_tile">16sp</dimen>
 	<dimen name="icon_coffee_margin_side">10dp</dimen>
-	<dimen name="coffee_page_margin_top">12dp</dimen>
-	<dimen name="coffee_page_margin_bottom">20dp</dimen>
-	<dimen name="coffee_page_margin_side">10dp</dimen>
+	<dimen name="coffee_page_margin_top">15dp</dimen>
+	<dimen name="coffee_page_margin_bottom">24dp</dimen>
+	<dimen name="coffee_page_margin_side">20dp</dimen>
+	<dimen name="icon_coffee_margin_out_side">5dp</dimen>
 	<dimen name="coffee_icon_text_padding_bottom">10dp</dimen>
+	<dimen name="arrow_margin">3dp</dimen>
 	
 	
 	

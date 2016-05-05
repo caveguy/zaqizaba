@@ -16,7 +16,7 @@
 	            android:layout_weight="1"  
 	            android:button="@null"
 				android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
-				android:layout_marginLeft="@dimen/icon_coffee_margin_side"
+				android:layout_marginLeft="@dimen/icon_coffee_margin_out_side"
 				android:layout_marginRight="@dimen/icon_coffee_margin_side"
 	            android:background="@drawable/radio5" 
 	            />
@@ -66,7 +66,7 @@
 	            android:button="@null"  
 	            android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
 	            android:layout_marginLeft="@dimen/icon_coffee_margin_side"
-	            android:layout_marginRight="@dimen/icon_coffee_margin_side"
+	            android:layout_marginRight="@dimen/icon_coffee_margin_out_side"
 	            android:background="@drawable/radio6" 
 	            android:adjustViewBounds="true"   
 	            />            
