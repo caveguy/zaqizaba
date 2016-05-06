@@ -15,16 +15,6 @@ import android.widget.LinearLayout;
 import com.example.coffemachinev3.R;
 
 
-/**
- * @项目名称 :CellNote
- * @文件名称 :ConfirmDialog.java
- * @所在包 :org.nerve.cellnote.view.dialog
- * @功能描述 :
- *	确定对话框，显示标题，内容，还有确定和取消按钮
- * @创建者 :集成显卡	1053214511@qq.com
- * @创建日期 :2013-1-28
- * @修改记录 :
- */
 public class SugarDialog implements OnClickListener{
 	/**默认的对话框视图*/
 	public static int DIALOG_UI = R.layout.dialog_sweetness ;
@@ -157,6 +147,7 @@ public class SugarDialog implements OnClickListener{
 				@Override
 				public void onClick(View v) {
 					dialog.dismiss();
+					dialog=null;
 					afterClickOK();
 				}
 			});
@@ -165,6 +156,7 @@ public class SugarDialog implements OnClickListener{
 				@Override
 				public void onClick(View v) {
 					dialog.dismiss();
+					dialog=null;
 					afterClickCancel();
 				}
 			});
@@ -197,7 +189,14 @@ public class SugarDialog implements OnClickListener{
 	public int getGravity(){
 		return Gravity.CENTER;
 	}
+	public void closeDialog(){
+		dialog.dismiss();
+		dialog=null;
+	}
 	
+	public boolean isAlive(){
+		return dialog==null?false:true;
+	}
 	/**
 	 * @方法名称 :afterClickOK
 	 * @功能描述 :确认按钮点击后触发，子类可以重写这个方法达到不同的效果

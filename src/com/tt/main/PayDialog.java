@@ -17,16 +17,6 @@ import android.widget.TextView;
 import com.example.coffemachinev3.R;
 
 
-/**
- * @项目名称 :CellNote
- * @文件名称 :ConfirmDialog.java
- * @所在包 :org.nerve.cellnote.view.dialog
- * @功能描述 :
- *	确定对话框，显示标题，内容，还有确定和取消按钮
- * @创建者 :集成显卡	1053214511@qq.com
- * @创建日期 :2013-1-28
- * @修改记录 :
- */
 public class PayDialog implements OnClickListener{
 	/**默认的对话框视图*/
 	public static int DIALOG_UI = R.layout.dialog_pay ;
@@ -171,6 +161,7 @@ public class PayDialog implements OnClickListener{
 				@Override
 				public void onClick(View v) {
 					dialog.dismiss();
+					dialog=null;
 					afterClickCancel();
 				}
 			});
@@ -208,7 +199,7 @@ public class PayDialog implements OnClickListener{
 
 	public void afterClickCancel(){
 		if(listener != null)
-			listener.onButtonClick(CANNEL);
+			listener.onCancelClick();
 	}
 
 	
@@ -219,7 +210,8 @@ public class PayDialog implements OnClickListener{
 		 * @param position
 		 * @return :void
 		 */
-		public void onButtonClick(int button);
+		public void onCancelClick();
+		
 		public void onPay(boolean success);
 	}
 
@@ -240,5 +232,14 @@ public class PayDialog implements OnClickListener{
 
 	
 		
+	}
+	
+	public void closeDialog(){
+		dialog.dismiss();
+		dialog=null;
+	}
+	
+	public boolean isAlive(){
+		return dialog==null?false:true;
 	}
 }
