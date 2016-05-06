@@ -74,7 +74,7 @@ public class CoffeeFragmentPage1 extends Fragment implements OnClickListener,and
 		btn_coffee3.setText(name[0]);
 		btn_coffee4.setText(name[0]);
 	}
-	void setCoffeeIconRadio(int id){
+	public void setCoffeeIconRadio(int id){
 		switch(id){
 			case R.id.radio_1:
 				checkedCallBack(0);
@@ -101,11 +101,12 @@ public class CoffeeFragmentPage1 extends Fragment implements OnClickListener,and
 				btn_coffee3.setChecked(false);
 				break;
 			case 0:
+			default:
 				btn_coffee1.setChecked(false);
 				btn_coffee2.setChecked(false);
 				btn_coffee3.setChecked(false);
 				btn_coffee4.setChecked(false);	
-		
+				break;
 		}
 	}
 	@Override

@@ -24,6 +24,13 @@
     <string name="tab1">微信支付</string>
     <string name="tab4">Card支付</string>
     <string name="tab3">Appeal支付</string>
+    
+    <string name="zfb">支付宝</string>
+    <string name="weixin">微信</string>
+    <string name="cardPay">IC卡支付</string>
+    <string name="numberPay">卡券支付</string>
+    
+    
     <string name="McUartName">/dev/ttymxc3</string>
     <string name="IoUartName">/dev/ttymxc4</string>
     
@@ -85,6 +92,7 @@
     <string name="latte">拿铁</string>
     <string name="cappuccino">卡布奇诺</string>
     <string name="sugar">糖</string>
+    <string name="water">白开水</string>
     <string name="milk">奶</string>
     <string name="init">初始化</string>
     <string name="clean">清洗</string>
@@ -142,10 +150,18 @@
     <string name="retry">重试</string>
     <string name="giveup">申请退款</string>
     <string name="title_sweet">甜度选择</string>
+    <string name="title_pay">支付选项</string>
     <string name="sugar0">无</string>
     <string name="sugar1">低</string>
     <string name="sugar2">中</string>
     <string name="sugar3">高</string>
+    <string name="qr_pay">扫码支付</string>
+    <string name="icPay">IC卡支付</string>
+    <string name="numPay">卡券支付</string>
+    <string name="no">无</string>
+    <string name="low">低</string>
+    <string name="medium">中</string>
+    <string name="high">高</string>
     <string name="version">v2.0.3-160503-1</string>
 
 </resources>

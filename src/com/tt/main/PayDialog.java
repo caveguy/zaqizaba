@@ -10,7 +10,9 @@ import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.coffemachinev3.R;
 
@@ -25,71 +27,46 @@ import com.example.coffemachinev3.R;
  * @创建日期 :2013-1-28
  * @修改记录 :
  */
-public class SugarDialog implements OnClickListener{
+public class PayDialog implements OnClickListener{
 	/**默认的对话框视图*/
-	public static int DIALOG_UI = R.layout.dialog_sweetness ;
-	
-	/**默认的对话框占主屏幕多宽度的比例*/
-//	public static float WIDTH_SCALE = 0.8F;
-	
-	/**OK按钮被点击*/
-	public static final int OK = 0;
-	/**取消按钮点击*/
-	public static final int CANNEL = 1;
-	private int choose;
-	protected Context context;
-	protected Dialog dialog;
-	protected Button okBtn;
-	protected Button cannelBtn;
+	public static int DIALOG_UI = R.layout.dialog_pay ;
 	
 
-	protected String title;
-	protected String message;
+
+	/**取消按钮点击*/
+	public static final int CANNEL = 1;
+	protected Context context;
+	protected Dialog dialog;
+	
+	protected Button cannelBtn;
+	private Button btn_ic,btn_num;
+	private ImageView img_zfb,img_weixin;
+	private TextView t_state;
+	protected int id;
+	int sweetness=0;
 	int place=0;
 	CheckBox radio1,radio2,radio3,radio4;
-	protected ConfirmListener listener;
+	protected PayListener listener;
 	
-	public SugarDialog(Context context){
+	public PayDialog(Context context){
 		this.context = context;
 	}
-	public SugarDialog(Context context, int place){
+	public PayDialog(Context context, int place,int sweet){
 		this(context);
 		this.place=place;
+		sweetness=sweet;
 //		this.title = t;
 //		this.message = m;
 	}
 	
-	public void setTitle(String t){
-		this.title = t;
-	}
-	public void setMessage(String m){
-		this.message = m;
-	}
-	public void setConfirmListener(ConfirmListener listener){
+
+	public void setListener(PayListener listener){
 		this.listener = listener;
 	}
 	
 	protected void createDialog(){
 		View view = View.inflate(context, getMainXML(), null);
 		initView( view);
-
-	}
-	
-
-    void initView(View view){
-
-    	radio1=(CheckBox)view.findViewById(R.id.radio_1);
-    	radio2=(CheckBox)view.findViewById(R.id.radio_2);
-    	radio3=(CheckBox)view.findViewById(R.id.radio_3);
-    	radio4=(CheckBox)view.findViewById(R.id.radio_4);
-
-    	radio1.setOnClickListener(this);
-    	radio2.setOnClickListener(this);
-    	radio3.setOnClickListener(this);
-    	radio4.setOnClickListener(this);
-    	radio1.setChecked(true);
-
-		
 		dialog = new Dialog(context);
 		dialog.show();
 		Window win = dialog.getWindow();
@@ -121,15 +98,51 @@ public class SugarDialog implements OnClickListener{
 		
 		params.setMargins(left, params.topMargin, params.rightMargin, params.bottomMargin);
 		layout_bg.setLayoutParams(params);
-		
-//		LinearLayout ll = (LinearLayout)view.findViewById(R.id.dialog_live);
-//		View liveView = getLiveView();
-//		if(liveView != null){
-//			ll.addView(liveView);
-//		}
-		
 		win.setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		win.setContentView(view);
+	}
+	
+	String getCoffee(){
+		switch(place){
+		
+		case 0:
+			return context.getString(R.string.espresso);
+		case 1:
+			return context.getString(R.string.american);
+		case 2:
+			return context.getString(R.string.cappuccino);
+		case 3:
+			return context.getString(R.string.latte);
+		case 4:
+			return context.getString(R.string.water);
+
+		}
+		return "";
+	}
+	String getSweet(){
+		switch(sweetness){
+		
+		case 0:
+			return context.getString(R.string.no);
+		case 1:
+			return context.getString(R.string.low);
+		case 2:
+			return context.getString(R.string.medium);
+		case 3:
+			return context.getString(R.string.high);
+
+			
+		}
+		return "";
+	}
+
+    void initView(View view){
+
+    	img_zfb=(ImageView)view.findViewById(R.id.img_qr_zfb);
+    	img_weixin=(ImageView)view.findViewById(R.id.img_qr_weixin);
+    	t_state=(TextView)view.findViewById(R.id.t_state);
+    	String state="您已选中："+getCoffee()+",甜度为："+getSweet()+",请尽快完成支付";
+    	t_state.setText(state);
 		
 		initButton(view);
     }
@@ -150,16 +163,9 @@ public class SugarDialog implements OnClickListener{
 	 * @return :void
 	 */
 	protected void initButton(View view){
+		cannelBtn = (Button)view.findViewById(R.id.btn_cancel);
 		if(isButtonShow()){
-			okBtn = (Button)view.findViewById(R.id.dialog_ok);
-			cannelBtn = (Button)view.findViewById(R.id.dialog_cannel);
-			okBtn.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					dialog.dismiss();
-					afterClickOK();
-				}
-			});
+
 			
 			cannelBtn.setOnClickListener(new OnClickListener() {
 				@Override
@@ -198,68 +204,27 @@ public class SugarDialog implements OnClickListener{
 		return Gravity.CENTER;
 	}
 	
-	/**
-	 * @方法名称 :afterClickOK
-	 * @功能描述 :确认按钮点击后触发，子类可以重写这个方法达到不同的效果
-	 * @return :void
-	 */
-	public void afterClickOK(){
-		if(listener != null)
-			listener.onOKClick(place, choose);
-	}
+
+
 	public void afterClickCancel(){
 		if(listener != null)
-			listener.onCancelClick(place);
+			listener.onButtonClick(CANNEL);
 	}
 
 	
-	public interface ConfirmListener{		
+	public interface PayListener{		
 		/**
 		 * @方法名称 :onConfirmClick
 		 * @功能描述 :当confirm对话框中的按钮被点击时
 		 * @param position
 		 * @return :void
 		 */
-		public void onOKClick(int position, int choose);
-		public void onCancelClick(int position);
+		public void onButtonClick(int button);
+		public void onPay(boolean success);
 	}
 
 
-	void setIconRadio(int id){
-		switch(id){
-			case R.id.radio_1:
-				choose=0;
-				radio2.setChecked(false);
-				radio3.setChecked(false);
-				radio4.setChecked(false);
-				break;
-			case R.id.radio_2:
-				choose=1;
-				radio1.setChecked(false);
-				radio3.setChecked(false);
-				radio4.setChecked(false);
-				break;
-			case R.id.radio_3:
-				choose=2;
-				radio1.setChecked(false);
-				radio2.setChecked(false);
-				radio4.setChecked(false);
-				break;
-			case R.id.radio_4:
-				choose=3;
-				radio1.setChecked(false);
-				radio2.setChecked(false);
-				radio3.setChecked(false);
-				break;
-			case 0:
-				radio1.setChecked(false);
-				radio2.setChecked(false);
-				radio3.setChecked(false);
-				radio4.setChecked(false);	
-				break;
-		
-		}
-	}
+
 //	@Override
 //	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 //		int id =buttonView.getId();
@@ -272,12 +237,8 @@ public class SugarDialog implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		int id =v.getId();
-		CheckBox box=(CheckBox)v;
-		if(!box.isChecked()){
-			box.setChecked(true);
-		}else{
-			setIconRadio(id);
-		}
+
+	
 		
 	}
 }

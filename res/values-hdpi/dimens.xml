@@ -38,9 +38,16 @@
 	<dimen name="dialog2_leftMargin">80dp</dimen>
 	<dimen name="dialog3_leftMargin">460dp</dimen>
 	<dimen name="dialog4_leftMargin">460dp</dimen>
+	<dimen name="dialog_state_size">12sp</dimen>
+	<dimen name="dialog_zfb_size">14sp</dimen>
+	<dimen name="size_qr_img">72dp</dimen>
+	<dimen name="margin_qr_img_y">8dp</dimen>
+	<dimen name="margin_qr_img_x">12dp</dimen>
+	<dimen name="btn_paymargin_bottom">18dp</dimen>
+	<dimen name="btn_paymargin_top">10dp</dimen>
 	
-	
-	
+		
+		
 	<dimen name="bottom_time">24dp</dimen>
 	<dimen name="padding_payIcon">16dp</dimen>
 	<dimen name="padding_type">7dp</dimen>
@@ -51,8 +58,6 @@
 	<dimen name="size_coffee_title">14sp</dimen>
 	<dimen name="padding_qr_frag">30dp</dimen>
 	<dimen name="paddingTop_qr_img">30dp</dimen>
-	<dimen name="size_qr_img">120dp</dimen>
-	<dimen name="margin_qr_img">30dp</dimen>
 	<dimen name="size_other_btnw">80dp</dimen>
 	<dimen name="size_other_btnh">50dp</dimen>
  	<dimen name="marginLeft_btn_other">30dp</dimen>

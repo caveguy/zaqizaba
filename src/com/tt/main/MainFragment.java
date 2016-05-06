@@ -17,6 +17,8 @@ import android.widget.RelativeLayout;
 
 import com.example.coffemachinev3.R;
 import com.tt.main.CoffeeFragmentPage1.CheckedCallBack;
+import com.tt.main.PayDialog.PayListener;
+import com.tt.main.SugarDialog.ConfirmListener;
 import com.tt.util.SharePreferenceUtil;
 import com.tt.util.ToastShow;
 import com.tt.view.GuideFragmentAdapter;
@@ -36,8 +38,9 @@ public class MainFragment extends Fragment {
 	PageIndicator mIndicator;
 	ToastShow myToast;
 	Context context;
-	
+	int sweetness=0;
 	SugarDialog sugarDialog;
+	PayDialog payDialog;
 //	private PageIndicator mIndicator;
 	public static RelativeLayout mainbg;
 	CallBack back;
@@ -153,25 +156,14 @@ public class MainFragment extends Fragment {
 	}
 	private ArrayList<Fragment> initFragments() {
 		ArrayList<Fragment> fragments = new ArrayList<Fragment>();
-//		final MainLeftFragment leftFragment = MainLeftFragment.newInstance();
-//		leftFragment.setClickCallBack(new ClickCallBack() {
-//			
-//			@Override
-//			public void onitemClick(int res) {
-//				leftFragment.dismis();
-//				mainbg.setBackgroundResource(res);
-//			}
-//		});
-		
-		
+	
 		 page1 = CoffeeFragmentPage1.newInstance();
 		 page2 = CoffeeFragmentPage2.newInstance();
 		 page1.setCheckedCallBack(new CheckedCallBack() {
 			
 			@Override
 			public void onCallback(int id) {
-				sugarDialog=new SugarDialog(context,id);
-				sugarDialog.show();
+				showSugarDialog(id);
 			}
 		});
 //		fragments.add(leftFragment);
@@ -180,4 +172,60 @@ public class MainFragment extends Fragment {
 		return fragments;
 
 	}
+	void setSweetness(int sweet){
+		sweetness=sweet;
+	}
+	int getSweetness(){
+		return sweetness;
+	}
+	
+	void resetChoice(){
+		page1.setCoffeeIconRadio(0);
+		page2.setCoffeeIconRadio(0);
+	}
+	void showSugarDialog(int id){
+		sugarDialog=new SugarDialog(context,id);
+		sugarDialog.setConfirmListener(sugarListener);
+		sugarDialog.show();
+	}
+	void showPayDialog(int id,int sweet){
+		payDialog=new PayDialog(context,id,sweet);
+		payDialog.setListener(payListener);
+		payDialog.show();
+	}
+	
+	SugarListener sugarListener=new SugarListener();
+	 class SugarListener implements ConfirmListener{
+
+			@Override
+			public void onOKClick(int position, int choose) {
+				setSweetness(choose);
+				showPayDialog(position,choose);
+			}
+
+			@Override
+			public void onCancelClick(int position) {
+				resetChoice();
+				
+			}
+	 }
+	 PayDialogListener payListener=new PayDialogListener();
+	 class PayDialogListener implements PayListener{
+
+		@Override
+		public void onButtonClick(int button) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onPay(boolean success) {
+			// TODO Auto-generated method stub
+			
+		} 
+	 }
+	 
+	 
+	 
+	 
 }

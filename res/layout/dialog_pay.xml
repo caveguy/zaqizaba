@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom|left"
+    >
+	<LinearLayout
+	android:id="@+id/layout_bg"
+    android:orientation="vertical"
+    android:layout_marginLeft="@dimen/dialog_marginleft_l"
+    android:layout_width="@dimen/dialog_width"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/dialog_paddingside"
+    android:paddingLeft="@dimen/dialog_paddingside"
+    android:paddingRight="@dimen/dialog_paddingside"
+    android:background="@drawable/bg_notice_l"
+    android:layout_marginBottom="@dimen/dialog_margin_bottom"
+    >  
+    <TextView 
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/dialog_title_size"
+        android:textColor="@color/orange_title"
+        android:gravity="center"
+        android:text="@string/title_sweet"
+        />
+    
+    <!-- 标题下面的整个布局 -->
+	<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+	android:gravity="left"
+    >    
+        <TextView 
+        android:id="@+id/t_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/dialog_state_size"
+        android:textColor="@color/brown_title"
+        android:text="您已选择：美式，甜度为：中,请尽快完成支付"
+        />  
+    	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+		android:gravity="center"
+	    >   
+	    <!-- 左边二维码 -->
+	    	<LinearLayout
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+		    android:layout_marginTop="@dimen/margin_qr_img_y"
+			android:layout_marginRight="@dimen/margin_qr_img_x"
+			android:paddingBottom="@dimen/margin_qr_img_y"
+			android:gravity="center"
+		    >   
+		   		<ImageView
+		   		    android:id="@+id/img_qr_zfb"
+		   		   	android:layout_width="@dimen/size_qr_img"
+			    	android:layout_height="@dimen/size_qr_img"
+			    	android:layout_marginBottom="@dimen/margin_qr_img_y"
+			    	android:adjustViewBounds="true"
+			    	android:src="@drawable/qr"
+		    	>   
+	   		  </ImageView>
+	   		    <TextView 
+			   
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textSize="@dimen/dialog_zfb_size"
+			        android:textColor="@color/brown_title"
+			        android:text="@string/zfb"
+			        />  
+			   	  <TextView 
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textSize="@dimen/dialog_state_size"
+			        android:textColor="@color/brown_title"
+			        android:text="@string/qr_pay"
+			        />       
+		   		
+	       </LinearLayout> 
+	       <!-- 中间二维码 -->
+	       <LinearLayout
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+		    android:layout_marginTop="@dimen/margin_qr_img_y"
+			android:layout_marginLeft="@dimen/margin_qr_img_x"
+			android:layout_marginRight="@dimen/margin_qr_img_x"
+			android:gravity="center"
+		    >   
+			<ImageView
+		   		    android:id="@+id/img_qr_weixin"
+		   		   	android:layout_width="@dimen/size_qr_img"
+			    	android:layout_height="@dimen/size_qr_img"
+			    	android:layout_marginBottom="@dimen/margin_qr_img_y"
+			    	android:adjustViewBounds="true"
+			    	android:src="@drawable/qr"
+		    	>   
+	   		  </ImageView>
+	   		    <TextView 
+			   
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textSize="@dimen/dialog_zfb_size"
+			        android:textColor="@color/brown_title"
+			        android:text="@string/zfb"
+			        />  
+			   	  <TextView 
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textSize="@dimen/dialog_state_size"
+			        android:textColor="@color/brown_title"
+			        android:text="@string/qr_pay"
+			        />
+	       </LinearLayout>
+	        <!-- 右边按钮区域 -->
+	    	<LinearLayout
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+		    android:layout_marginLeft="@dimen/margin_qr_img_x"
+			android:gravity="center"
+		    >   
+		        <Button 
+		            android:id="@+id/btn_ic"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="@string/icPay"
+		            android:background="@drawable/bg_button_pay"
+		     		android:layout_marginBottom="@dimen/btn_paymargin_bottom"
+		            android:textColor="@color/brown_title"/>
+  		        <Button 
+		            android:id="@+id/btn_card"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="@string/numPay"
+		            android:background="@drawable/bg_button_pay"
+		           	android:layout_marginBottom="@dimen/btn_paymargin_bottom"
+		            android:textColor="@color/brown_title"/>      
+	         	<Button 
+		            android:id="@+id/btn_cancel"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="@string/cancel"
+		            android:background="@drawable/bg_button_pay"
+		            android:layout_marginTop="@dimen/btn_paymargin_top"
+		            android:textColor="@color/brown_title"/>	         
+	       </LinearLayout>	       
+       </LinearLayout> 
+  
+
+   
+</LinearLayout>    
+        <!-- 这个可以自由添加视图 -->
+	    <LinearLayout 
+	        android:id="@+id/dialog_live"
+	        android:orientation="vertical"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	       >
+       
+   	 </LinearLayout>
+    
+	</LinearLayout>      
+    
+</LinearLayout>   

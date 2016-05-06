@@ -23,7 +23,7 @@
         android:textSize="@dimen/dialog_title_size"
         android:textColor="@color/orange_title"
         android:gravity="center"
-        android:text="@string/title_sweet"
+        android:text="@string/title_pay"
         />
 	<LinearLayout
     android:layout_width="match_parent"
