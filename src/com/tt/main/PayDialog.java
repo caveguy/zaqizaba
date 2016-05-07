@@ -2,6 +2,7 @@ package com.tt.main;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.View;
@@ -242,4 +243,14 @@ public class PayDialog implements OnClickListener{
 	public boolean isAlive(){
 		return dialog==null?false:true;
 	}
+	public void setZfbQr(String path){
+		if(isAlive())
+			img_zfb.setImageBitmap(BitmapFactory.decodeFile(path));
+	}
+	public void setWeixinQr(String path){
+		if(isAlive())
+			img_weixin.setImageBitmap(BitmapFactory.decodeFile(path));
+	}
+	
+	
 }

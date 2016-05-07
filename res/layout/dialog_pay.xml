@@ -60,11 +60,13 @@
 		    >   
 		   		<ImageView
 		   		    android:id="@+id/img_qr_zfb"
+		   		    android:scaleType="fitXY"
 		   		   	android:layout_width="@dimen/size_qr_img"
 			    	android:layout_height="@dimen/size_qr_img"
 			    	android:layout_marginBottom="@dimen/margin_qr_img_y"
 			    	android:adjustViewBounds="true"
-			    	android:src="@drawable/qr"
+			    	android:background="@color/white"
+			    	
 		    	>   
 	   		  </ImageView>
 	   		    <TextView 
@@ -101,7 +103,8 @@
 			    	android:layout_height="@dimen/size_qr_img"
 			    	android:layout_marginBottom="@dimen/margin_qr_img_y"
 			    	android:adjustViewBounds="true"
-			    	android:src="@drawable/qr"
+			    	android:scaleType="fitCenter"
+			    	android:background="@color/white"
 		    	>   
 	   		  </ImageView>
 	   		    <TextView 

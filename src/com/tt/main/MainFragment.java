@@ -4,7 +4,9 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -18,9 +20,12 @@ import tp.device.coffee.task.RefundApplyAsyncTask;
 import tp.lib.TPConstants;
 import android.app.Fragment;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.style.AlignmentSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,12 +58,14 @@ import com.viewpagerindicator.PageIndicator;
  * ������Fragment
  */
 public class MainFragment extends Fragment {
-	private final int Handler_qr=1001;
+
 	private final int Handler_netDisp=1002;
 	private final int Handler_tPay=1003;
 	private final int Handler_tCoffee=1006;
 	private final int Handler_mcDisp=1004;
 	private final int Handler_TimeOut=1005;
+	private final int Handler_qr_weixin=1007;
+	private final int Handler_qr_zhifubao=1008;
 	private final String Tag="CoffeeFrag";
 	private final int CoffeeType1=0;
 	private final int CoffeeType2=1;
@@ -77,7 +84,8 @@ public class MainFragment extends Fragment {
 	private final int CloseCnt_pay=60*2;
 	private final int CloseCnt_TakingCup=30;
 	private final int TimeOutDuaration=80;
-	
+	private final int WeixinPay=2;
+	private final int AliPay=1;
 	private int coffeeType=0;
 	private GuideFragmentAdapter mAdapter;
 	private MainViewPager mPager;
@@ -100,13 +108,15 @@ public class MainFragment extends Fragment {
 	boolean isMcEnable=false;      //咖啡机是否工作正常
 	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
 	boolean needBean=true ;   //
-	
+	private boolean dispDevLayout=false;
+
 	//目前辅助板的两种不能工作的状态：
 	boolean hasCup=true;
 	boolean hasWater=true;
 	boolean isConnectToServer=false;
 	boolean isMachineWork=false;
 	boolean appealed=false;//是否已经申述
+	boolean isDebug=false;
 	HashMap<Integer,Long> goodId=new HashMap<Integer,Long>();
 	HashMap<Long,String>	goodName=new HashMap<Long,String>();
 	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
@@ -142,6 +152,9 @@ public class MainFragment extends Fragment {
 		return fragment;
 	}
 
+	
+	
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -153,7 +166,130 @@ public class MainFragment extends Fragment {
 		return view;
 	}
 	
-	
+    @Override
+	public void onStart() {
+        initMachines();
+		super.onStart();
+	}
+    Integer getCurType(){
+    	Iterator it = goodId.entrySet().iterator(); 
+    	while (it.hasNext()) {  	  
+    		 Map.Entry entry=(HashMap.Entry) it.next();  
+    		    Integer key = (Integer)entry.getKey();  	    
+    		    Long value = (Long)entry.getValue();  
+    	    if( value==cur_goodId){
+    	    	return key;
+    	    }  
+    	}
+    	return 0;
+    }
+void initMachines(){
+    	
+    	myMachine=new MachineProtocol(context);
+    	mcSetCallBack();
+        deliveryController=new DeliveryProtocol(context);
+        deliveryController.setCallBack(new DeliveryProtocol.CallBack(){
+
+        	
+			@Override
+			public void cupDroped() {
+				//杯子已经掉下，可以打咖啡了
+				mc_makeCoffee(getCurType());
+			}
+
+
+
+			@Override
+			public void cupStuck() {
+				mc_cupStuck();
+				
+			}
+
+			@Override
+			public void noCupDrop() {
+				mc_noCups();
+				
+			}
+
+			@Override
+			public void dropCupTimeOut() {
+				mc_dropCupTimeOut();
+				
+			}
+
+			@Override
+			public void hasDirtyCup() {
+				mc_hasDirtyCup();
+				
+			}
+
+			@Override
+			public void powderDroped() {
+				mc_powderDroped();
+				
+			}
+
+			@Override
+			public void sendTimeOut() {
+				mc_toAssistControllerTimeOut();
+				
+			}
+			@Override
+			public void tradeFinish() {
+				mylog.log_i("***cup was taken away,deal finished ****");
+				myHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						closeOder();
+					}
+				});	
+			}
+
+
+
+			@Override
+			public void startDropCup() {
+				mc_startDropCup();
+			}
+
+
+
+			@Override
+			public void onDisable() {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void onEnable() {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void cupReady() {
+				resumeTimeOutTime();
+				mc_makeCoffee(getCurType());
+			}
+
+
+
+			@Override
+			public void noWater() {
+				mc_noWater();
+			}
+        	
+        });
+        if(hasNetWork()){
+        	initPayServer();
+        }
+
+        addNetworkChangedCallback();
+    }
 	void initView(View view){
 		myToast= new ToastShow(context);
         ArrowListener arrowListener=new ArrowListener();
@@ -193,13 +329,18 @@ public class MainFragment extends Fragment {
 			}
 		});
         
+        
+
 	     myHandler = new MyHandler(context){
 		        @Override
 		        public void myHandleMessage(Message msg) {
 		        	
 		    		switch (msg.what) {
-					case Handler_qr:
-						
+					case Handler_qr_weixin:
+						updateQRPic(msg.obj.toString(),WeixinPay);
+						break;
+					case Handler_qr_zhifubao:
+						updateQRPic(msg.obj.toString(),AliPay);
 						break;
 					case Handler_netDisp:	
 						myToast.toastShow(msg.obj.toString());
@@ -228,7 +369,91 @@ public class MainFragment extends Fragment {
 
         
 	}
+	void mcSetCallBack(){
+		 ParseReceiveCommand.setCallBack(new ParseReceiveCommand.CallBack() {
+			
+			@Override
+			public void onParsed(int cmd) {
+				// TODO Auto-generated method stub
+//				 if(cmd==1){
+//					String dispString= ParseReceiveCommand.getDispStringId(context);
+//					if(layout_mask.getVisibility()==View.VISIBLE){
+//						sendMsgToHandler(Handler_mcDisp, dispString);
+//						
+//					}
+//					if(dispString!=oldMcString){
+//						mylog.log_i("****Machine String****"+dispString);
+//						if(dispString.equals(context.getString(R.string.cmd1_pressRinse))){
+//							myMachine.sendCleanCmd();
+//						}
+////						else if(dispString.equals(getString(R.string.cmd1_ready))){
+////						 if(tradeStep!=StepNone&&oldMcString.equals(getString(R.string.cmd1_espresso))){  //交易状态下，字符串变成准备就绪说明出咖啡完成
+////								mc_coffeeDroped();
+////							}
+////						}
+//						
+//					}
+//					oldMcString=dispString;
+//				 }
+//				 else if(cmd==0x19){
+//					 byte windowstate=ParseReceiveCommand.getWindow();
+//					// myToast.toastShow("cmd0x19="+windowstate);
+//					 if(windowstate==2&&mcWindowLast==5){
+//						 mc_coffeeDroped();
+//						 
+//						 
+//					 }					 
+//					 mcWindowLast=windowstate;
+//					//myMachine.initMachine();
+//				 }
+			}
+
+			@Override
+			public void onFault(String msg) {
+				isMachineWork=false;
+				if(!dispDevLayout){
+					setEnable(isMachineWork&&isConnectToServer);
+					sendMsgToHandler(Handler_mcDisp, msg);
+				}
+				if(tradeStep==StepMaking){//在制作过程中出现错误，这个时候应该退款
+					if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
+						appealed=true;
+						
+						
+						appeal();
+						myHandler.post(new Runnable() {
+							
+							@Override
+							public void run() {
+								closeOder(); //从故障中恢复，直接关闭之前的订单	
+							}
+						});
+						
+					}
+				}
 	
+			}
+
+			@Override
+			public void onWork() {
+				isMachineWork=true;
+				if(!dispDevLayout){
+					setEnable(isMachineWork&&isConnectToServer);
+				}
+			}
+		});
+	}
+	
+	
+    void updateQRPic(String path,int type){
+    	if(payDialog!=null&&payDialog.isAlive()){
+    		if(type==WeixinPay)
+    			payDialog.setWeixinQr(path);
+    		else if(type==AliPay){
+    			payDialog.setZfbQr(path);
+    		}
+    	}
+    }
 	
 	void setArrow(int page){
 		if(page==0){
@@ -277,7 +502,8 @@ public class MainFragment extends Fragment {
 			@Override
 			public void onCallback(int id) {
 				showSugarDialog(id);
-				coffeeType=id;
+				setCoffeeType(id);
+				//coffeeType=id;
 			}
 		});
 //		fragments.add(leftFragment);
@@ -306,6 +532,7 @@ public class MainFragment extends Fragment {
 		payDialog=new PayDialog(context,id,sweet);
 		payDialog.setListener(payListener);
 		payDialog.show();
+		askQrPay(cur_goodId);
 	}
 	void showStateDialog(int id,String state){
 		stateDialog=new MakingStateDialog(context,id,state);
@@ -387,8 +614,20 @@ public class MainFragment extends Fragment {
 	    }
 	    
 	    
-	    void setGoodMsg(){
 
+	    
+	    void setGoodMsg(){
+	    	long id;
+	    	String[] name = new String[goodId.size()];
+	    	for(int i=0;i<goodId.size();i++){
+				if(goodId.containsKey(i)){
+					id=goodId.get(i);
+					name[i]=goodName.get(id)+"|￥"+goodPrice.get(id).toString();
+					
+				}
+	    	}
+	    	page1.setIconNames(name);
+	    	page2.setIconNames(name);
 	    	
 	    }
 	    void initPayServer(){
@@ -462,7 +701,7 @@ public class MainFragment extends Fragment {
 			msg.obj=dsp;
 			myHandler.sendMessage(msg);
 		}
-		public void getQtImage(String url) {
+		public void getQtImage(String url,int type) {
 
 			final String filePath = context.getCacheDir() + File.pathSeparator + "qtImage"
 					+ ".jpg";
@@ -473,15 +712,18 @@ public class MainFragment extends Fragment {
 
 			if (blCreated) {
 				myToast.toastShow(R.string.createQrSuccess);
-				sendMsgToHandler(Handler_qr,filePath);
-				
+				if(type==WeixinPay)
+					sendMsgToHandler(Handler_qr_weixin,filePath);
+				else if(type==AliPay){
+					sendMsgToHandler(Handler_qr_zhifubao,filePath);
+				}
 
 			} else {
 				myToast.toastShow(R.string.createQrFailed);
 			}
 		}
 	    
-	    void askPay(long goodId,int payType){
+	    void askWeixinQrPay(long goodId){
 	        /*下单*/
 	        MakeOrderReq req = new MakeOrderReq();
 	        req.setFeedId(deviceInterfaceAdapter.getDevice().getFeedId());
@@ -489,19 +731,42 @@ public class MainFragment extends Fragment {
 	        goodsIds.add(goodId);
 	        //goodsIds.add(2l);
 	        req.setGoodsIds(goodsIds);
-	        req.setPayType(payType);//1支付宝 2//微信
+	        req.setPayType(WeixinPay);//1支付宝 2//微信
 	        new MakeOrderAsyncTask(){
 	            @Override
 	            protected void onPostExecute(MakeOrderRsp rsp) {
 	                if(rsp!=null && rsp.getErrcode()==0){
 	                  String url= rsp.getQrCodeUrl();
-	                   getQtImage( url);
+	                   getQtImage( url,WeixinPay);
 	                }
 	            }
 	           
 	        }.execute(req);
 	    }
-	    
+	    void askZfbQrPay(long goodId){
+	    	/*下单*/
+	    	MakeOrderReq req = new MakeOrderReq();
+	    	req.setFeedId(deviceInterfaceAdapter.getDevice().getFeedId());
+	    	List<Long> goodsIds = new ArrayList<Long>();
+	    	goodsIds.add(goodId);
+	    	//goodsIds.add(2l);
+	    	req.setGoodsIds(goodsIds);
+	    	req.setPayType(AliPay);//1支付宝 2//微信
+	    	new MakeOrderAsyncTask(){
+	    		@Override
+	    		protected void onPostExecute(MakeOrderRsp rsp) {
+	    			if(rsp!=null && rsp.getErrcode()==0){
+	    				String url= rsp.getQrCodeUrl();
+	    				getQtImage( url,AliPay);
+	    			}
+	    		}
+	    		
+	    	}.execute(req);
+	    }
+	    void askQrPay(long goodId){
+	    	askZfbQrPay(goodId);
+	    	askWeixinQrPay(goodId);
+	    }
 	    
 	    void appeal(){
 	        /*退款申请*/
@@ -920,5 +1185,38 @@ public class MainFragment extends Fragment {
 						stateDialog.setState(state);
 					}
 				}
+				void setCoffeeType(int type){
+					
+					if(type==-1){
+						cur_goodId=-1;
+						//t_coffeeType.setText(R.string.pleaseChooseCoffee);
+						//setPayEnable(false);
+						return ;
+					}
+					coffeeType=type;
+					if(isDebug){
+						startMaking();
+					}
+					//setPayEnable(true);
+					if(goodId.containsKey(type)){
+						cur_goodId=goodId.get(type);
+					
+					//	tCoffeeDisp="已选择"+goodName.get(cur_goodId)+"|￥"+goodPrice.get(cur_goodId).toString();
+					//	t_coffeeType.setText(tCoffeeDisp);
+					//	t_payType.setText(R.string.pleaseChoosePay);
+						
+					}
+				}
 				
+				boolean  hasNetWork(){
+					ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+					NetworkInfo mobileInfo = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+					NetworkInfo wifiInfo = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+					NetworkInfo ethInfo = manager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
+					//NetworkInfo activeInfo = manager.getActiveNetworkInfo();
+					
+					boolean isConnected=mobileInfo.isConnected()|wifiInfo.isConnected()|ethInfo.isConnected();
+					
+					return isConnected;
+				}
 }

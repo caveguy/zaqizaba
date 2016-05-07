@@ -69,10 +69,14 @@ public class CoffeeFragmentPage1 extends Fragment implements OnClickListener,and
 
     }
 	public void setIconNames(String[] name){
-		btn_coffee1.setText(name[0]);
-		btn_coffee2.setText(name[0]);
-		btn_coffee3.setText(name[0]);
-		btn_coffee4.setText(name[0]);
+		if(name.length>0)
+			btn_coffee1.setText(name[0]);
+		if(name.length>1)
+			btn_coffee2.setText(name[1]);
+		if(name.length>2)
+			btn_coffee3.setText(name[2]);
+		if(name.length>3)
+			btn_coffee4.setText(name[3]);
 	}
 	public void setCoffeeIconRadio(int id){
 		switch(id){
