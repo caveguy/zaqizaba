@@ -190,8 +190,10 @@ public class SugarDialog implements OnClickListener{
 		return Gravity.CENTER;
 	}
 	public void closeDialog(){
-		dialog.dismiss();
-		dialog=null;
+		if(dialog!=null){
+			dialog.dismiss();
+			dialog=null;
+		}
 	}
 	
 	public boolean isAlive(){

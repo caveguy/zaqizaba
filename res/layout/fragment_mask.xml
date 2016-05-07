@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/layout_mask"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    android:gravity="center"
+    android:clickable="true"
+    >
+	<LinearLayout
+	android:id="@+id/layout_bg"
+    android:orientation="vertical"
+    android:layout_width="@dimen/dialog_width"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/dialog_paddingside"
+    android:paddingLeft="@dimen/dialog_paddingside"
+    android:paddingRight="@dimen/dialog_paddingside"
+    android:background="@color/white_bg"
+    >  
+    <!--  
+    <TextView 
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/dialog_title_size"
+        android:textColor="@color/orange_title"
+        android:gravity="center"
+        android:text="@string/maintain"
+        />
+-->
+	  <LinearLayout 
+    
+    android:layout_width="match_parent"
+   	android:layout_height="wrap_content"
+    android:gravity="center"  
+    android:orientation="vertical"
+     >
+    
+   	         <TextView
+   	        android:id="@+id/t_maintain"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/maintain_text_size"
+	       android:textColor="@color/brown_title"
+	        android:text="@string/maintain"/> 
+	      
+				  <LinearLayout 
+			    
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:gravity="center"
+			    android:orientation="horizontal"
+			     >
+	  	    <TextView
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/devState_text_size"
+	        android:textColor="@color/brown_title"
+	        android:text="@string/mcStateLable"
+	        /> 
+   	         <TextView
+   	        android:id="@+id/t_mcDetail"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="@color/brown_title"
+	        android:textSize="@dimen/devState_text_size"
+	        android:text="@string/comErr"
+	        /> 
+	       </LinearLayout>
+	       			  <LinearLayout 
+			    
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:gravity="center"
+			    android:orientation="horizontal"
+			     >
+	  	    <TextView
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/devState_text_size"
+	        android:text="@string/netStateLable"
+	        android:textColor="@color/brown_title"
+	        /> 
+   	         <TextView
+   	        android:id="@+id/t_netDetail"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/devState_text_size"
+	        android:text="@string/nonet"
+	        android:textColor="@color/brown_title"
+	        /> 
+	       </LinearLayout>
+	        <TextView
+   	        android:id="@+id/t_refund"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="@color/red_msg"
+	        android:textSize="@dimen/devState_text_size"
+	        
+	        android:text="@string/refund"
+	        /> 
+   	     <RadioGroup 
+   	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+   	        android:orientation="horizontal" 
+   	         
+   	         >
+   	         <RadioButton 
+   	         android:id="@+id/radio_cup1"
+   	         android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+	        android:textColor="@color/brown_title"
+   	        android:text="自动落杯"   
+   	             />
+   	         <RadioButton 
+   	         android:id="@+id/radio_cup2"
+   	         android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+	        android:textColor="@color/brown_title"
+   	        android:text="手动放杯"   
+   	             />   
+   	         
+   	         
+   	     </RadioGroup>
+   	        <RadioGroup 
+   	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+   	        android:orientation="horizontal" 
+   	         
+   	         >
+   	         <RadioButton 
+   	         android:id="@+id/radio_needBean"
+   	         android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+   	        android:text="@string/needbean"   
+   	        android:textColor="@color/brown_title"
+   	             />
+   	        <RadioButton 
+   	         android:id="@+id/radio_noneedBean"
+   	         android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+   	        android:text="@string/noneedbean" 
+   	        android:textColor="@color/brown_title"  
+   	             />   
+   	           
+   	     </RadioGroup>
+   	     	<CheckBox
+   	        android:id="@+id/btn_debug"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/debug"
+	        android:textColor="@color/brown_title"
+	        /> 	
+   	     
+   	     
+	         <Button
+   	        android:id="@+id/btn_clean"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/dialog_state_size"
+	        android:text="@string/clean"
+	        android:textColor="@color/brown_title"
+	        /> 
+	        <Button
+   	        android:id="@+id/btn_mskCancel"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="@dimen/dialog_state_size"
+	        android:text="@string/hide"
+	        android:textColor="@color/brown_title"
+	        /> 
+        
+	        <TextView 
+		        android:id="@+id/t_version"
+		    	android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textSize="@dimen/dialog_state_size"
+		        android:text="@string/version" 
+		        android:textColor="@color/brown_title"
+	            
+	            />
+	 </LinearLayout>
+ </LinearLayout>	
+ </LinearLayout>	

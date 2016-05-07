@@ -21,14 +21,13 @@ public class MakingStateDialog implements OnClickListener{
 	
 
 
-	/**取消按钮点击*/
-	public static final int CANNEL = 1;
+
 	protected Context context;
 	protected Dialog dialog;
 	
-	protected Button cannelBtn;
+	
 	private String state;
-	private TextView t_state;
+	private TextView t_state,t_state_ext;
 	protected int id;
 	int place=0;
 
@@ -89,14 +88,20 @@ public class MakingStateDialog implements OnClickListener{
 
     void initView(View view){
     	t_state=(TextView)view.findViewById(R.id.t_state);
+    	t_state_ext=(TextView)view.findViewById(R.id.t_state_ext);
 //    	String state=;
-   	t_state.setText(state);
+    	if(state!=null)
+    		t_state.setText(state);
 		
 //		initButton(view);
     }
 	public void setState(String str){
 		this.state=str;
 		t_state.setText(state);
+	}
+	public void setState_ext(String str){
+		this.state=str;
+		t_state_ext.setText(state);
 	}
 	
 	public void show(){
@@ -121,8 +126,10 @@ public class MakingStateDialog implements OnClickListener{
 
 	}
 	public void closeDialog(){
-		dialog.dismiss();
-		dialog=null;
+		if(dialog!=null){
+			dialog.dismiss();
+			dialog=null;
+		}
 	}
 	
 	public boolean isAlive(){

@@ -39,6 +39,7 @@
 	<dimen name="dialog3_leftMargin">1090dp</dimen>
 	<dimen name="dialog4_leftMargin">1090dp</dimen>
 	<dimen name="dialog_state_size">26sp</dimen>
+	<dimen name="state_dialog_state_margin_top">16dp</dimen>
 	<dimen name="dialog_make_state_size">35sp</dimen>	
 	<dimen name="dialog_zfb_size">30sp</dimen>
 	<dimen name="size_qr_img">158dp</dimen>

@@ -24,7 +24,7 @@
         android:textSize="@dimen/dialog_title_size"
         android:textColor="@color/orange_title"
         android:gravity="center"
-        android:text="@string/title_sweet"
+        android:text="@string/title_state"
         />
     
     <!-- 标题下面的整个布局 -->
@@ -38,9 +38,19 @@
         android:id="@+id/t_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/state_dialog_state_margin_top"
         android:textSize="@dimen/dialog_make_state_size"
         android:textColor="@color/brown_dialog"
         android:text="付款成功，制作中，请稍后......"
+        />   
+        <TextView 
+        android:id="@+id/t_state_ext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/state_dialog_state_margin_top"
+        android:textSize="@dimen/dialog_make_state_size"
+        android:textColor="@color/brown_dialog"
+        android:text=""
         />        
        </LinearLayout> 
   

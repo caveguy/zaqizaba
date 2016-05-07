@@ -151,6 +151,7 @@
     <string name="giveup">申请退款</string>
     <string name="title_sweet">甜度选择</string>
     <string name="title_pay">支付选项</string>
+    <string name="title_state">状态提示</string>
     <string name="sugar0">无</string>
     <string name="sugar1">低</string>
     <string name="sugar2">中</string>

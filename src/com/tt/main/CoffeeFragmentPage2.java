@@ -1,44 +1,38 @@
 package com.tt.main;
 
-import java.math.BigDecimal;
-
-import tp.device.DeviceInterface.MyHandler;
 import android.app.Fragment;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.example.coffemachinev3.R;
-import com.tt.util.ToastShow;
 
 public class CoffeeFragmentPage2 extends Fragment implements OnClickListener,android.widget.CompoundButton.OnCheckedChangeListener{
 
 	CheckBox btn_coffee1,btn_coffee2,btn_coffee3,btn_coffee4;
 
-	CallBack back;
-	public interface CallBack{
-		void onCallback();
+	CheckedCallBack back=null;
+	public interface CheckedCallBack{
+		void onCallback(int id);
 	}
-	public CallBack getBack() {
+	public CheckedCallBack getBack() {
 		return back;
 	}
 
-	public void setBack(CallBack back) {
+	public void setCheckedCallBack(CheckedCallBack back) {
 		this.back = back;
 	}
 
+	void checkedCallBack(int id){
+		if(back!=null){
+			back.onCallback(id);
+		}
+	}
+	
 	public static CoffeeFragmentPage2 newInstance() {
 		CoffeeFragmentPage2 fragment = new CoffeeFragmentPage2();
 		return fragment;
@@ -75,39 +69,48 @@ public class CoffeeFragmentPage2 extends Fragment implements OnClickListener,and
 
     }
 	public void setIconNames(String[] name){
-		btn_coffee1.setText(name[0]);
-		btn_coffee2.setText(name[0]);
-		btn_coffee3.setText(name[0]);
-		btn_coffee4.setText(name[0]);
+		if(name.length>4)
+			btn_coffee1.setText(name[4]);
+		if(name.length>5)
+			btn_coffee2.setText(name[5]);
+		if(name.length>6)
+			btn_coffee3.setText(name[6]);
+		if(name.length>7)
+			btn_coffee4.setText(name[7]);
 	}
-	void setCoffeeIconRadio(int id){
+	public void setCoffeeIconRadio(int id){
 		switch(id){
 			case R.id.radio_1:
+				checkedCallBack(0);
 				btn_coffee2.setChecked(false);
 				btn_coffee3.setChecked(false);
 				btn_coffee4.setChecked(false);
 				break;
 			case R.id.radio_2:
+				checkedCallBack(1);
 				btn_coffee1.setChecked(false);
 				btn_coffee3.setChecked(false);
 				btn_coffee4.setChecked(false);
 				break;
 			case R.id.radio_3:
+				checkedCallBack(2);
 				btn_coffee2.setChecked(false);
 				btn_coffee1.setChecked(false);
 				btn_coffee4.setChecked(false);
 				break;
 			case R.id.radio_4:
+				checkedCallBack(3);
 				btn_coffee1.setChecked(false);
 				btn_coffee2.setChecked(false);
 				btn_coffee3.setChecked(false);
 				break;
 			case 0:
+			default:
 				btn_coffee1.setChecked(false);
 				btn_coffee2.setChecked(false);
 				btn_coffee3.setChecked(false);
 				btn_coffee4.setChecked(false);	
-		
+				break;
 		}
 	}
 	@Override

@@ -36,16 +36,18 @@ public class PayDialog implements OnClickListener{
 	protected int id;
 	int sweetness=0;
 	int place=0;
+	String taste=null;
 	CheckBox radio1,radio2,radio3,radio4;
 	protected PayListener listener;
 	
 	public PayDialog(Context context){
 		this.context = context;
 	}
-	public PayDialog(Context context, int place,int sweet){
+	public PayDialog(Context context, int place,int sweet,String name){
 		this(context);
 		this.place=place;
 		sweetness=sweet;
+		taste=name;
 //		this.title = t;
 //		this.message = m;
 	}
@@ -93,23 +95,23 @@ public class PayDialog implements OnClickListener{
 		win.setContentView(view);
 	}
 	
-	String getCoffee(){
-		switch(place){
-		
-		case 0:
-			return context.getString(R.string.espresso);
-		case 1:
-			return context.getString(R.string.american);
-		case 2:
-			return context.getString(R.string.cappuccino);
-		case 3:
-			return context.getString(R.string.latte);
-		case 4:
-			return context.getString(R.string.water);
-
-		}
-		return "";
-	}
+//	String getCoffee(){
+//		switch(place){
+//		
+//		case 0:
+//			return context.getString(R.string.espresso);
+//		case 1:
+//			return context.getString(R.string.american);
+//		case 2:
+//			return context.getString(R.string.cappuccino);
+//		case 3:
+//			return context.getString(R.string.latte);
+//		case 4:
+//			return context.getString(R.string.water);
+//
+//		}
+//		return "";
+//	}
 	String getSweet(){
 		switch(sweetness){
 		
@@ -132,7 +134,7 @@ public class PayDialog implements OnClickListener{
     	img_zfb=(ImageView)view.findViewById(R.id.img_qr_zfb);
     	img_weixin=(ImageView)view.findViewById(R.id.img_qr_weixin);
     	t_state=(TextView)view.findViewById(R.id.t_state);
-    	String state="您已选中："+getCoffee()+",甜度为："+getSweet()+",请尽快完成支付";
+    	String state="您已选中："+taste+",甜度为："+getSweet()+",请尽快完成支付";
     	t_state.setText(state);
 		
 		initButton(view);
@@ -236,8 +238,10 @@ public class PayDialog implements OnClickListener{
 	}
 	
 	public void closeDialog(){
-		dialog.dismiss();
-		dialog=null;
+		if(dialog!=null){
+			dialog.dismiss();
+			dialog=null;
+		}
 	}
 	
 	public boolean isAlive(){

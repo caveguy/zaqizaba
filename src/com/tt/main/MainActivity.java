@@ -40,17 +40,33 @@ public class MainActivity extends Activity {
 				
 				@Override
 				public void logoClicked() {
-				//	coffeeFrag.enterDevMode();
+					coffeeFrag.enterDevMode();
 				}
 			};
-            videoFragment.setCallBack(videocallback);	
+            	
             getFragmentManager().beginTransaction()
             .add(R.id.frag_video, videoFragment).commit();
 
+         	maintainFrag=new MaintainFragment();
+            getFragmentManager().beginTransaction()
+            .add(R.id.container, maintainFrag).commit();
             
+            videoFragment.setCallBack(videocallback);
+         	//coffeeFrag.setCallBack(maintainFrag.getMainCallBack());
+        	//maintainFrag.setSelfBack(coffeeFrag.getDevCallBack());	
         }
     }
 
+    MaintainFragment maintainFrag;
+    void createDevFragment(){
+   
+    }
+    
+    
+    
+    
+    
+    
 	@Override
 	protected void onDestroy() {
 		 LogCatHelper.getInstance(this).stop();

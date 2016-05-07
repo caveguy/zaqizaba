@@ -3,6 +3,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_msg1"
     android:paddingLeft="@dimen/msg_margin_left"
+    android:paddingRight="@dimen/msg_margin_left"
     android:paddingTop="@dimen/msg_margin_top"
     android:orientation="vertical"
     >
