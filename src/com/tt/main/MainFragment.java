@@ -601,7 +601,7 @@ void existMask(){
 	
 		 page1 = CoffeeFragmentPage1.newInstance();
 		 page2 = CoffeeFragmentPage2.newInstance();
-		 page1.setCheckedCallBack(new CheckedCallBack() {
+		 page1.setCheckedCallBack(new CoffeeFragmentPage1.CheckedCallBack() {
 			
 			@Override
 			public void onCallback(int id) {
@@ -610,6 +610,15 @@ void existMask(){
 				//coffeeType=id;
 			}
 		});
+		 page2.setCheckedCallBack(new CoffeeFragmentPage2.CheckedCallBack() {
+			 
+			 @Override
+			 public void onCallback(int id) {
+				 showSugarDialog(id);
+				 setCoffeeType(id+4);
+				 //coffeeType=id;
+			 }
+		 });
 //		fragments.add(leftFragment);
 		fragments.add(page1);
 		fragments.add(page2);
@@ -757,8 +766,13 @@ void existMask(){
 				}
 	    	}
 	    	page1.setIconNames(name);
-	    	page2.setIconNames(name);
-	    	
+	    	if(name.length>4){
+	    	String[] name2=new String[name.length-4];
+	    	for(int i=4;i<name.length;i++){
+	    		name2[i-4]=name[i]	;
+	    	}
+	    	page2.setIconNames(name2);
+	    	}
 	    }
 	    void initPayServer(){
 	    	if(coffeeDeviceEvent==null){
