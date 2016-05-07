@@ -994,7 +994,7 @@ void existMask(){
 //						//t_payType.setText(R.string.dropPowder);
 //					}
 //				});
-		    	switch(type){
+		    	switch(type){//这里要根据sweetness选择出糖量
 		    	case CoffeeType1://美式
 		    		myMachine.dropCoffee();
 			    //	deliveryController.cmd_pushLeftPowder(70, 50,150);//落糖
