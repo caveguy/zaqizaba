@@ -10,7 +10,7 @@ public class MainActivity extends Activity {
 	MassageFragment massageFrag;
 	MainFragment coffeeFrag;
 	VideoFragment.CallBack videocallback;
-	CoffeeFragment.CallBack coffeecallback;
+//	CoffeeFragment.CallBack coffeecallback;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

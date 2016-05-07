@@ -13,6 +13,7 @@
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/dialog_paddingside"
     android:paddingLeft="@dimen/dialog_paddingside"
+    android:paddingRight="@dimen/dialog_paddingside"
     android:background="@drawable/bg_notice_l"
     android:layout_marginBottom="@dimen/dialog_margin_bottom"
     >  
@@ -23,12 +24,12 @@
         android:textSize="@dimen/dialog_title_size"
         android:textColor="@color/orange_title"
         android:gravity="center"
-        android:text="@string/title_pay"
+        android:text="@string/title_sweet"
         />
 	<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/dialog_radio_padding"
+
 	android:gravity="center"
     >      
     <GridLayout 
@@ -46,7 +47,7 @@
 	            android:layout_height="wrap_content"  
 	            android:text="@string/sugar0"  
 	            android:textSize="@dimen/size_coffee_title"   
-	            android:textColor="@color/brown_title"    
+	            android:textColor="@color/brown_dialog"    
 	            android:layout_weight="1"  
 	            android:button="@drawable/sweet_radio1" 
 	            android:layout_marginTop="@dimen/dialog_radio_padding"
@@ -59,7 +60,7 @@
 	            android:layout_height="wrap_content"  
 	            android:text="@string/sugar1"  
 	            android:textSize="@dimen/size_coffee_title"   
-	            android:textColor="@color/brown_title"    
+	            android:textColor="@color/brown_dialog"    
 	            android:layout_weight="1"  
 	            android:button="@drawable/sweet_radio2" 
 	            android:layout_marginTop="@dimen/dialog_radio_padding"
@@ -72,7 +73,7 @@
 	            android:layout_height="wrap_content"  
 	            android:text="@string/sugar2"  
 	            android:textSize="@dimen/size_coffee_title"   
-	            android:textColor="@color/brown_title"    
+	            android:textColor="@color/brown_dialog"    
 	            android:layout_weight="1"  
 	            android:button="@drawable/sweet_radio3" 
 	            android:layout_marginTop="@dimen/dialog_radio_padding"
@@ -85,7 +86,7 @@
 	            android:layout_height="wrap_content"  
 	            android:text="@string/sugar3"  
 	            android:textSize="@dimen/size_coffee_title"   
-	            android:textColor="@color/brown_title"    
+	            android:textColor="@color/brown_dialog"    
 	            android:layout_weight="1"  
 	            android:button="@drawable/sweet_radio4" 
 	            android:layout_marginTop="@dimen/dialog_radio_padding"
@@ -121,8 +122,9 @@
             android:layout_height="wrap_content"
             android:text="@string/ok"
             android:background="@drawable/bg_button"
+            android:textSize="@dimen/size_button_ok"
             android:layout_marginRight="@dimen/dialog_button_marginside"
-            android:textColor="@color/brown_title"/>
+            android:textColor="@color/brown_dialog"/>
         
          <Button 
             android:id="@+id/dialog_cannel"
@@ -130,8 +132,9 @@
             android:layout_height="wrap_content"
             android:text="@string/cancel"
             android:background="@drawable/bg_button"
+            android:textSize="@dimen/size_button_ok"
             android:layout_marginLeft="@dimen/dialog_button_marginside"
-            android:textColor="@color/brown_title"/>
+            android:textColor="@color/brown_dialog"/>
         
     </LinearLayout>
 </LinearLayout>    

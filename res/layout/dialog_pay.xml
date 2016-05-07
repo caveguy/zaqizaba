@@ -24,7 +24,7 @@
         android:textSize="@dimen/dialog_title_size"
         android:textColor="@color/orange_title"
         android:gravity="center"
-        android:text="@string/title_sweet"
+        android:text="@string/title_pay"
         />
     
     <!-- 标题下面的整个布局 -->
@@ -39,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/dialog_state_size"
-        android:textColor="@color/brown_title"
+        android:textColor="@color/brown_dialog"
         android:text="您已选择：美式，甜度为：中,请尽快完成支付"
         />  
     	<LinearLayout
@@ -72,14 +72,14 @@
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:textSize="@dimen/dialog_zfb_size"
-			        android:textColor="@color/brown_title"
+			        android:textColor="@color/brown_dialog"
 			        android:text="@string/zfb"
 			        />  
 			   	  <TextView 
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:textSize="@dimen/dialog_state_size"
-			        android:textColor="@color/brown_title"
+			        android:textColor="@color/brown_dialog"
 			        android:text="@string/qr_pay"
 			        />       
 		   		
@@ -92,6 +92,7 @@
 		    android:layout_marginTop="@dimen/margin_qr_img_y"
 			android:layout_marginLeft="@dimen/margin_qr_img_x"
 			android:layout_marginRight="@dimen/margin_qr_img_x"
+			android:paddingBottom="@dimen/margin_qr_img_y"
 			android:gravity="center"
 		    >   
 			<ImageView
@@ -108,14 +109,14 @@
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:textSize="@dimen/dialog_zfb_size"
-			        android:textColor="@color/brown_title"
-			        android:text="@string/zfb"
+			        android:textColor="@color/brown_dialog"
+			        android:text="@string/weixin"
 			        />  
 			   	  <TextView 
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:textSize="@dimen/dialog_state_size"
-			        android:textColor="@color/brown_title"
+			        android:textColor="@color/brown_dialog"
 			        android:text="@string/qr_pay"
 			        />
 	       </LinearLayout>
@@ -125,6 +126,7 @@
 		    android:layout_height="wrap_content"
 		    android:orientation="vertical"
 		    android:layout_marginLeft="@dimen/margin_qr_img_x"
+		    android:layout_marginTop="@dimen/btn_paymargin_top"
 			android:gravity="center"
 		    >   
 		        <Button 
@@ -132,25 +134,28 @@
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
 		            android:text="@string/icPay"
+		            android:textSize="@dimen/size_button_otherPay"
 		            android:background="@drawable/bg_button_pay"
 		     		android:layout_marginBottom="@dimen/btn_paymargin_bottom"
-		            android:textColor="@color/brown_title"/>
+		            android:textColor="@color/brown_dialog"/>
   		        <Button 
 		            android:id="@+id/btn_card"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
 		            android:text="@string/numPay"
+		            android:textSize="@dimen/size_button_otherPay"
 		            android:background="@drawable/bg_button_pay"
 		           	android:layout_marginBottom="@dimen/btn_paymargin_bottom"
-		            android:textColor="@color/brown_title"/>      
+		            android:textColor="@color/brown_dialog"/>      
 	         	<Button 
 		            android:id="@+id/btn_cancel"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
 		            android:text="@string/cancel"
+		            android:textSize="@dimen/size_button_ok"
 		            android:background="@drawable/bg_button_pay"
 		            android:layout_marginTop="@dimen/btn_paymargin_top"
-		            android:textColor="@color/brown_title"/>	         
+		            android:textColor="@color/brown_dialog"/>	         
 	       </LinearLayout>	       
        </LinearLayout> 
   

@@ -39,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/dialog_make_state_size"
-        android:textColor="@color/brown_title"
+        android:textColor="@color/brown_dialog"
         android:text="付款成功，制作中，请稍后......"
         />        
        </LinearLayout> 
