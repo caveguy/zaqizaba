@@ -51,7 +51,7 @@
 	<dimen name="size_button_ok">26sp</dimen>
 	<dimen name="indicator_padding">22dp</dimen>
 	<dimen name="indicator_radius">8dp</dimen>
-	
+	<dimen name="dev_margin_top">350dp</dimen>
 		
 		
 	<dimen name="bottom_time">48dp</dimen>

@@ -4,8 +4,9 @@
     android:id="@+id/layout_mask"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/dev_margin_top"
     android:visibility="gone"
-    android:gravity="center"
+    android:gravity="center_horizontal|top"
     android:clickable="true"
     >
 	<LinearLayout
@@ -134,6 +135,7 @@
    	         android:layout_width="wrap_content"
 	        android:layout_height="wrap_content" 
 	        android:textColor="@color/brown_title"
+	        android:textSize="@dimen/devState_text_size"
    	        android:text="自动落杯"   
    	             />
    	         <RadioButton 
@@ -141,6 +143,7 @@
    	         android:layout_width="wrap_content"
 	        android:layout_height="wrap_content" 
 	        android:textColor="@color/brown_title"
+	        android:textSize="@dimen/devState_text_size"
    	        android:text="手动放杯"   
    	             />   
    	         
@@ -157,6 +160,7 @@
    	         android:layout_width="wrap_content"
 	        android:layout_height="wrap_content" 
    	        android:text="@string/needbean"   
+   	        android:textSize="@dimen/devState_text_size"
    	        android:textColor="@color/brown_title"
    	             />
    	        <RadioButton 
@@ -164,6 +168,7 @@
    	         android:layout_width="wrap_content"
 	        android:layout_height="wrap_content" 
    	        android:text="@string/noneedbean" 
+   	        android:textSize="@dimen/devState_text_size"
    	        android:textColor="@color/brown_title"  
    	             />   
    	           
@@ -173,6 +178,7 @@
 	    	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="@string/debug"
+	        android:textSize="@dimen/devState_text_size"
 	        android:textColor="@color/brown_title"
 	        /> 	
    	     
@@ -183,6 +189,7 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="@dimen/dialog_state_size"
 	        android:text="@string/clean"
+	        
 	        android:textColor="@color/brown_title"
 	        /> 
 	        <Button
