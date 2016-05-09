@@ -100,6 +100,7 @@ public class DeliveryProtocol {
 	void getAck(){
 		hasAck=true;	
 		cancelAckTimerTask();
+		onGetAckCallBack();
 	}
 	public DeliveryProtocol(Context c){
 		context=c;
@@ -557,7 +558,7 @@ public class DeliveryProtocol {
 		void tradeFinish();
 		void startDropCup();
 		void onDisable();
-		void onEnable();
+		void onGetAck();
 		void cupReady();//为了不落杯的程序准备
 	//	void cupNotReady();//为了不落杯的程序准备
 	}
@@ -574,10 +575,10 @@ public class DeliveryProtocol {
 		if(callBack!=null)
 			callBack.noWater();
 	}
-	private void onEnableCallBack(){
-		Log.d(TAG,"!!!!onEnableCallBack");
+	private void onGetAckCallBack(){
+	//	Log.d(TAG,"!!!!onEnableCallBack");
 		if(callBack!=null)
-			callBack.onEnable();
+			callBack.onGetAck();
 	}
 	private void startDropCupCallBack(){
 		Log.d(TAG,"!!!!startDropCupCallBack");

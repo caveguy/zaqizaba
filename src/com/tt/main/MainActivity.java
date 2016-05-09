@@ -10,7 +10,7 @@ public class MainActivity extends Activity {
 	MassageFragment massageFrag;
 	MainFragment coffeeFrag;
 	VideoFragment.CallBack videocallback;
-//	CoffeeFragment.CallBack coffeecallback;
+	MainFragment.UpdateMsgCallBack  coffeecallback;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,27 +22,13 @@ public class MainActivity extends Activity {
             getFragmentManager().beginTransaction()
                     .add(R.id.frag_msg,massageFrag) .commitAllowingStateLoss(); 
             coffeeFrag=new MainFragment();
-//            coffeecallback=new CallBack(){
-//
-//				@Override
-//				public void updateMsg(String msg) {
-//					massageFrag.setMsg(msg);
-//				}
-//
-//            };
-          //  coffeeFrag.setCallBack(coffeecallback);
+
             getFragmentManager().beginTransaction()
             .add(R.id.frag_work, coffeeFrag) .commitAllowingStateLoss();
 
 
         	VideoFragment videoFragment=new VideoFragment();
-            videocallback=new VideoFragment.CallBack() {
-				
-				@Override
-				public void logoClicked() {
-					coffeeFrag.enterDevMode();
-				}
-			};
+
             	
             getFragmentManager().beginTransaction()
             .add(R.id.frag_video, videoFragment).commit();
@@ -51,6 +37,21 @@ public class MainActivity extends Activity {
             getFragmentManager().beginTransaction()
             .add(R.id.container, maintainFrag).commit();
             
+            coffeecallback=new MainFragment.UpdateMsgCallBack(){
+
+				@Override
+				public void updateMsg(String msg) {
+					massageFrag.setMsg(msg);
+				}
+            };
+            videocallback=new VideoFragment.CallBack() {
+				
+				@Override
+				public void logoClicked() {
+					coffeeFrag.enterDevMode();
+				}
+			};
+            coffeeFrag.setMsgCallBack(coffeecallback);
             videoFragment.setCallBack(videocallback);
          	//coffeeFrag.setCallBack(maintainFrag.getMainCallBack());
         	//maintainFrag.setSelfBack(coffeeFrag.getDevCallBack());	

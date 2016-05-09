@@ -128,11 +128,13 @@
     <string name="dropPowder">"正在制作咖啡"</string>
     <string name="startDropCup">"正在落杯"</string>
     <string name="comErr">"无法与咖啡机通信"</string>
+    <string name="AssiscomErr">"无法与辅助板通信"</string>
     <string name="putCup">"请放纸杯"</string>
     <string name="hide">隐藏</string>
     <string name="debug">调试模式(无需支付)</string>
     <string name="update_Price">"sync_device_goods_price"</string>
-    <string name="mcStateLable">机器状态：</string>
+    <string name="mcStateLable">主咖啡机状态：</string>
+    <string name="assistStateLable">辅助系统状态：</string>
     <string name="netStateLable">网络状态：</string>
     <string name="nonet">无法连接到网络</string>
     <string name="hasnet">已连接网络，等待服务器连接</string>
@@ -159,10 +161,12 @@
     <string name="qr_pay">扫码支付</string>
     <string name="icPay">IC卡支付</string>
     <string name="numPay">卡券支付</string>
+    <string name="work">工作正常</string>
     <string name="no">无</string>
     <string name="low">低</string>
     <string name="medium">中</string>
     <string name="high">高</string>
-    <string name="version">v3.0.1-160507-3</string>
+    <string name="wait">等待更新</string>
+    <string name="version">v3.0.2-160509-1</string>
 
 </resources>

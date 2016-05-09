@@ -65,7 +65,7 @@
 	     android:textSize="@dimen/size_msg_text"
 	     android:textColor="@color/white"
 	     android:layout_marginLeft="@dimen/msg_text_margin_left"
-	     android:text="杭州"/>  
+	     android:text="@string/wait"/>  
 	</LinearLayout>
       
     <LinearLayout 
@@ -87,7 +87,7 @@
 	     android:textSize="@dimen/size_msg_text"
 	     android:textColor="@color/white"
 	     android:layout_marginLeft="@dimen/msg_text_margin_left"
-	     android:text="小雨转多云"/>  
+	     android:text="string/wait"/>  
 	</LinearLayout>
     <LinearLayout 
 	    android:layout_width="match_parent"
@@ -107,7 +107,7 @@
 	     android:textSize="@dimen/size_msg_text"
 	     android:textColor="@color/white"
 	     android:layout_marginLeft="@dimen/msg_text_margin_left"
-	     android:text="12-19℃"/>  
+	     android:text="string/wait"/>  
 	</LinearLayout>	
     <LinearLayout 
 	    android:layout_width="match_parent"

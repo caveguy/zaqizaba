@@ -23,10 +23,8 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Message;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.style.AlignmentSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +42,6 @@ import coffee.shop.po.response.MakeOrderRsp;
 import coffee.shop.po.response.QueryDeviceGoodsRsp;
 
 import com.example.coffemachinev3.R;
-import com.tt.main.CoffeeFragmentPage1.CheckedCallBack;
 import com.tt.main.PayDialog.PayListener;
 import com.tt.main.SugarDialog.ConfirmListener;
 import com.tt.util.Encode;
@@ -59,12 +56,12 @@ import com.viewpagerindicator.PageIndicator;
  * ������Fragment
  */
 public class MainFragment extends Fragment {
-
+	private final int Handler_assiMcDisp=1001;
 	private final int Handler_netDisp=1002;
 	private final int Handler_tPay=1003;
-	private final int Handler_tCoffee=1006;
 	private final int Handler_mcDisp=1004;
 	private final int Handler_TimeOut=1005;
+	private final int Handler_tCoffee=1006;	
 	private final int Handler_qr_weixin=1007;
 	private final int Handler_qr_zhifubao=1008;
 	private final String Tag="CoffeeFrag";
@@ -118,6 +115,8 @@ public class MainFragment extends Fragment {
 	boolean hasWater=true;
 	boolean isConnectToServer=false;
 	boolean isMachineWork=false;
+	boolean isAssistMcWork=false;
+	
 	boolean appealed=false;//是否已经申述
 	boolean isDebug=false;
 	byte mcWindowLast=0; //为了知道咖啡有没有制作完成
@@ -140,19 +139,41 @@ public class MainFragment extends Fragment {
 //	private PageIndicator mIndicator;
 	public static RelativeLayout mainbg;
 	static SetDevCallBack myCallback=null;
+	 String oldAssisStr="";
+	 String oldMcStr="";
+	 String oldNetStr="";
+
+	UpdateMsgCallBack msgCallBack=null;
+	public  void setMsgCallBack(UpdateMsgCallBack call) {
+		// TODO Auto-generated method stub
+		msgCallBack = call;
+	}
+
+	public interface UpdateMsgCallBack {
+		
+		void updateMsg(String msg);
+
+	}
 	
-//	public  MaintainFragment.DevCallBack getDevCallBack(){
-//		return devCallBack;
-//	}
+	private void updateMsgCallBack(String msg){
+		if(msgCallBack!=null)
+			msgCallBack.updateMsg(msg);
+	}
+
+
 	
 	public interface SetDevCallBack{
 		void onMcStateChanged(String state);
 		void onNetStateChanged(String state);
+		void onAssisStateChanged(String state);
 		void enterDevMode();
 		void enterMaintainMode(boolean refund);
 		void hide();
 		
 	}
+	
+	
+	
 	
 	/**********跟开发选项及维护菜单打交道的接口**************
 	 * 
@@ -169,9 +190,17 @@ public class MainFragment extends Fragment {
 			myCallback.onNetStateChanged(state);
 		}
 	}
-	
+	void setDevAssisState(String state){
+		if(myCallback!=null){
+			myCallback.onAssisStateChanged(state);
+		}
+	}
+	/*
+	 * dev模式是强制进入的，在maintain模式也可以进去
+	 * 
+	 */
 	void enterDevMode(){
-		Log.e(Tag, "enterDevMode!!! ");
+		//Log.e(Tag, "enterDevMode!!! ");
 		dispDevLayout=true;
 		if(myCallback!=null){
 			myCallback.enterDevMode();
@@ -181,16 +210,20 @@ public class MainFragment extends Fragment {
 	}
 	
 	void  enterMaintainMode(boolean refund){
-		dispDevLayout=true;
-		if(myCallback!=null){
-			myCallback.enterMaintainMode(refund);
+		if(!dispDevLayout){
+			dispDevLayout=true;
+			if(myCallback!=null){
+				myCallback.enterMaintainMode(refund);
+			}
 		}
 	}
 	
 	void leaveDevOrMaintainMode(){
-		dispDevLayout=false;
-		if(myCallback!=null){
-			myCallback. hide();;
+		if(dispDevLayout){
+			dispDevLayout=false;
+			if(myCallback!=null){
+				myCallback. hide();;
+			}
 		}
 	}
 	/******************************end**************************************/
@@ -301,43 +334,36 @@ void initMachines(){
 					}
 				});	
 			}
-
-
-
 			@Override
 			public void startDropCup() {
 				mc_startDropCup();
 			}
-
-
-
 			@Override
 			public void onDisable() {
 				// TODO Auto-generated method stub
 				
 			}
-
-
-
-			@Override
-			public void onEnable() {
-				// TODO Auto-generated method stub
-				
-			}
-
-
-
+//			@Override
+//			public void onEnable() {
+//				// TODO Auto-generated method stub
+//				
+//			}
 			@Override
 			public void cupReady() {
 				resumeTimeOutTime();
 				mc_makeCoffee(getCurType());
 			}
+			@Override
+			public void noWater() {
+				mc_noWater();
+			}
 
 
 
 			@Override
-			public void noWater() {
-				mc_noWater();
+			public void onGetAck() {
+				setAssitMcEnable(true,context.getString(R.string.work));
+	
 			}
         	
         });
@@ -350,15 +376,9 @@ void initMachines(){
 
 
 
-void enterMaintainMode(){
-	
-}
-
 void existMask(){
 	
 }
-
-
 
 
 	void initView(View view){
@@ -417,22 +437,23 @@ void existMask(){
 					case Handler_netDisp:	
 						myToast.toastShow(msg.obj.toString());
 						setDevNetState(msg.obj.toString());
-						//t_netDetail.setText(msg.obj.toString());
+						break;
+					case Handler_assiMcDisp:	
+						myToast.toastShow(msg.obj.toString());
+						setDevAssisState(msg.obj.toString());
 						break;
 					case Handler_tPay:
-						setDevNetState(msg.obj.toString());
 						setStateDialogString(msg.obj.toString(),1);
-						//t_payType.setText(msg.obj.toString());
 						break;
 					case Handler_tCoffee://制作状态
 						setStateDialogString(msg.obj.toString(),0);
-						//t_coffeeType.setText(msg.obj.toString());
+				
 						break;
 					case Handler_mcDisp://
 						String dsp=(hasCup?"":(context.getString(R.string.noCup)+"|"))+
 						(hasWater?"":(context.getString(R.string.noWater)+"|"))+
 						msg.obj.toString();
-						//t_mcDetail.setText(dsp);
+				
 						setDevMcState(dsp);
 						break;
 					case Handler_TimeOut:
@@ -515,16 +536,11 @@ void existMask(){
 
 			@Override
 			public void onFault(String msg) {
-				isMachineWork=false;
-				if(!dispDevLayout){
-					setEnable(isMachineWork&&isConnectToServer);
-					sendMsgToHandler(Handler_mcDisp, msg);
-				}
+				//isMachineWork=false;
+				//先申述后进维护界面
 				if(tradeStep==StepMaking){//在制作过程中出现错误，这个时候应该退款
 					if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
 						appealed=true;
-						
-						
 						appeal();
 						myHandler.post(new Runnable() {
 							
@@ -536,15 +552,23 @@ void existMask(){
 						
 					}
 				}
+				setMcEnable(false,msg);
+//				if(!dispDevLayout){
+					
+//					updateEnable();
+//					sendMsgToHandler(Handler_mcDisp, msg);
+//				}
+
 	
 			}
 
 			@Override
 			public void onWork() {
-				isMachineWork=true;
-				if(!dispDevLayout){
-					setEnable(isMachineWork&&isConnectToServer);
-				}
+				setMcEnable(true,context.getString(R.string.work));
+//				isMachineWork=true;
+//				if(!dispDevLayout){
+//					updateEnable();
+//				}
 			}
 		});
 	}
@@ -709,7 +733,7 @@ void existMask(){
 	 }
 	    
 	    void startMaking(){  
-	    	
+	    	appealed=false;//支付后默认未申述
 	    	cancelCloseTimerTask();
 	    	tradeStep=StepMaking; //进入制作阶段
 	    	startTimeOutTimer(TimeOutDuaration);
@@ -782,11 +806,7 @@ void existMask(){
 	            public void onLoad() {
 	                super.onLoad();
 	                /*获得设备商品列表*/
-	                
-	                isConnectToServer=true;
-	             //Toast.makeText(getActivity(), "连接成功", Toast.LENGTH_LONG).show();
-	                sendMsgToHandler(Handler_netDisp, context.getString(R.string.connectServer));
-	              //  myToast.toastShow("连接服务器成功");
+	                setNetWorkEnable(true,context.getString(R.string.connectServer));
 	                updatePrice();
 
 	            }
@@ -828,7 +848,7 @@ void existMask(){
 						//更新价格
 						 updatePrice();
 					}else{
-						//updateMsgCallBack(arg0);
+						updateMsgCallBack(arg0);
 					}
 				}
 
@@ -936,14 +956,12 @@ void existMask(){
 					Log.e(Tag, "!!!!!!!!!!!!!!netWorkChanged "+connected);
 					myToast.toastShow("netWorkChanged "+connected);
 					if(connected){
-						isConnectToServer=true;
-						 sendMsgToHandler(Handler_netDisp, context.getString(R.string.hasnet));
+						setNetWorkEnable(false,context.getString(R.string.hasnet));
 						initPayServer();
-						if(isConnectToServer)
-							updatePrice();
+//						if(isConnectToServer)
+//							updatePrice();
 					}else{
-						isConnectToServer=false;
-						sendMsgToHandler(Handler_netDisp, context.getString(R.string.nonet));
+						setNetWorkEnable(false,context.getString(R.string.nonet));
 					}
 				}
 			});
@@ -983,17 +1001,7 @@ void existMask(){
 		    	makingStep=0;
 		    	//test
 		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.dropPowder));
-//		    	myHandler.post(new Runnable() {		
-//					@Override
-//					public void run() {
-//						
-//					//	tCoffeeDisp=context.getString(R.string.dropPowder);
-//					//	t_coffeeType.setText(tCoffeeDisp);
-//						
-//						
-//						//t_payType.setText(R.string.dropPowder);
-//					}
-//				});
+
 		    	switch(type){//这里要根据sweetness选择出糖量
 		    	case CoffeeType1://美式
 		    		myMachine.dropCoffee();
@@ -1036,19 +1044,13 @@ void existMask(){
 		    void mc_noCups(){
 		    	hasCup=false;
 		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.noCup));
-//		    	myHandler.post(new Runnable() {		
-//					@Override
-//					public void run() {
-//					//	t_coffeeType.setText(R.string.noCup);
-//					}
-//				});
 		    	myHandler.postDelayed(new Runnable() {		
 					@Override
 					public void run() {
 						closeOder();
-						sendMsgToHandler(Handler_mcDisp, ParseReceiveCommand.getDispStringId(context));
-						setEnable(false);
-						//mc_readCup();
+						
+						setAssitMcEnable(false,context.getString(R.string.noCup));
+
 					}
 				},2000);
 		    }
@@ -1062,8 +1064,9 @@ void existMask(){
 					@Override
 					public void run() {
 						//t_payType.setText(R.string.noWater);
-						sendMsgToHandler(Handler_mcDisp, ParseReceiveCommand.getDispStringId(context));
-						setEnable(false);
+						setAssitMcEnable(false,context.getString(R.string.noWater));
+//						sendMsgToHandler(Handler_mcDisp, ParseReceiveCommand.getDispStringId(context));
+//						setEnable(false);
 					}
 				},1000);
 
@@ -1076,16 +1079,7 @@ void existMask(){
 		    void mc_hasDirtyCup(){
 		    	
 		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.hasDirtyCup));
-		    	pauseTimeOutTime();
-//		    	myHandler.post(new Runnable() {		
-//					@Override
-//					public void run() {
-//						
-//						//t_coffeeType.setText(R.string.hasDirtyCup);
-//						pauseTimeOutTime();
-//					}
-//				});
-		    	
+		    	pauseTimeOutTime(); 	
 		    }
 		    
 		    
@@ -1093,14 +1087,7 @@ void existMask(){
 		    void mc_startDropCup(){
 		    	resumeTimeOutTime();
 		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.startDropCup));
-//		    	myHandler.post(new Runnable() {		
-//		    		@Override
-//		    		public void run() {
-//		    	
-//		    			//t_coffeeType.setText(R.string.startDropCup);
-//		    		}
-//		    	});
-		    	
+
 		    }
 	/**
 	 * 咖啡制作完成
@@ -1110,9 +1097,6 @@ void existMask(){
 		   void stepTakingCup(){
 		   		tradeStep=StepTakingCup;
 		   		tExtStateDisp=context.getString(R.string.takeCup);
-//		    	String dsp=tPayDisp+"("+CloseCnt_TakingCup+"s)";
-//				sendMsgToHandler(Handler_tPay, dsp);
-		   		//sendMsgToHandler(Handler_tPay, tPayDisp); 
 				if(timeOutTask!=null){
 					timeOutTask.closeCnt=CloseCnt_TakingCup;
 				}
@@ -1120,11 +1104,6 @@ void existMask(){
 		   		deliveryController.cmd_QueryCupToken();
 		   }
 		   
-//		   void addedCloseTask(int cnt){
-//				if(timeOutTask!=null){
-//					timeOutTask.closeCnt=CloseCnt_TakingCup;
-//				}
-//		   }
 		    /**
 		     * 出粉完成
 		     * 
@@ -1152,29 +1131,18 @@ void existMask(){
 		    }
 		    void mc_cupStuck(){
 		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.cupStuck));
-//		    	myHandler.post(new Runnable() 
-//		    	{		
-//					@Override
-//					public void run() {
-//					
-//					//	t_coffeeType.setText(R.string.cupStuck);
-//					}
-//				});
 		    	deliveryController.cmd_isCupReady();
 		    }
 		    /**
 		     * 跟辅助板通信超时
+		     * 目前这个函数没有实际意义 2016.05.09
 		     * 
 		     */
 		    void mc_toAssistControllerTimeOut(){
-		    	isMachineWork=false;//20160507
-//		    	myHandler.post(new Runnable() {		
-//					@Override
-//					public void run() {
-//						
-//					//	t_coffeeType.setText(R.string.toAssisTimeOut);
-//					}
-//				});
+//		    	isAssistMcWork=false;//20160507
+//		    	updateEnable();
+//		    	sendMsgToHandler(Handler_mcDisp, context.getString(R.string.toAssisTimeOut));
+		    	setAssitMcEnable(false,context.getString(R.string.toAssisTimeOut));
 		    	
 		    }
 
@@ -1311,15 +1279,45 @@ void existMask(){
 					closeTimer=null;
 				}	
 			} 
+
+			 
+			 void setMcEnable(boolean  enable,String msg){
+				 if(isMachineWork!=enable||(!oldMcStr.equals(msg))){
+					 oldMcStr=msg;
+					 isMachineWork=enable;
+					 updateEnable();
+					 sendMsgToHandler(Handler_mcDisp, msg);
+				 }
+			 }
+
+			 
+			 void setAssitMcEnable(boolean  enable,String msg){
+				 
+				 if(isAssistMcWork!=enable||(!oldAssisStr.equals(msg))){
+					 isAssistMcWork=enable;
+					 oldAssisStr=msg;
+					 updateEnable();
+					 sendMsgToHandler(Handler_assiMcDisp, msg);
+				 }
+			 }
+			 void setNetWorkEnable(boolean  enable,String msg){
+				 if(isConnectToServer!=enable||(!oldNetStr.equals(msg))){
+					 oldNetStr=msg;
+					 isConnectToServer=enable;
+					 updateEnable();
+					 sendMsgToHandler(Handler_netDisp, msg);
+				 }
+			 }
+			 
 			 void setEnable(boolean enable){
 				if(enable){
 					leaveDevOrMaintainMode();
 				}else{
-					enterMaintainMode();
+					enterMaintainMode(appealed);
 				}
 			 }
 			 void updateEnable(){
-				 
+				 setEnable(isMachineWork&&isConnectToServer&&isAssistMcWork);
 			 }
 				void closeOder(){
 					tradeStep=StepNone;		
@@ -1329,14 +1327,6 @@ void existMask(){
 					deliveryController.cmd_readError();//交易完成之后读取水位
 					resetChoice();
 					closeStateDialog();
-					//sendMsgToHandler(Handler_tCoffee, context.getString(R.string.pleaseChooseCoffee));	
-//					layout_makingMask.setVisibility(View.GONE);
-//					layout_qr.setVisibility(View.GONE);
-//					t_coffeeType.setText(R.string.pleaseChooseCoffee);
-//					t_payType.setText(R.string.pleaseChoosePay);
-//					
-//					setCoffeeIconRadio(0);
-//					setPayIconRadio(0);
 				}
 				
 				void setMakingState(String state){
@@ -1353,17 +1343,8 @@ void existMask(){
 						return ;
 					}
 					coffeeType=type;
-//					if(isDebug){
-//						startMaking();
-//					}
-					//setPayEnable(true);
 					if(goodId.containsKey(type)){
 						cur_goodId=goodId.get(type);
-					
-					//	tCoffeeDisp="已选择"+goodName.get(cur_goodId)+"|￥"+goodPrice.get(cur_goodId).toString();
-					//	t_coffeeType.setText(tCoffeeDisp);
-					//	t_payType.setText(R.string.pleaseChoosePay);
-						
 					}
 				}
 				

@@ -2,6 +2,8 @@ package com.tt.main;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +21,7 @@ import com.tt.main.CoffeeFragmentPage1.CheckedCallBack;
 
 public class MaintainFragment extends Fragment implements OnClickListener,android.widget.CompoundButton.OnCheckedChangeListener{
 
-	TextView t_maintain,t_mcDetail,t_netDetail,t_version,t_refund;
+	TextView t_maintain,t_mcDetail,t_netDetail,t_version,t_refund,t_assistDetail;
 	RadioButton radioCup1,radioCup2;
 	RadioButton radio_needBean,radio_noBean;
 	CheckBox btn_debug;
@@ -28,6 +30,17 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	public static DevCallBack back=null;
 	LinearLayout layout_mask;
 	Button btn_clean,btn_mskCancel;
+	Handler myHandler=null;
+	private final int Handler_net=1001;
+	private final int Handler_mc=1002;
+	private final int Handler_assis=1003;
+	private final int Handler_leave=1004;
+	private final int Handler_enterDev=1005;
+	private final int Handler_enterMaintain=1006;
+	private final int Handler_hide=1007;
+			
+	
+	
 	//MainFragment.SetDevCallBack mainCallback=null;
 	public interface DevCallBack{
 		void onBeanModeChanged(boolean need);
@@ -77,58 +90,61 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 
 		@Override
 		public void onMcStateChanged(String state) {
-			Log.e("maintain","onMcStateChanged="+state);
-			setMcState( state);
+			//Log.e("maintain","onMcStateChanged="+state);
+			Message message=new Message();
+			message.what=Handler_mc;
+			message.obj=state;
+			myHandler.sendMessage(message);
+			
 			
 		}
 
 		@Override
 		public void onNetStateChanged(String state) {
-			setNetState(state);
+			Message message=new Message();
+			message.what=Handler_net;
+			message.obj=state;
+			myHandler.sendMessage(message);
+			
 			
 		}
-
+		@Override
+		public void onAssisStateChanged(String state) {
+			Message message=new Message();
+			message.what=Handler_assis;
+			message.obj=state;
+			myHandler.sendMessage(message);
+			
+		}
 		@Override
 		public void enterDevMode() {
-			Log.e("maintain","enterDevMode=");
-			layout_mask.setVisibility(View.VISIBLE);
-			t_maintain.setText(getActivity().getString(R.string.devMode));
-			btn_mskCancel.setVisibility(View.VISIBLE);
-			btn_clean.setVisibility(View.VISIBLE);
-			radioCup1.setVisibility(View.VISIBLE);
-			radioCup2.setVisibility(View.VISIBLE);
-			btn_debug.setVisibility(View.VISIBLE);
-			radio_needBean.setVisibility(View.VISIBLE);
-			radio_noBean.setVisibility(View.VISIBLE);
-			t_version.setVisibility(View.VISIBLE);
-			t_refund.setVisibility(View.GONE);
+			
+			
+			Message message=new Message();
+			message.what=Handler_enterDev;
+			//message.obj=state;
+			myHandler.sendMessage(message);
+
 		}
 
 		@Override
 		public void enterMaintainMode(boolean refund) {
-			t_maintain.setText(getActivity().getString(R.string.maintain));
-			layout_mask.setVisibility(View.VISIBLE);
-			btn_mskCancel.setVisibility(View.GONE);
-			btn_clean.setVisibility(View.GONE);
-			radioCup1.setVisibility(View.GONE);
-			radioCup2.setVisibility(View.GONE);
-			radio_needBean.setVisibility(View.GONE);
-			radio_noBean.setVisibility(View.GONE);
-			btn_debug.setVisibility(View.GONE);
-			t_version.setVisibility(View.GONE);
-			if(refund){//已经付款状态,应该提示退款
-				t_refund.setVisibility(View.VISIBLE);
-			}else{
-				t_refund.setVisibility(View.GONE);
-			}
+			Message message=new Message();
+			message.what=Handler_enterMaintain;
+			message.obj=refund;
+			myHandler.sendMessage(message);
 			
 		}
 
 		@Override
 		public void hide() {
-			// TODO Auto-generated method stub
+			Message message=new Message();
+			message.what=Handler_hide;
+			myHandler.sendMessage(message);
 			
 		}
+
+
 		
 
 	}; 
@@ -159,11 +175,51 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		super.onDestroy();
 	}
 
+	void enterDev(){
+		
+		Log.e("maintain","enterDevMode=");
+		layout_mask.setVisibility(View.VISIBLE);
+		t_maintain.setText(getActivity().getString(R.string.devMode));
+		btn_mskCancel.setVisibility(View.VISIBLE);
+		btn_clean.setVisibility(View.VISIBLE);
+		radioCup1.setVisibility(View.VISIBLE);
+		radioCup2.setVisibility(View.VISIBLE);
+		btn_debug.setVisibility(View.VISIBLE);
+		radio_needBean.setVisibility(View.VISIBLE);
+		radio_noBean.setVisibility(View.VISIBLE);
+		t_version.setVisibility(View.VISIBLE);
+		t_refund.setVisibility(View.GONE);
+	}
+	void enterMaintain(Boolean refund){
+		t_maintain.setText(getActivity().getString(R.string.maintain));
+		layout_mask.setVisibility(View.VISIBLE);
+		btn_mskCancel.setVisibility(View.GONE);
+		btn_clean.setVisibility(View.GONE);
+		radioCup1.setVisibility(View.GONE);
+		radioCup2.setVisibility(View.GONE);
+		radio_needBean.setVisibility(View.GONE);
+		radio_noBean.setVisibility(View.GONE);
+		btn_debug.setVisibility(View.GONE);
+		t_version.setVisibility(View.GONE);
+		if(refund){//已经付款状态,应该提示退款
+			t_refund.setVisibility(View.VISIBLE);
+		}else{
+			t_refund.setVisibility(View.GONE);
+		}
+	}
+	void hide(){
+		layout_mask.setVisibility(View.GONE);
+	}
+	
+	
 	public void setMcState(String state){
 		t_mcDetail.setText(state);
 	}
 	public void setNetState(String state){
 		t_netDetail.setText(state);
+	}
+	public void setAssistState(String state){
+		t_assistDetail.setText(state);
 	}
     void initView(View view){
     	layout_mask=(LinearLayout)view.findViewById(R.id.layout_mask);
@@ -171,6 +227,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	btn_debug.setOnCheckedChangeListener(this);
     	t_maintain=(TextView)view.findViewById(R.id.t_maintain);
     	t_mcDetail=(TextView)view.findViewById(R.id.t_mcDetail);
+    	t_assistDetail=(TextView)view.findViewById(R.id.t_assistDetail);
     	t_version=(TextView)view.findViewById(R.id.t_version);
     	t_refund=(TextView)view.findViewById(R.id.t_refund);
     	t_netDetail=(TextView)view.findViewById(R.id.t_netDetail);
@@ -198,11 +255,41 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	radioCup2.setOnCheckedChangeListener(this);
     	radio_needBean.setOnCheckedChangeListener(this);
     	radio_noBean.setOnCheckedChangeListener(this);
+    	myHandler =new Handler(){
 
+			@Override
+			public void handleMessage(Message msg) {
+			        	
+			    		switch (msg.what) {
+						case Handler_mc:
+							setMcState(msg.obj.toString());
+							break;
+						case Handler_net:
+							setNetState(msg.obj.toString());
+							break;
+						case Handler_assis:
+							setAssistState(msg.obj.toString());
+							break;
+						case Handler_enterDev:
+							enterDev();
+							break;
+						case Handler_enterMaintain:
+							enterMaintain((Boolean)msg.obj);
+							break;
+						case Handler_hide:
+							hide();
+							break;
+			    		}
+							
+				super.handleMessage(msg);
+			}
+    		
+    	};
 
     }
+    	
 
-
+    	
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		int id =buttonView.getId();
