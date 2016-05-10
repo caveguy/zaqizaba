@@ -953,9 +953,11 @@ void existMask(){
 					myToast.toastShow("netWorkChanged "+connected);
 					if(connected){
 						setNetWorkEnable(false,context.getString(R.string.hasnet));
-						initPayServer();
-//						if(isConnectToServer)
-//							updatePrice();
+						if(coffeeDeviceEvent==null){
+							initPayServer();
+						}else{//重启app
+							reStartApp();
+						}
 					}else{
 						setNetWorkEnable(false,context.getString(R.string.nonet));
 					}
@@ -964,7 +966,9 @@ void existMask(){
 		}
 
 		
- 
+		void reStartApp(){		
+				android.os.Process.killProcess(android.os.Process.myPid());
+		}
 		    
 		    
 		    void mc_dropCup(){
