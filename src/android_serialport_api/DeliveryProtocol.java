@@ -42,6 +42,7 @@ public class DeliveryProtocol {
 	final byte Cmd_setRightWater=0x2f;
 	final byte Cmd_setRightPreWater=0x29;
 	final byte Cmd_pushPowder=0x30;
+	
 	final byte Cmd_readState=0x50;
 	final byte Cmd_readErros=(byte) 0x51;//
 	final byte Cmd_readLower8bits=(byte) 0xb9;
@@ -91,6 +92,7 @@ public class DeliveryProtocol {
 	QueryTimerTask queryTimerTask=null;
 	SendTimerTask sendTimerTask=null;
 	byte query_what=0;
+	boolean isConnect=false;
 //	boolean inQueryState=false;  //是否处在查询状态，
 //	boolean inAckState=false;  //是否处在应答状态，
 	
@@ -106,6 +108,7 @@ public class DeliveryProtocol {
 		context=c;
 		//computeCrcTable();
 		initSerialPort();
+		startQueryTimer(Cmd_readErros);
 		//myTimerTask=new MyTimerTask();
 	}
 	
@@ -534,9 +537,14 @@ public class DeliveryProtocol {
 			case Cmd_readState:
 				cmd_readState();
 				break;
+			case Cmd_readErros:
+				cmd_readError();
+				break;
 			}
 	}
-	
+	public void startQueryErrorTask(){
+		startQueryTimer(Cmd_readErros);
+	}
 	///////////////////////回调接口////////////////////////////////
 
 	CallBack callBack=null;
@@ -558,7 +566,7 @@ public class DeliveryProtocol {
 		void tradeFinish();
 		void startDropCup();
 		void onDisable();
-		void onGetAck();
+		void onGetConnect();
 		void cupReady();//为了不落杯的程序准备
 	//	void cupNotReady();//为了不落杯的程序准备
 	}
@@ -577,8 +585,12 @@ public class DeliveryProtocol {
 	}
 	private void onGetAckCallBack(){
 	//	Log.d(TAG,"!!!!onEnableCallBack");
-		if(callBack!=null)
-			callBack.onGetAck();
+		if(!isConnect){
+			isConnect=true;
+			if(callBack!=null){
+				callBack.onGetConnect();
+			}
+		}
 	}
 	private void startDropCupCallBack(){
 		Log.d(TAG,"!!!!startDropCupCallBack");
@@ -657,6 +669,7 @@ public class DeliveryProtocol {
 	
 	private void sendTimeOutCallBack(){
 		Log.d(TAG,"!!!!sendTimeOutCallBack");
+		isConnect=false;
 		if(callBack!=null)
 			callBack.sendTimeOut();
 		

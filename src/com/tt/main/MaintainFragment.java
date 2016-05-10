@@ -207,9 +207,9 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			t_refund.setVisibility(View.GONE);
 		}
 	}
-	void hide(){
-		layout_mask.setVisibility(View.GONE);
-	}
+//	void hide(){
+//		layout_mask.setVisibility(View.GONE);
+//	}
 	
 	
 	public void setMcState(String state){
@@ -277,7 +277,8 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 							enterMaintain((Boolean)msg.obj);
 							break;
 						case Handler_hide:
-							hide();
+							//hide();
+							leave();
 							break;
 			    		}
 							

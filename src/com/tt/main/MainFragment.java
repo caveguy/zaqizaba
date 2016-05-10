@@ -222,7 +222,7 @@ public class MainFragment extends Fragment {
 		if(dispDevLayout){
 			dispDevLayout=false;
 			if(myCallback!=null){
-				myCallback. hide();;
+				myCallback. hide();
 			}
 		}
 	}
@@ -357,13 +357,9 @@ void initMachines(){
 			public void noWater() {
 				mc_noWater();
 			}
-
-
-
 			@Override
-			public void onGetAck() {
-				setAssitMcEnable(true,context.getString(R.string.work));
-	
+			public void onGetConnect() {
+				setAssitMcEnable(true,context.getString(R.string.work));				
 			}
         	
         });
@@ -1323,8 +1319,9 @@ void existMask(){
 					tradeStep=StepNone;		
 					cancelCloseTimerTask();
 					cancelTimeOutTask();
-					deliveryController.cancelQueryTimerTask();
-					deliveryController.cmd_readError();//交易完成之后读取水位
+//					deliveryController.cancelQueryTimerTask();
+//					deliveryController.cmd_readError();//交易完成之后读取水位
+					deliveryController.startQueryErrorTask();
 					resetChoice();
 					closeStateDialog();
 				}
