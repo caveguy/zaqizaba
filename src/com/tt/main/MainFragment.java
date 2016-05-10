@@ -60,10 +60,11 @@ public class MainFragment extends Fragment {
 	private final int Handler_netDisp=1002;
 	private final int Handler_tPay=1003;
 	private final int Handler_mcDisp=1004;
-	private final int Handler_TimeOut=1005;
+	private final int Handler_TradeTimeOut=1005;
 	private final int Handler_tCoffee=1006;	
 	private final int Handler_qr_weixin=1007;
 	private final int Handler_qr_zhifubao=1008;
+	private final int Handler_ServerInitTimeOut=1009;
 	private final String Tag="CoffeeFrag";
 	private final int CoffeeType1=0;
 	private final int CoffeeType2=1;
@@ -81,7 +82,8 @@ public class MainFragment extends Fragment {
 	private final byte AllFinish=(byte) (CoffeeFinish|PowderFinish);
 	private final int CloseCnt_pay=60*2;
 	private final int CloseCnt_TakingCup=30;
-	private final int TimeOutDuaration=80;
+	private final int TradeTimeOutDuaration=80;
+	private final int SeverTimeOutDuaration=30;
 	private final int WeixinPay=2;
 	private final int AliPay=1;
 	private int coffeeType=0;
@@ -452,12 +454,13 @@ void existMask(){
 				
 						setDevMcState(dsp);
 						break;
-					case Handler_TimeOut:
-						if(tradeStep==StepTakingCup){
+					case Handler_TradeTimeOut:
 							closeOder();
-						}
 						//dispRetryDialog();//超时后显示是否重做对话框
 						//myToast.toastShow(R.string.);
+						break;
+					case Handler_ServerInitTimeOut:
+						reStartApp();
 						break;
 		        }
 		        };
@@ -732,7 +735,7 @@ void existMask(){
 	    	appealed=false;//支付后默认未申述
 	    	cancelCloseTimerTask();
 	    	tradeStep=StepMaking; //进入制作阶段
-	    	startTimeOutTimer(TimeOutDuaration);
+	    	startTimeOutTimer(TradeTimeOutDuaration,TimerOutTask.Event_trade_timeOut);
 	    	if(dropcupMode){
 	    		mc_dropCup();
 	    	}else{
@@ -796,13 +799,17 @@ void existMask(){
 	    }
 	    void initPayServer(){
 	    	if(coffeeDeviceEvent==null){
+	    		startTimeOutTimer(SeverTimeOutDuaration,TimerOutTask.Event_serverInit_timeOut);
 	        coffeeDeviceEvent = new CoffeeDeviceEvent() {
 
 	        	@Override
 	            public void onLoad() {
 	                super.onLoad();
+	                cancelTimeOutTask();//取消超时定时器
 	                /*获得设备商品列表*/
+	                
 	                setNetWorkEnable(true,context.getString(R.string.connectServer));
+	                
 	                updatePrice();
 
 	            }
@@ -1176,6 +1183,9 @@ void existMask(){
 		    	
 		    	boolean inTask=false;
 		    	int closeCnt=0;
+		    	static final int Event_trade_timeOut=1;
+		    	static final int Event_serverInit_timeOut=2;
+		    	int event=0;
 				@Override
 				public void run() {
 					//isTrading=false;
@@ -1199,7 +1209,12 @@ void existMask(){
 									}
 		
 								}else{
-									tradeTimeOut();	
+									if(event==Event_trade_timeOut){
+										tradeTimeOut();	
+									}
+									else if(event==Event_serverInit_timeOut){
+										serverInitTimeOut();
+									}
 								}
 							}
 						});	
@@ -1210,8 +1225,11 @@ void existMask(){
 	//交易超时应该退款
 		    void tradeTimeOut(){
 		    	//这个时候应该可以选择重试或者退款！！！
-		    	
-		    	sendMsgToHandler(Handler_TimeOut, "");
+		    	sendMsgToHandler(Handler_TradeTimeOut,"");
+		    }
+		    void serverInitTimeOut(){
+		    	reStartApp();
+		    	//sendMsgToHandler(Handler_ServerInitTimeOut,"");
 		    }
 		    
 		    void startCloseTimer(int cnt){
@@ -1251,7 +1269,7 @@ void existMask(){
 		    	if(timeOutTask!=null)
 		    		timeOutTask.inTask=true;
 		    }
-			private void startTimeOutTimer(int cnt){
+			private void startTimeOutTimer(int cnt,int event){
 
 			//	Log.d("ioctrl","startAckTimer############");
 				if(closeTimer==null){
@@ -1261,6 +1279,7 @@ void existMask(){
 				timeOutTask=new TimerOutTask();
 				timeOutTask.inTask=true;
 				timeOutTask.closeCnt=cnt;
+				timeOutTask.event=event;
 				closeTimer.schedule(timeOutTask, 1000,1000);
 			}
 		    void cancelTimeOutTask(){
