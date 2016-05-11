@@ -338,7 +338,7 @@ public class MachineProtocol {
 	}
 }
 	@Override
-	protected void finalize() throws Throwable {
+	public void finalize() throws Throwable {
 		cleanTimer();
 		mReadThread.interrupt();
 		closeSerialPort();

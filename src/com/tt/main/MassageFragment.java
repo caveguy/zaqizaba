@@ -252,15 +252,15 @@ public class MassageFragment extends Fragment {
 	 * 
 	 * 方法名：initMyLocation 功能：启动定位 参数： 创建人：zhangtian 创建时间：2015-08-20
 	 */
-	ProgressDialog progressDialog=null;
+	//ProgressDialog progressDialog=null;
 	private void initMyLocation() {
-		progressDialog = ProgressDialog
-				.show(context, null, "城市定位中...", true, true);
+	//	progressDialog = ProgressDialog
+		//		.show(context, null, "城市定位中...", true, true);
 		mLocationListener = new LocationListener() {
 			@Override
 			public void onLocationChanged(Location location) {
 				if (location != null ) {
-					progressDialog.dismiss();
+					//progressDialog.dismiss();
 					//flag = false;
 					
 					GeoPoint myPt = new GeoPoint(
@@ -307,9 +307,9 @@ public class MassageFragment extends Fragment {
 						hasGetLocation=true;
 						provinceName = pro.substring(0, pro.length() - 1);
 						cityName = city.substring(0, city.length() - 1);
-						progressDialog = ProgressDialog.show(
-								context, null, "查询中...", true,
-								true);
+//						progressDialog = ProgressDialog.show(
+//								context, null, "查询中...", true,
+//								true);
 						QueryWeatherTask asyncTask = new QueryWeatherTask();
 						asyncTask.execute("");
 					} else {
@@ -329,7 +329,7 @@ public class MassageFragment extends Fragment {
 	private class QueryWeatherTask extends AsyncTask {
 		@Override
 		protected void onPostExecute(Object result) {
-			progressDialog.dismiss();
+			//progressDialog.dismiss();
 			if(result!=null){
 				String weatherResult = (String)result;
 				Log.d("weather",weatherResult);

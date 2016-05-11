@@ -617,6 +617,14 @@ void existMask(){
 	}
 	@Override
 	public void onDestroy() {
+		try {
+			deliveryController.finalize();
+			myMachine.finalize();
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		cleanTimer();
 		super.onDestroy();
 	}
 	private ArrayList<Fragment> initFragments() {
@@ -975,7 +983,14 @@ void existMask(){
 		}
 
 		
-		void reStartApp(){		
+		void reStartApp(){	
+			
+//			Intent restartIntent = new Intent(context, MainActivity.class);
+//			int pendingId = 1;
+//			PendingIntent pendingIntent = PendingIntent.getActivity(context, pendingId, restartIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+//			AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+//			mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 2000, pendingIntent);
+			//((Activity) context).finish();
 				android.os.Process.killProcess(android.os.Process.myPid());
 		}
 		    

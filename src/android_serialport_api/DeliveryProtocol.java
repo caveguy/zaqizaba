@@ -838,7 +838,7 @@ public class DeliveryProtocol {
 	
 	
 	@Override
-	protected void finalize() throws Throwable {
+	public void finalize() throws Throwable {
 		cleanTimer();
 		mReadThread.interrupt();
 		closeSerialPort();
