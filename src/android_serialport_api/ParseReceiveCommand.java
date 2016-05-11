@@ -36,8 +36,11 @@ public  class  ParseReceiveCommand {
 	    		normalCallBack();
 	    		return context.getString(R.string.cmd1_rinsing);    		
 	    	case 0x4:
-	    		normalCallBack();
-	    		return context.getString(R.string.cmd1_openTab);	    		
+	    		//normalCallBack();
+	    		//return context.getString(R.string.cmd1_openTab);
+	    		msg=context.getString(R.string.cmd1_openTab);
+	    		faultCallBack(msg);
+	    		return 	msg;  
 	    	case 0x5:	
 	    		msg=context.getString(R.string.cmd1_close_tab);
 	    		faultCallBack(msg);

@@ -18,8 +18,11 @@ import tp.device.coffee.task.MakeOrderAsyncTask;
 import tp.device.coffee.task.QueryDeviceGoodsAsyncTask;
 import tp.device.coffee.task.RefundApplyAsyncTask;
 import tp.lib.TPConstants;
+import android.app.AlarmManager;
 import android.app.Fragment;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -985,13 +988,13 @@ void existMask(){
 		
 		void reStartApp(){	
 			
-//			Intent restartIntent = new Intent(context, MainActivity.class);
-//			int pendingId = 1;
-//			PendingIntent pendingIntent = PendingIntent.getActivity(context, pendingId, restartIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-//			AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-//			mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 2000, pendingIntent);
+			Intent restartIntent = new Intent(context, MainActivity.class);
+			int pendingId = 1;
+			PendingIntent pendingIntent = PendingIntent.getActivity(context, pendingId, restartIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+			AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+			mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 2000, pendingIntent);
 			//((Activity) context).finish();
-				android.os.Process.killProcess(android.os.Process.myPid());
+			android.os.Process.killProcess(android.os.Process.myPid());
 		}
 		    
 		    
