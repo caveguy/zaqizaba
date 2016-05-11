@@ -87,7 +87,7 @@
 	     android:textSize="@dimen/size_msg_text"
 	     android:textColor="@color/white"
 	     android:layout_marginLeft="@dimen/msg_text_margin_left"
-	     android:text="string/wait"/>  
+	     android:text="@string/wait"/>  
 	</LinearLayout>
     <LinearLayout 
 	    android:layout_width="match_parent"
@@ -107,7 +107,7 @@
 	     android:textSize="@dimen/size_msg_text"
 	     android:textColor="@color/white"
 	     android:layout_marginLeft="@dimen/msg_text_margin_left"
-	     android:text="string/wait"/>  
+	     android:text="@string/wait"/>  
 	</LinearLayout>	
     <LinearLayout 
 	    android:layout_width="match_parent"

@@ -72,6 +72,8 @@ public class DeliveryProtocol {
 	final int SendTimerDuaration=200;
 	final int AckTimerDuaration=150;
 	final int QueryTimerDuaration=500;
+	final int ErrorQueryTimerDuaration=10*1000;
+	
 	final byte Query_dirtyCup=0x11;
 	final byte Query_cupToken=0x22;	
 	final byte Query_hasCup=0x33;
@@ -108,7 +110,7 @@ public class DeliveryProtocol {
 		context=c;
 		//computeCrcTable();
 		initSerialPort();
-		startQueryTimer(Cmd_readErros);
+		startQueryErrorTask();
 		//myTimerTask=new MyTimerTask();
 	}
 	
@@ -409,22 +411,22 @@ public class DeliveryProtocol {
 		if(queryTimer==null){
 			queryTimer=new Timer();
 		}
-//		if(queryTimerTask!=null){
-//			if(queryTimerTask.cancel()){//只有任务确实被取消了，才能让任务为null
-//				queryTimerTask=null;
-//			}
-//		}
 		cancelQueryTimerTask();
-		
-		
-		//if(queryTimerTask==null){
-			queryTimerTask=new QueryTimerTask();
-			queryTimerTask.inQueryState=true;
-			queryTimer.schedule(queryTimerTask, QueryTimerDuaration,QueryTimerDuaration);
-		//}
-		
+		queryTimerTask=new QueryTimerTask();
+		queryTimerTask.inQueryState=true;
+		queryTimer.schedule(queryTimerTask, QueryTimerDuaration,QueryTimerDuaration);	
 	}	
-	
+	private void startErrorQueryTimer(){
+	//	Log.d(TAG, "startQueryTimer query_what="+cmd);
+		query_what=Cmd_readErros;
+		if(queryTimer==null){
+			queryTimer=new Timer();
+		}
+		cancelQueryTimerTask();
+		queryTimerTask=new QueryTimerTask();
+		queryTimerTask.inQueryState=true;
+		queryTimer.schedule(queryTimerTask, QueryTimerDuaration,ErrorQueryTimerDuaration);	
+	}	
 	public void cancelQueryTimerTask(){
 		Log.d(TAG, "cancelQueryTimerTask!! ");
 		if(queryTimerTask!=null){
@@ -543,7 +545,8 @@ public class DeliveryProtocol {
 			}
 	}
 	public void startQueryErrorTask(){
-		startQueryTimer(Cmd_readErros);
+		startErrorQueryTimer();
+		//startQueryTimer(Cmd_readErros);
 	}
 	///////////////////////回调接口////////////////////////////////
 
