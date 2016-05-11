@@ -68,6 +68,7 @@ public class MainFragment extends Fragment {
 	private final int Handler_qr_weixin=1007;
 	private final int Handler_qr_zhifubao=1008;
 	private final int Handler_ServerInitTimeOut=1009;
+	private final int Handler_CloseTimer=1010;
 	private final String Tag="CoffeeFrag";
 	private final int CoffeeType1=0;
 	private final int CoffeeType2=1;
@@ -83,7 +84,9 @@ public class MainFragment extends Fragment {
 	private final byte CoffeeFinish=0x01;//咖啡完成
 	private final byte PowderFinish=0x02;//出粉完成
 	private final byte AllFinish=(byte) (CoffeeFinish|PowderFinish);
-	private final int CloseCnt_pay=60*2;
+	private final int SugarChoiceCloseCnt=60;
+	private final int PayCloseCnt=60*2;
+	
 	private final int CloseCnt_TakingCup=30;
 	private final int TradeTimeOutDuaration=80;
 	private final int SeverTimeOutDuaration=30;
@@ -462,6 +465,9 @@ void existMask(){
 						//dispRetryDialog();//超时后显示是否重做对话框
 						//myToast.toastShow(R.string.);
 						break;
+					case Handler_CloseTimer:
+						closeOder();
+						break;
 					case Handler_ServerInitTimeOut:
 						reStartApp();
 						break;
@@ -669,17 +675,23 @@ void existMask(){
 	void resetChoice(){
 		page1.setCoffeeIconRadio(0);
 		page2.setCoffeeIconRadio(0);
+		closeSugarDialog();
+		closePayDialog();
+		closeStateDialog();
 	}
 	void showSugarDialog(int id){
 		sugarDialog=new SugarDialog(context,id);
 		sugarDialog.setConfirmListener(sugarListener);
+		startCloseTimer(SugarChoiceCloseCnt);
 		sugarDialog.show();
 	}
 	void closeSugarDialog(){
+		//cancelCloseTimerTask();
 		if(sugarDialog!=null)
 			sugarDialog.closeDialog();
 	}
 	void showPayDialog(int id,int sweet){
+		startCloseTimer(PayCloseCnt);
 		payDialog=new PayDialog(context,id,sweet,goodName.get(cur_goodId));
 		payDialog.setListener(payListener);
 		payDialog.show();
@@ -833,8 +845,7 @@ void existMask(){
 						public void run() {
 							
 							 myToast.toastShow("支付失败");	
-							// layout_qr.setVisibility(View.GONE);
-							// cancelCloseTimerTask();
+					
 						}
 					});	
 				}
@@ -845,11 +856,8 @@ void existMask(){
 					myHandler.post(new Runnable() {
 						@Override
 						public void run() {
-							
-						//	t_payType.setText(R.string.paySuccess);
 							myToast.toastShow(R.string.paySuccess);
-						//	layout_qr.setVisibility(View.GONE);
-							//cancelCloseTimer(); //不能取消，否则按钮状态没有清除
+
 							
 						}
 					});
@@ -1127,7 +1135,6 @@ void existMask(){
 				if(timeOutTask!=null){
 					timeOutTask.closeCnt=CloseCnt_TakingCup;
 				}
-		   		//startCloseTimer(CloseCnt_TakingCup);
 		   		deliveryController.cmd_QueryCupToken();
 		   }
 		   
@@ -1176,26 +1183,15 @@ void existMask(){
 		    
 		    class CloseTimeTask extends TimerTask{
 		    	
-		    	int closeCnt=0;
+		    	//int closeCnt=0;
 		    	boolean inTask=false;
 				@Override
 				public void run() {
-					//isTrading=false;
-					myHandler.post(new Runnable() {
+					if(inTask){
 						
-						@Override
-						public void run() {
-							if(inTask){
-								if(closeCnt-->0){
-									String dsp=tExtStateDisp+"("+closeCnt+"s)";
-									sendMsgToHandler(Handler_tPay, dsp);
-		
-								}else{
-									closeOder(); //超时后关闭交易
-								}
-							}
-						}
-					});	
+						sendMsgToHandler(Handler_CloseTimer, "");
+						
+					}
 				}
 		    	
 		    }
@@ -1252,26 +1248,18 @@ void existMask(){
 		    	//sendMsgToHandler(Handler_ServerInitTimeOut,"");
 		    }
 		    
-		    void startCloseTimer(int cnt){
-		    	
+		    void startCloseTimer(int cnt){	    	
 		    	if(closeTimer==null){
 		    		closeTimer=new Timer();
 		    	}
-		    	if(closeTask==null){
-		    		closeTask=new CloseTimeTask();
-		    		closeTask.closeCnt=cnt;
-		    		closeTask.inTask=true;
-		    		closeTimer.schedule(closeTask, 1000,1000);
-		    	}else{
-		    		if(closeTask.cancel()){
-		    			closeTask=new CloseTimeTask();
-		    			closeTask.inTask=true;
-		    			closeTask.closeCnt=cnt;
-		    			closeTimer.schedule(closeTask, 1000,1000);
-		    		}
-		    	}	
-		    	
+		    	cancelCloseTimerTask();
+	    		closeTask=new CloseTimeTask();
+	    		//closeTask.closeCnt=cnt;
+	    		closeTask.inTask=true;
+	    		closeTimer.schedule(closeTask, 1000*cnt);
 		    }
+
+		    
 		    void cancelCloseTimerTask(){
 		    	if(closeTask!=null){
 		    		closeTask.inTask=false;
@@ -1366,7 +1354,6 @@ void existMask(){
 //					deliveryController.cmd_readError();//交易完成之后读取水位
 					deliveryController.startQueryErrorTask();
 					resetChoice();
-					closeStateDialog();
 				}
 				
 				void setMakingState(String state){
