@@ -259,7 +259,10 @@ public  class  ParseReceiveCommand {
  */
 	
 	public static int parseCmds(byte[] data) {
-		int cmd=data[2];
+		
+		int cmd=0;
+		try{
+			cmd=data[2];
 		switch(cmd){
 		case 1:
 			cmd1_data0=data[DataStart];
@@ -424,7 +427,10 @@ public  class  ParseReceiveCommand {
 			}
 			break;
 		}
-		
+		}
+		catch(ArrayIndexOutOfBoundsException e){
+			
+		}
 		return cmd;
 	}
 	
