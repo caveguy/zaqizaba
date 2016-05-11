@@ -14,11 +14,8 @@ public class NetChangedReciever extends BroadcastReceiver {
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		// TODO Auto-generated method stub
-		//Toast.makeText(context, intent.getAction(), 1).show();
 		netChangedCallBack(hasNetWork(context));
-		//Toast.makeText(context, "mobile:"+mobileInfo.isConnected()+"\n"+"wifi:"+wifiInfo.isConnected()
-		//		        +"\n"+"active:"+activeInfo.getTypeName(), 1).show();
+
 	}  //如果无网络连接activeInfo为null
 
 	

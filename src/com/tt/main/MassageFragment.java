@@ -12,6 +12,8 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,6 +56,8 @@ public class MassageFragment extends Fragment {
 //	SimpleDateFormat formatTime = new SimpleDateFormat ("HH:mm");
 	private final int Msg_updateTime=1001;
 	private final int Msg_updateMsg=1002;
+	private final int Msg_initMap=1003;
+
 	SharePreferenceUtil sharePreferenceUtil;
 	private final String Tag="MsgFrag";
 	private final String MsgKey1="key1";
@@ -63,12 +67,16 @@ public class MassageFragment extends Fragment {
 	//for weather
 	Timer myTimer=null;
 	WeatherTimerTask weatherTimerTask=null;
+	ClockTimerTask clockTimerTask=null;
+	
 	int weather_cnt=0;
-	boolean hasGetLocation=false;
-	boolean hasGetWeather=false;
+	//boolean hasGetLocation=false;
+	//boolean hasGetWeather=false;
 	
 	final int WEATHER_FREQ_FIRST=1;//没有获取过，一分钟查询一次
 	final int WEATHER_FREQ_AFTER=120;//已经获取过，2小时更新一次
+	private final int WeatherTimerDuar=60*1000;
+	private final int TimeTimerDuar=30*1000;
 	int weather_freq=WEATHER_FREQ_FIRST;
 	BMapManager mBMapMan = null;
 	LocationListener mLocationListener = null;
@@ -102,22 +110,20 @@ public class MassageFragment extends Fragment {
     }
     @Override
     public void onStart(){
-    	 initBaiDuMap();
+    	if(hasNetWork(context)){
+    		initBaiDuMap();
+    	}
     	super.onStart();
     }
 	@Override
 	public void onPause() {
-		mBMapMan.getLocationManager().removeUpdates(mLocationListener);
-		mBMapMan.stop();
+		stopMapLocation();
 		super.onPause();
 	}
 
 	@Override
 	public void onResume() {
-		mBMapMan.getLocationManager().requestLocationUpdates(mLocationListener);
-		mBMapMan.getLocationManager().enableProvider(
-				MKLocationManager.MK_GPS_PROVIDER);
-		mBMapMan.start();
+		startMapLocation();
 		super.onResume();
 	}
     
@@ -191,7 +197,13 @@ public class MassageFragment extends Fragment {
 //						sharePreferenceUtil.setStringValue(MsgKey3,msgs[2]);
 //						t_msg3.setText(msgs[2]);
 //					}
+					
 					break;
+				case Msg_initMap:
+					initBaiDuMap();
+					startMapLocation();
+					break;
+					
 			}
 			
 			
@@ -199,6 +211,21 @@ public class MassageFragment extends Fragment {
 		}
 
     };
+    
+   void stopMapLocation(){
+		if(mBMapMan!=null){
+			mBMapMan.getLocationManager().removeUpdates(mLocationListener);
+			mBMapMan.stop();
+		}
+   }
+    void startMapLocation(){
+		if(mBMapMan!=null){
+			mBMapMan.getLocationManager().requestLocationUpdates(mLocationListener);
+			mBMapMan.getLocationManager().enableProvider(
+					MKLocationManager.MK_GPS_PROVIDER);
+			mBMapMan.start();
+		}
+    }
 	private void sendMsgToHandler(int what,String dsp){
 		Message msg=new Message();
 		msg.what=what;
@@ -212,16 +239,7 @@ public class MassageFragment extends Fragment {
     }
 
     
-    public void  cleanTimer(){
-//    	if(clockTime!=null){
-//    		clockTime.cancel();
-//    		clockTime=null;
-//    	}
-    	if(myTimer!=null){
-    		myTimer.cancel();
-    		myTimer=null;
-    	}
-    }
+
     
     
 	/**
@@ -304,7 +322,7 @@ public class MassageFragment extends Fragment {
 					String city = res.addressComponents.city;
 					String pro = res.addressComponents.province;
 					if (city != null) {
-						hasGetLocation=true;
+						//hasGetLocation=true;
 						provinceName = pro.substring(0, pro.length() - 1);
 						cityName = city.substring(0, city.length() - 1);
 //						progressDialog = ProgressDialog.show(
@@ -363,7 +381,7 @@ public class MassageFragment extends Fragment {
 	 */
 	private void todayParse(Map<String, String> weatherMap) {
 		if(weatherMap!=null){
-			hasGetWeather=true;
+			//hasGetWeather=true;
 			weather_freq=WEATHER_FREQ_AFTER;
 			//Log.e("weather","weatherMap="+weatherMap.toString());
 			//SimpleDateFormat    sDateFormat    =   new    SimpleDateFormat("E");       
@@ -395,6 +413,7 @@ public class MassageFragment extends Fragment {
 			mesg.what=Msg_updateTime;
 			mesg.obj=date;
 			mHandler.sendMessage(mesg);
+
 		}
     	
     }
@@ -404,35 +423,64 @@ public class MassageFragment extends Fragment {
 			@Override
 			public void run() {
 
-				
-				if(weather_cnt==weather_freq){
-					if(cityName==null)
-					cityName="杭州";
-					//Log.d("main","!!!!!!!!!Query weather!!!!!!!!!!!!");
-					new QueryWeatherTask().execute("");
+				if(mBMapMan==null){ //先初始化定位
+					if(hasNetWork(context)){
+						Message mesg1=new Message(); 
+						mesg1.what=Msg_initMap;
+						mHandler.sendMessage(mesg1);
+					}
+				}else{  //然后才能更新天气
+					if(weather_cnt==weather_freq){
+						if(cityName==null)
+						cityName="杭州";
+						//Log.d("main","!!!!!!!!!Query weather!!!!!!!!!!!!");
+						new QueryWeatherTask().execute("");
+					}
+					weather_cnt=(weather_cnt>weather_freq)?0:++weather_cnt;
 				}
-				weather_cnt=(weather_cnt>weather_freq)?0:++weather_cnt;
 			}
 			 
 		 }
-	 void initTimer(){
+	 
+	void cancelTimer(){
 		 if(myTimer!=null){
 			 myTimer.cancel();
-			 
+			 myTimer=null;
+		 } 
+		 if(weatherTimerTask!=null){
+			 weatherTimerTask.cancel();
+			 weatherTimerTask=null;
 		 }
-		 myTimer=new Timer();
-		
-		 if(weatherTimerTask==null){
-			 weatherTimerTask=new WeatherTimerTask();
-		 }
-		 myTimer.schedule(weatherTimerTask, 60000,60000);
-		 myTimer.schedule(new ClockTimerTask(), 1000,60*1000);
+		 if(clockTimerTask!=null){
+			 clockTimerTask.cancel();
+			 weatherTimerTask=null;
+		 } 
 	 }
-	
+	 
+	 void initTimer(){
+		 cancelTimer();
+		 myTimer=new Timer();
+
+		weatherTimerTask=new WeatherTimerTask();
+		clockTimerTask=new ClockTimerTask();
+		 myTimer.schedule(weatherTimerTask, 15000,WeatherTimerDuar);
+		 myTimer.schedule(clockTimerTask, 10000,TimeTimerDuar);
+	 }
+		boolean  hasNetWork(Context context){
+			ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo mobileInfo = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+			NetworkInfo wifiInfo = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+			NetworkInfo ethInfo = manager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
+			NetworkInfo activeInfo = manager.getActiveNetworkInfo();
+			boolean isConnected=mobileInfo.isConnected()|wifiInfo.isConnected()|ethInfo.isConnected();
+			
+			return isConnected;
+		}
 	
 	@Override
 	public void onDestroy() {
-		cleanTimer();
+		cancelTimer();
+		mBMapMan=null;
 		super.onDestroy();
 	}
     

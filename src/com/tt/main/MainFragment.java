@@ -116,8 +116,10 @@ public class MainFragment extends Fragment {
 	boolean isMcEnable=false;      //咖啡机是否工作正常
 	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
 	boolean needBean=true ;   //
-	private boolean dispDevLayout=false;
-
+	//private boolean dispDevLayout=false;
+	private int dispMskLayout=0;
+	private int Msk_dev=1;
+	private int Msk_maintain=2;
 	//目前辅助板的两种不能工作的状态：
 	boolean hasCup=true;
 	boolean hasWater=true;
@@ -209,7 +211,8 @@ public class MainFragment extends Fragment {
 	 */
 	void enterDevMode(){
 		//Log.e(Tag, "enterDevMode!!! ");
-		dispDevLayout=true;
+		dispMskLayout=Msk_dev;
+		//dispDevLayout=true;
 		if(myCallback!=null){
 			myCallback.enterDevMode();
 		}else{
@@ -218,8 +221,9 @@ public class MainFragment extends Fragment {
 	}
 	
 	void  enterMaintainMode(boolean refund){
-		if(!dispDevLayout){
-			dispDevLayout=true;
+		Log.d(Tag, "enterMaintainMode");
+		if(dispMskLayout!=Msk_maintain){
+			dispMskLayout=Msk_maintain;
 			if(myCallback!=null){
 				myCallback.enterMaintainMode(refund);
 			}
@@ -227,8 +231,9 @@ public class MainFragment extends Fragment {
 	}
 	
 	void leaveDevOrMaintainMode(){
-		if(dispDevLayout){
-			dispDevLayout=false;
+		if(dispMskLayout!=0){
+		Log.d(Tag, "leaveDevOrMaintainMode");
+		dispMskLayout=0;
 			if(myCallback!=null){
 				myCallback. hide();
 			}
@@ -498,10 +503,7 @@ void existMask(){
 
 		@Override
 		public void leave() {
-			dispDevLayout=false;
-			updateEnable();
-			
-			
+			updateEnable();		
 		}
 
 		@Override
@@ -519,7 +521,7 @@ void existMask(){
 				// TODO Auto-generated method stub
 				 if(cmd==1){
 					String dispString= ParseReceiveCommand.getDispStringId(context);
-					if(dispDevLayout){
+					if(dispMskLayout!=0){
 						sendMsgToHandler(Handler_mcDisp, dispString);
 						
 					}

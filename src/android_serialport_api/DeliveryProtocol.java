@@ -528,7 +528,7 @@ public class DeliveryProtocol {
 	        		sendData = (byte[])sendList.get(i);
 	        		if(sendData!=null){
 	        			sendList.remove(i);
-	        	    	Log.e(TAG, "onSendTime !sendList.isEmpty() &&sendData!=null");
+	        	   // 	Log.e(TAG, "onSendTime !sendList.isEmpty() &&sendData!=null");
 	        			sendCmd(sendData);
 	        			startAckTimer();
 	        			break;
