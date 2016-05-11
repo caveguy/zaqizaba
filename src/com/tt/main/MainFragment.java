@@ -361,7 +361,7 @@ void initMachines(){
 			}
 			@Override
 			public void onGetConnect() {
-				setAssitMcEnable(true,context.getString(R.string.work));				
+				setAssitMcEnable(true,context.getString(R.string.cmd1_ready));				
 			}
         	
         });
@@ -495,7 +495,7 @@ void existMask(){
 
 		@Override
 		public void clean() {
-		
+			myMachine.sendCleanCmd();
 		}
 	}; 
 	}
@@ -563,7 +563,7 @@ void existMask(){
 
 			@Override
 			public void onWork() {
-				setMcEnable(true,context.getString(R.string.work));
+				setMcEnable(true,context.getString(R.string.cmd1_ready));
 //				isMachineWork=true;
 //				if(!dispDevLayout){
 //					updateEnable();
@@ -734,6 +734,8 @@ void existMask(){
 	    void startMaking(){  
 	    	appealed=false;//支付后默认未申述
 	    	cancelCloseTimerTask();
+	    	if(tradeStep==StepMaking)//防止重复进入制作阶段
+	    		return;
 	    	tradeStep=StepMaking; //进入制作阶段
 	    	startTimeOutTimer(TradeTimeOutDuaration,TimerOutTask.Event_trade_timeOut);
 	    	if(dropcupMode){

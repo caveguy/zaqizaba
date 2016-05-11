@@ -72,7 +72,7 @@ public class DeliveryProtocol {
 	final int SendTimerDuaration=200;
 	final int AckTimerDuaration=150;
 	final int QueryTimerDuaration=500;
-	final int ErrorQueryTimerDuaration=10*1000;
+	final int ErrorQueryTimerDuaration=5*1000;
 	
 	final byte Query_dirtyCup=0x11;
 	final byte Query_cupToken=0x22;	
@@ -110,6 +110,7 @@ public class DeliveryProtocol {
 		context=c;
 		//computeCrcTable();
 		initSerialPort();
+		startSendTimer();
 		startQueryErrorTask();
 		//myTimerTask=new MyTimerTask();
 	}
@@ -125,7 +126,7 @@ public class DeliveryProtocol {
 			/* Create a receiving thread */
 			mReadThread = new ReadThread();
 			mReadThread.start();
-			startSendTimer();
+			
 		} catch (Exception e) {
 			//DisplayError(R.string.error_security);
 		}
@@ -366,9 +367,18 @@ public class DeliveryProtocol {
 			try {
 				if(sendData!=null){
 					if(isDebug)
-						showLog("send",sendData,sendData.length);	
+						showLog(TAG+"reSendData",sendData,sendData.length);	
 					mOutputStream.write(sendData);
-					startAckTimer();
+					hasAck=false;
+				//	Log.d("ioctrl","startAckTimer############");
+					if(ackTimer==null){
+						ackTimer=new Timer();
+					}
+					cancelAckTimerTask();
+					ackTimerTask=new AckTimerTask();
+					ackTimerTask.inAckState=true;
+					ackTimer.schedule(ackTimerTask, AckTimerDuaration);
+					//startAckTimer();
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -462,8 +472,7 @@ public class DeliveryProtocol {
 		public void run() {
 			if(!hasAck&&inAckState){
 			//	Log.d("io","AckTimerTask !hasAck");
-				ackCnt++;
-				
+				ackCnt++;				
 				if(ackCnt>Max_ackRetryCnt){
 					cancelAckTimerTask();
 					sendTimeOutCallBack(); //发送超时
@@ -508,17 +517,18 @@ public class DeliveryProtocol {
 	
 	void onSendTime(){
 		//Log.e("io", "onSendTime ");
+		
 	    if(!sendList.isEmpty()){
 
 	    	
-	        if(hasAck){
+	        if(hasAck||(!isConnect)){
 //	        	if(canNext!=0){
 //	        		canNext--;
 	        	for(int i = 0;i<sendList.size();i++ ){
 	        		sendData = (byte[])sendList.get(i);
 	        		if(sendData!=null){
 	        			sendList.remove(i);
-	        	    	//Log.e("io", "onSendTime !sendList.isEmpty() &&sendData!=null");
+	        	    	Log.e(TAG, "onSendTime !sendList.isEmpty() &&sendData!=null");
 	        			sendCmd(sendData);
 	        			startAckTimer();
 	        			break;

@@ -249,7 +249,7 @@ public class MachineProtocol {
 			try {
 				if(sendData!=null){
 					if(isDebug)
-						showLog("send to uart",sendData,sendData.length);	
+						//showLog("send to uart",sendData,sendData.length);	
 					mOutputStream.write(sendData);
 				}
 			} catch (IOException e) {
