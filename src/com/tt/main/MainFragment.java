@@ -1001,6 +1001,7 @@ void existMask(){
 		void reStartApp(){	
 			
 			Intent restartIntent = new Intent(context, MainActivity.class);
+			restartIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			int pendingId = 1;
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, pendingId, restartIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 			AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);

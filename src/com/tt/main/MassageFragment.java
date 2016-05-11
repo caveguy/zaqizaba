@@ -325,6 +325,7 @@ public class MassageFragment extends Fragment {
 						//hasGetLocation=true;
 						provinceName = pro.substring(0, pro.length() - 1);
 						cityName = city.substring(0, city.length() - 1);
+						stopMapLocation();//获取地址后断服务
 //						progressDialog = ProgressDialog.show(
 //								context, null, "查询中...", true,
 //								true);
