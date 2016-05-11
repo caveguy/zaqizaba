@@ -499,6 +499,8 @@ void existMask(){
 		@Override
 		public void leave() {
 			dispDevLayout=false;
+			updateEnable();
+			
 			
 		}
 
