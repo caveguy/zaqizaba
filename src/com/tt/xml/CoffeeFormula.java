@@ -30,6 +30,26 @@ public class CoffeeFormula {
 	private  static String chocolate_water="chocolate_water";
 	
 	
+	
+	
+	public static boolean setName(List<Coffee> list,Integer id,String name){
+		for(Coffee coffee:list){
+			if(coffee.getId()==id){
+				coffee.setName(name);
+				return true;
+			}
+		}
+		return false;
+	}
+	public static boolean setPrice(List<Coffee> list,int id,String price){
+		for(Coffee coffee:list){
+			if(coffee.getId()==id){
+				coffee.setPrice(price);
+				return true;
+			}
+		}
+		return false;
+	}
 	/**
 	 * 
 	 * ��ȡ����

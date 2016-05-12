@@ -136,10 +136,11 @@ public class MainFragment extends Fragment {
 	boolean appealed=false;//是否已经申述
 	boolean isDebug=false;
 	byte mcWindowLast=0; //为了知道咖啡有没有制作完成
-	HashMap<Integer,Long> goodId=new HashMap<Integer,Long>();
-	HashMap<Long,String>	goodName=new HashMap<Long,String>();
-	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
-	HashMap<Long,String[]>	goodFormula=new HashMap<Long,String[]>();//配方
+	private List<Coffee> coffeeFormula =null;
+	HashMap<Integer,Integer> goodId=new HashMap<Integer,Integer>();
+//	HashMap<Long,String>	goodName=new HashMap<Long,String>();
+//	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
+//	HashMap<Long,String[]>	goodFormula=new HashMap<Long,String[]>();//配方
 	  //存放商品信息
 	 private MyHandler myHandler =null;
     private CoffeeDeviceInterfaceAdapter deviceInterfaceAdapter=null;
@@ -151,7 +152,7 @@ public class MainFragment extends Fragment {
 	TimerOutTask timeOutTask=null;
 	DeliveryProtocol deliveryController=null;
 	private MachineProtocol myMachine=null;	
-	private List<Coffee> coffeeFormula =null;
+	
 //	 MaintainFragment.DevCallBack  devCallBack=null;
 //	private PageIndicator mIndicator;
 	public static RelativeLayout mainbg;
@@ -297,13 +298,25 @@ public class MainFragment extends Fragment {
     	while (it.hasNext()) {  	  
     		 Map.Entry entry=(HashMap.Entry) it.next();  
     		    Integer key = (Integer)entry.getKey();  	    
-    		    Long value = (Long)entry.getValue();  
+    		    Integer value = (Integer)entry.getValue();  
     	    if( value==cur_goodId){
     	    	return key;
     	    }  
     	}
     	return 0;
     }
+//    Integer getCurType(){
+//		return (int) cur_goodId;
+//}
+    String getCurGoodName(){
+    	for(Coffee coffee:coffeeFormula){
+    		if(coffee.getId()==cur_goodId);
+    		return coffee.getName();
+    	}
+    	return "";
+    }
+    
+
 void initMachines(){
     	
     	myMachine=new MachineProtocol(context);
@@ -726,7 +739,8 @@ void existMask(){
 	}
 	void showPayDialog(int id,int sweet){
 		startCloseTimer(PayCloseCnt);
-		payDialog=new PayDialog(context,id%4,sweet,goodName.get(cur_goodId));
+		
+		payDialog=new PayDialog(context,id%4,sweet,getCurGoodName());
 		payDialog.setListener(payListener);
 		payDialog.show();
 		askQrPay(cur_goodId);
@@ -801,6 +815,9 @@ void existMask(){
 	    		mc_readCup();
 	    	}
 	    }
+	    
+	    
+	    
 	    void updatePrice(){
 	        new QueryDeviceGoodsAsyncTask(){
 	            @Override
@@ -812,10 +829,13 @@ void existMask(){
 	                    	int i=0;
 	                       for(DeviceGoods goods:rsp.getGoods()){
 	                    	   
-	                    	   Long id=goods.getGoodsId();
+	                    	   int id=goods.getGoodsId().intValue();
+	                    	   CoffeeFormula.setName(coffeeFormula, id, goods.getGoodsName());
+	                    	   CoffeeFormula.setPrice(coffeeFormula, id, goods.getGoodsPrice().toString());
+	       
 	                    	   goodId.put(i++, id);
-	                    	   goodName.put(id,goods.getGoodsName());
-	                    	   goodPrice.put(id, goods.getGoodsPrice());
+//	                    	   goodName.put(id,goods.getGoodsName());
+//	                    	   goodPrice.put(id, goods.getGoodsPrice());
 	                    	   //配方列表
 //	                    	   String formula=goods.getConfig();
 //	                    	   String[] formulas=formula.split(";");
@@ -839,18 +859,23 @@ void existMask(){
 	    
 	    void setGoodMsg(){
 	    	long id;
-	    	String[] name = new String[goodId.size()];
-	    	for(int i=0;i<goodId.size();i++){
-				if(goodId.containsKey(i)){
-					id=goodId.get(i);
-					name[i]=goodName.get(id)+"|￥"+goodPrice.get(id).toString();
-					
-				}
+	    	String[] name = new String[coffeeFormula.size()];
+	    	int i=0;
+	    	for(Coffee coffee:coffeeFormula){
+	    		name[i++]=coffee.getName()+"|￥"+coffee.getPrice();
 	    	}
+//	    	String[] name = new String[goodId.size()];
+//	    	for(int i=0;i<goodId.size();i++){
+//	    		if(goodId.containsKey(i)){
+//	    			id=goodId.get(i);
+//	    			name[i]=goodName.get(id)+"|￥"+goodPrice.get(id).toString();
+//	    			
+//	    		}
+//	    	}
 	    	page1.setIconNames(name);
 	    	if(name.length>4){
 	    	String[] name2=new String[name.length-4];
-	    	for(int i=4;i<name.length;i++){
+	    	for( i=4;i<name.length;i++){
 	    		name2[i-4]=name[i]	;
 	    	}
 	    	page2.setIconNames(name2);
@@ -1115,7 +1140,7 @@ void existMask(){
 	    		
 	    		for(Coffee coffee:coffeeFormula){
 	    			//if(coffee.getName().equals(context.getString(R.string.name_americano))){
-	    			Log.e(Tag, coffee.toString());
+	    			
 	    			if(coffee.getId()==id){
 	    				if(coffee.getNeedCoffee()!=null){//需要打咖啡
 		    				int needCoffee=new Integer(coffee.getNeedCoffee());
@@ -1460,6 +1485,7 @@ void existMask(){
 						return false;
 					}
 					coffeeType=type;
+	
 					if(goodId.containsKey(type)){
 						cur_goodId=goodId.get(type);
 						return true;

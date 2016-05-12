@@ -175,6 +175,6 @@
     <string name="name_Milk">Milk</string>
     <string name="name_chocolate">Chocolate</string>
     <string name="errgetXml">获取配方表失败</string>
-    <string name="version">v3.0.4-160512-4</string>
+    <string name="version">v3.0.5-160512-5</string>
 
 </resources>

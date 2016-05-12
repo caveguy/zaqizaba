@@ -3,6 +3,9 @@ package com.tt.xml;
 public class Coffee {
 	private Integer id=null;
 	private String name=null;
+	private String price=null;
+
+	
 	private Integer needCoffee=null;
 	private String sugar_level=null;//用string是为了一个中分出4个
 
@@ -25,6 +28,12 @@ public class Coffee {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getPrice() {
+		return price;
+	}
+	public void setPrice(String price) {
+		this.price = price;
 	}
 	public Integer getNeedCoffee() {
 		return needCoffee;
@@ -106,4 +115,7 @@ public class Coffee {
 //		this.sugar_preWater=sugar_pre;
 //	}
 	public Coffee(){}
+	
+	
+	
 }
