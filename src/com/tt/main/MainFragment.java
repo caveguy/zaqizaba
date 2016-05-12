@@ -72,12 +72,13 @@ public class MainFragment extends Fragment {
 	private final int Handler_ServerInitTimeOut=1009;
 	private final int Handler_CloseTimer=1010;
 	private final String Tag="CoffeeFrag";
-	private final int CoffeeType1=0;
-	private final int CoffeeType2=1;
-	private final int CoffeeType3=2;
-	private final int CoffeeType4=3;
-	private final int CoffeeType5=4;
-	private final int CoffeeType6=5;
+//	private final int CoffeeType1=0;
+//	private final int CoffeeType2=1;
+//	private final int CoffeeType3=2;
+//	private final int CoffeeType4=3;
+//	private final int CoffeeType5=4;
+//	private final int CoffeeType6=5;
+//	private final int CoffeeType7=6;
 
 	private final int StepNone=0;  
 	private final int StepPay=1; //等待支付
@@ -122,9 +123,12 @@ public class MainFragment extends Fragment {
 	private int dispMskLayout=0;
 	private int Msk_dev=1;
 	private int Msk_maintain=2;
-	//目前辅助板的两种不能工作的状态：
-//	boolean hasCup=true;
-//	boolean hasWater=true;
+	//目前辅助板的几种不能工作的状态：
+	boolean hasCup=true;
+	boolean hasWater=true;
+	boolean getXml=false;
+
+	
 	boolean isConnectToServer=false;
 	boolean isMachineWork=false;
 	boolean isAssistMcWork=false;
@@ -188,8 +192,11 @@ public class MainFragment extends Fragment {
 	void getCoffeeFormula(){
 		try {
 			coffeeFormula=CoffeeFormula.getCoffeeFormula(context);
+			getXml=true;
 		} catch (Exception e) {
 			Log.e(Tag, e.toString());
+			getXml=false;
+			setAssitMcEnable(false, "");
 			e.printStackTrace();
 		}
 	}
@@ -514,6 +521,9 @@ void existMask(){
 
 		@Override
 		public void leave() {
+//			hasWater=true;
+//			hasCup=true;
+//			setAssitMcEnable(true,context.getString(R.string.cmd1_ready));
 			updateEnable();		
 		}
 
@@ -704,7 +714,7 @@ void existMask(){
 		closeStateDialog();
 	}
 	void showSugarDialog(int id){
-		sugarDialog=new SugarDialog(context,id);
+		sugarDialog=new SugarDialog(context,id%4);
 		sugarDialog.setConfirmListener(sugarListener);
 		startCloseTimer(SugarChoiceCloseCnt);
 		sugarDialog.show();
@@ -716,7 +726,7 @@ void existMask(){
 	}
 	void showPayDialog(int id,int sweet){
 		startCloseTimer(PayCloseCnt);
-		payDialog=new PayDialog(context,id,sweet,goodName.get(cur_goodId));
+		payDialog=new PayDialog(context,id%4,sweet,goodName.get(cur_goodId));
 		payDialog.setListener(payListener);
 		payDialog.show();
 		askQrPay(cur_goodId);
@@ -727,7 +737,7 @@ void existMask(){
 	}
 	void showStateDialog(int id,String state){
 		 closePayDialog();
-		stateDialog=new MakingStateDialog(context,id,state);
+		stateDialog=new MakingStateDialog(context,id%4,state);
 		stateDialog.show();
 	}
 	void closeStateDialog(){
@@ -1109,27 +1119,34 @@ void existMask(){
 	    			if(coffee.getId()==id){
 	    				if(coffee.getNeedCoffee()!=null){//需要打咖啡
 		    				int needCoffee=new Integer(coffee.getNeedCoffee());
-		    				if(needCoffee==1){
+		    				if(needCoffee==1){ //出咖啡
 		    					makingStep&=~CoffeeFinish;
 		    					myMachine.dropCoffee();
 		    				}
 	    				}
-	    				int sugar=0;
-	    				String[] sugar_levels=coffee.getSugerLever().split(";");
-	    					if(sugar_levels!=null&&sugar_levels.length>=4){
-	    						
-	    					if(level==0){
-	    						sugar=0;
-	    					}else{
-	    						sugar=new Integer(sugar_levels[level]);
-	    					}
-	    					makingStep&=~PowderFinish;
-	    					deliveryController.cmd_pushLeftPowder(sugar,coffee.getSugerPreWater(),coffee.getSugerWater());
+	    				
+	    				Integer sugarWater=coffee.getSugarWater();
+	    				if(sugarWater!=null&&sugarWater!=0){//出糖水
+	    					int sugar=0;
+		    				String[] sugar_levels=coffee.getSugarLever().split(";");	
+		    					if(level==0){
+		    						//sugar=0;
+		    					}else if(sugar_levels!=null&&sugar_levels.length>=4){
+		    						sugar=new Integer(sugar_levels[level]);
+		    					}
+		    					makingStep&=~PowderFinish;
+		    					deliveryController.cmd_pushLeftPowder(sugar,coffee.getSugarPreWater(),coffee.getSugarWater());
+		    				
 	    				}
 		    				Integer milkWater=coffee.getMilkWater();
-		    				if(milkWater!=0){
+		    				if(milkWater!=null&&milkWater!=0){  //出奶水
 		    					makingStep&=~PowderFinish;
 		    					deliveryController.cmd_pushCenterPowder(coffee.getMilkLever(),coffee.getMilkPreWater(),coffee.getMilkWater());
+		    				}
+		    				Integer chocolateWater=coffee.getChocolateWater();
+		    				if(chocolateWater!=null&&chocolateWater!=0){  //出巧克力水
+		    					makingStep&=~PowderFinish;
+		    					deliveryController.cmd_pushRightPowder(coffee.getChocolateLever(),coffee.getChocolatePreWater(),coffee.getChocolateWater());
 		    				}
 	    				}
 	    					
@@ -1144,13 +1161,14 @@ void existMask(){
 		     *提示用户，并通知服务器做退款处理
 		     */
 		    void mc_noCups(){
-		    	//hasCup=false;
+		    	
 		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.noCup));
 		    	myHandler.postDelayed(new Runnable() {		
 					@Override
 					public void run() {
-						closeOder();					
-						setAssitMcEnable(false,context.getString(R.string.noCup));
+						closeOder();
+						hasCup=false;
+						setAssitMcEnable(false,"");
 					}
 				},2000);
 		    }
@@ -1159,12 +1177,13 @@ void existMask(){
 		     *提示用户，并通知服务器做退款处理
 		     */
 		    void mc_noWater(){
-		    	//hasWater=false;
+		    	
 		    	myHandler.postDelayed(new Runnable() {		
 					@Override
 					public void run() {
 						//t_payType.setText(R.string.noWater);
-						setAssitMcEnable(false,context.getString(R.string.noWater));
+						hasWater=false;
+						setAssitMcEnable(false,"");
 //						sendMsgToHandler(Handler_mcDisp, ParseReceiveCommand.getDispStringId(context));
 //						setEnable(false);
 					}
@@ -1386,7 +1405,13 @@ void existMask(){
 			 void setAssitMcEnable(boolean  enable,String msg){
 				 
 				 if(isAssistMcWork!=enable||(!oldAssisStr.equals(msg))){
-					 isAssistMcWork=enable;
+					 isAssistMcWork=enable&&hasCup&&hasWater&&getXml;
+					 if(!isAssistMcWork){
+					 msg=(hasCup?"":context.getString(R.string.noCup)+"/")+
+						(hasWater?"":context.getString(R.string.noWater)+"/")+
+						(getXml?"":context.getString(R.string.errgetXml)+"/")+
+						 (enable?"":msg);
+					 }
 					 oldAssisStr=msg;
 					 updateEnable();
 					 sendMsgToHandler(Handler_assiMcDisp, msg);

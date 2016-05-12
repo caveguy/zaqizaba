@@ -11,6 +11,9 @@ public class Coffee {
 	private Integer milk_level=null;
 	private Integer milk_preWater=null;
 	private Integer milk_water=null;
+	private Integer chocolate_level=null;
+	private Integer chocolate_preWater=null;
+	private Integer chocolate_water=null;
 	public Integer getId() {
 		return id;
 	}
@@ -29,22 +32,22 @@ public class Coffee {
 	public void setNeedCoffee(Integer value) {
 		this.needCoffee = value;
 	}
-	public String getSugerLever() {
+	public String getSugarLever() {
 		return sugar_level;
 	}
-	public void setSugerLever(String l) {
+	public void setSugarLever(String l) {
 		this.sugar_level = l;
 	}
-	public Integer getSugerPreWater() {
+	public Integer getSugarPreWater() {
 		return sugar_preWater;
 	}
-	public void setSugerPreWater(Integer l) {
+	public void setSugarPreWater(Integer l) {
 		this.sugar_preWater = l;
 	}
-	public Integer getSugerWater() {
+	public Integer getSugarWater() {
 		return sugar_water;
 	}
-	public void setSugerWater(Integer l) {
+	public void setSugarWater(Integer l) {
 		this.sugar_water = l;
 	}
 	public Integer getMilkLever() {
@@ -65,23 +68,42 @@ public class Coffee {
 	public void setMilkWater(Integer l) {
 		this.milk_water = l;
 	}
+	public Integer getChocolateLever() {
+		return chocolate_level;
+	}
+	public void setChocolateLever(Integer l) {
+		this.chocolate_level = l;
+	}
+	public Integer getChocolatePreWater() {
+		return chocolate_preWater;
+	}
+	public void setChocolatePreWater(Integer l) {
+		this.chocolate_preWater = l;
+	}
+	public Integer getChocolateWater() {
+		return chocolate_water;
+	}
+	public void setChocolateWater(Integer l) {
+		this.chocolate_water = l;
+	}
 	@Override
 	public String toString() { 
 	
 		return "Coffee [id="+id + ", name=" + name+"" +" needCoffee="+needCoffee+
 				",\n sugar_level="+sugar_level+ ",sugar_preWater"+sugar_preWater+",sugar_water"+sugar_water+
 				",\n milk_level="+milk_level+ ",milk_preWater"+milk_preWater+",milk_water"+milk_water+
+				",\n chocolate_level="+chocolate_level+ ",chocolate_preWater"+chocolate_preWater+",chocolate_water"+chocolate_water+
 				"]";
 	}
-	public Coffee(int id, String name, String sugar_lev,int sugar_pre,int sugar_water,int milk_lev,int milk_pre,int milk_water) {
-		this.id = id;
-		this.name = name;
-		this.milk_level=milk_lev;
-		this.milk_water=milk_water;
-		this.milk_preWater=milk_pre;
-		this.sugar_level=sugar_lev;
-		this.sugar_water=sugar_water;
-		this.sugar_preWater=sugar_pre;
-	}
+//	public Coffee(int id, String name, String sugar_lev,int sugar_pre,int sugar_water,int milk_lev,int milk_pre,int milk_water) {
+//		this.id = id;
+//		this.name = name;
+//		this.milk_level=milk_lev;
+//		this.milk_water=milk_water;
+//		this.milk_preWater=milk_pre;
+//		this.sugar_level=sugar_lev;
+//		this.sugar_water=sugar_water;
+//		this.sugar_preWater=sugar_pre;
+//	}
 	public Coffee(){}
 }

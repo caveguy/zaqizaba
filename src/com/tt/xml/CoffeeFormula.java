@@ -25,6 +25,9 @@ public class CoffeeFormula {
 	private  static String milk_level="milk_level";
 	private  static String milk_preWater="milk_preWater";
 	private  static String milk_water="milk_water";
+	private  static String chocolate_level="chocolate_level";
+	private  static String chocolate_preWater="chocolate_preWater";
+	private  static String chocolate_water="chocolate_water";
 	
 	
 	/**
@@ -52,37 +55,49 @@ public class CoffeeFormula {
 					coffee = new Coffee();
 					coffee.setId(id);
 				}
-				if(name.equals(pullParser.getName())){
+				else if(name.equals(pullParser.getName())){
 					String name = pullParser.nextText();
 					coffee.setName(name);
 				}
-				if(need_coffee.equals(pullParser.getName())){
+				else if(need_coffee.equals(pullParser.getName())){
 					int value =new Integer(pullParser.nextText());
 					coffee.setNeedCoffee(value);
 				}
-				if(sugar_level.equals(pullParser.getName())){
+				else if(sugar_level.equals(pullParser.getName())){
 					String name = pullParser.nextText();
-					coffee.setSugerLever(name);
+					coffee.setSugarLever(name);
 				}
-				if(sugar_preWater.equals(pullParser.getName())){
+				else if(sugar_preWater.equals(pullParser.getName())){
 					int value = new Integer(pullParser.nextText());
-					coffee.setSugerPreWater(value);
+					coffee.setSugarPreWater(value);
 				}
-				if(sugar_water.equals(pullParser.getName())){
+				else if(sugar_water.equals(pullParser.getName())){
 					int value = new Integer(pullParser.nextText());
-					coffee.setSugerWater(value);
+					coffee.setSugarWater(value);
 				}
-				if(milk_level.equals(pullParser.getName())){
+				else if(milk_level.equals(pullParser.getName())){
 					int value = new Integer(pullParser.nextText());
 					coffee.setMilkLever(value);
 				}
-				if(milk_preWater.equals(pullParser.getName())){
+				else if(milk_preWater.equals(pullParser.getName())){
 					int value = new Integer(pullParser.nextText());
 					coffee.setMilkPreWater(value);
 				}
-				if(milk_water.equals(pullParser.getName())){
+				else if(milk_water.equals(pullParser.getName())){
 					int value = new Integer(pullParser.nextText());
 					coffee.setMilkWater(value);
+				}
+				else if(chocolate_level.equals(pullParser.getName())){
+					int value = new Integer(pullParser.nextText());
+					coffee.setChocolateLever(value);
+				}
+				else if(chocolate_preWater.equals(pullParser.getName())){
+					int value = new Integer(pullParser.nextText());
+					coffee.setChocolatePreWater(value);
+				}
+				else if(chocolate_water.equals(pullParser.getName())){
+					int value = new Integer(pullParser.nextText());
+					coffee.setChocolateWater(value);
 				}
 	
 				break;
@@ -118,13 +133,13 @@ public class CoffeeFormula {
 			serializer.endTag(null, "name");
 			
 			serializer.startTag(null,sugar_level);
-			serializer.text(person.getSugerLever().toString());
+			serializer.text(person.getSugarLever().toString());
 			serializer.endTag(null, sugar_level);
 			serializer.startTag(null,sugar_preWater);
-			serializer.text(person.getSugerPreWater().toString());
+			serializer.text(person.getSugarPreWater().toString());
 			serializer.endTag(null, sugar_preWater);
 			serializer.startTag(null,sugar_water);
-			serializer.text(person.getSugerWater().toString());
+			serializer.text(person.getSugarWater().toString());
 			serializer.endTag(null, sugar_water);
 			serializer.startTag(null,milk_level);
 			serializer.text(person.getMilkLever().toString());
