@@ -11,10 +11,13 @@ public  class  ParseReceiveCommand {
 	private final static int DataLenthByte=3;
 	static CallBack callBack=null;
 	//public static int queryCnt=0;
-	private static  boolean needBeanMake=false;
+	private static  boolean needBeanMake=true;
 	
 	public static void setBeanMake(boolean can){
 		needBeanMake=can;
+	}
+	public static boolean isNeedBean(){
+		return needBeanMake;
 	}
 	public static byte getWindow(){
 		return cmd19_windowSetting[0];

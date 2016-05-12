@@ -52,6 +52,8 @@ import com.tt.util.TTLog;
 import com.tt.util.ToastShow;
 import com.tt.view.GuideFragmentAdapter;
 import com.tt.view.MainViewPager;
+import com.tt.xml.Coffee;
+import com.tt.xml.CoffeeFormula;
 import com.viewpagerindicator.CirclePageIndicator;
 import com.viewpagerindicator.PageIndicator;
 
@@ -115,14 +117,14 @@ public class MainFragment extends Fragment {
 	boolean isDeliverEnable=false;  //辅助板是否工作正常
 	boolean isMcEnable=false;      //咖啡机是否工作正常
 	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
-	boolean needBean=true ;   //
+	//boolean needBean=true ;   //
 	//private boolean dispDevLayout=false;
 	private int dispMskLayout=0;
 	private int Msk_dev=1;
 	private int Msk_maintain=2;
 	//目前辅助板的两种不能工作的状态：
-	boolean hasCup=true;
-	boolean hasWater=true;
+//	boolean hasCup=true;
+//	boolean hasWater=true;
 	boolean isConnectToServer=false;
 	boolean isMachineWork=false;
 	boolean isAssistMcWork=false;
@@ -145,6 +147,7 @@ public class MainFragment extends Fragment {
 	TimerOutTask timeOutTask=null;
 	DeliveryProtocol deliveryController=null;
 	private MachineProtocol myMachine=null;	
+	private List<Coffee> coffeeFormula =null;
 //	 MaintainFragment.DevCallBack  devCallBack=null;
 //	private PageIndicator mIndicator;
 	public static RelativeLayout mainbg;
@@ -182,7 +185,14 @@ public class MainFragment extends Fragment {
 		
 	}
 	
-	
+	void getCoffeeFormula(){
+		try {
+			coffeeFormula=CoffeeFormula.getCoffeeFormula(context);
+		} catch (Exception e) {
+			Log.e(Tag, e.toString());
+			e.printStackTrace();
+		}
+	}
 	
 	
 	/**********跟开发选项及维护菜单打交道的接口**************
@@ -241,6 +251,7 @@ public class MainFragment extends Fragment {
 	}
 	/******************************end**************************************/
 	
+	
 	public SetDevCallBack getBack() {
 		return myCallback;
 	}
@@ -265,7 +276,7 @@ public class MainFragment extends Fragment {
 		 mylog=new TTLog(Tag,true);
 		context=getActivity();
 		initView(view);
-
+		getCoffeeFormula();
 		return view;
 	}
 	
@@ -459,9 +470,9 @@ void existMask(){
 				
 						break;
 					case Handler_mcDisp://
-						String dsp=(hasCup?"":(context.getString(R.string.noCup)+"|"))+
-						(hasWater?"":(context.getString(R.string.noWater)+"|"))+
-						msg.obj.toString();
+						 //(hasCup?"":(context.getString(R.string.noCup)+"|"))+
+						//(hasWater?"":(context.getString(R.string.noWater)+"|"))+
+						String dsp= msg.obj.toString();
 				
 						setDevMcState(dsp);
 						break;
@@ -497,8 +508,8 @@ void existMask(){
 		
 		@Override
 		public void onBeanModeChanged(boolean need) {
-			needBean=need;
-			
+			//needBean=need;
+			setBeanMode(need);
 		}
 
 		@Override
@@ -513,6 +524,11 @@ void existMask(){
 	}; 
 	}
 	String oldMcString=null;
+	void setBeanMode(boolean need){
+		//needBean=need;
+		ParseReceiveCommand.setBeanMake(need);
+	}
+	
 	void mcSetCallBack(){
 		 ParseReceiveCommand.setCallBack(new ParseReceiveCommand.CallBack() {
 			
@@ -649,8 +665,10 @@ void existMask(){
 			
 			@Override
 			public void onCallback(int id) {
-				showSugarDialog(id);
-				setCoffeeType(id);
+				
+				if(setCoffeeType(id)){
+					showSugarDialog(id);
+				}
 				//coffeeType=id;
 			}
 		});
@@ -658,8 +676,10 @@ void existMask(){
 			 
 			 @Override
 			 public void onCallback(int id) {
-				 showSugarDialog(id);
-				 setCoffeeType(id+4);
+				 
+				 if(setCoffeeType(id+4)){
+					 showSugarDialog(id);
+				 }
 				 //coffeeType=id;
 			 }
 		 });
@@ -918,7 +938,8 @@ void existMask(){
 	    void askWeixinQrPay(long goodId){
 	        /*下单*/
 	        MakeOrderReq req = new MakeOrderReq();
-	        req.setFeedId(deviceInterfaceAdapter.getDevice().getFeedId());
+	        String feedId=deviceInterfaceAdapter.getDevice().getFeedId();
+	        req.setFeedId(feedId);
 	        List<Long> goodsIds = new ArrayList<Long>();
 	        goodsIds.add(goodId);
 	        //goodsIds.add(2l);
@@ -938,7 +959,9 @@ void existMask(){
 	    void askZfbQrPay(long goodId){
 	    	/*下单*/
 	    	MakeOrderReq req = new MakeOrderReq();
-	    	req.setFeedId(deviceInterfaceAdapter.getDevice().getFeedId());
+	    	String feedId=deviceInterfaceAdapter.getDevice().getFeedId();
+	    	Log.e(Tag, "*****************feedId="+feedId+"******************");
+	        req.setFeedId(feedId);
 	    	List<Long> goodsIds = new ArrayList<Long>();
 	    	goodsIds.add(goodId);
 	    	//goodsIds.add(2l);
@@ -1041,56 +1064,93 @@ void existMask(){
 		    	makingStep=0;
 		    	//test
 		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.dropPowder));
-
-		    	switch(type){//这里要根据sweetness选择出糖量
-		    	case CoffeeType1://美式
-		    		myMachine.dropCoffee();
-			    //	deliveryController.cmd_pushLeftPowder(70, 50,150);//落糖
-			    	deliveryController.cmd_pushLeftPowder(70, 10,50);//落糖
-			    	break;
-		    	case CoffeeType2://卡布
-		    		myMachine.dropCoffee();		
-		    		deliveryController.cmd_pushCenterPowder(70, 10,30);
-		    		deliveryController.cmd_pushLeftPowder(70, 10,30);
-		    		break;
-		    	case CoffeeType3://意式
-		    		myMachine.dropCoffee();
-		    		makingStep|=PowderFinish;
-		    		break;
-		    	case CoffeeType4://拿铁
-		    		myMachine.dropCoffee();
-		    		deliveryController.cmd_pushCenterPowder(70,10,40);
-		    		deliveryController.cmd_pushLeftPowder(70,10,30);
-		    		break;
-		    	case CoffeeType5://糖
-		    		makingStep|=CoffeeFinish;
-		    		deliveryController.cmd_pushLeftPowder(70, 20,60);
-		    		
-		    		break;
-		    	case CoffeeType6://奶
-		    		makingStep|=CoffeeFinish;
-		    		deliveryController.cmd_pushCenterPowder(70, 20,60);
-		    		break;
-		    	}
+		    	makeCoffee(type+1,sweetness);
+//		    	switch(type){//这里要根据sweetness选择出糖量
+//		    	case CoffeeType1://美式
+//		    		myMachine.dropCoffee();
+//			    //	deliveryController.cmd_pushLeftPowder(70, 50,150);//落糖
+//			    	deliveryController.cmd_pushLeftPowder(70, 10,50);//落糖
+//			    	break;
+//		    	case CoffeeType2://卡布
+//		    		myMachine.dropCoffee();		
+//		    		deliveryController.cmd_pushCenterPowder(70, 10,30);
+//		    		deliveryController.cmd_pushLeftPowder(70, 10,30);
+//		    		break;
+//		    	case CoffeeType3://意式
+//		    		myMachine.dropCoffee();
+//		    		makingStep|=PowderFinish;
+//		    		break;
+//		    	case CoffeeType4://拿铁
+//		    		myMachine.dropCoffee();
+//		    		deliveryController.cmd_pushCenterPowder(70,10,40);
+//		    		deliveryController.cmd_pushLeftPowder(70,10,30);
+//		    		break;
+//		    	case CoffeeType5://糖
+//		    		makingStep|=CoffeeFinish;
+//		    		deliveryController.cmd_pushLeftPowder(70, 20,60);
+//		    		
+//		    		break;
+//		    	case CoffeeType6://奶
+//		    		makingStep|=CoffeeFinish;
+//		    		deliveryController.cmd_pushCenterPowder(70, 20,60);
+//		    		break;
+//		    	}
 		    }
+		    
+		    void makeCoffee(int id,int level){
+		    	makingStep=AllFinish;//如果后面什么都不做，那么就是全部做完了
+	    		if(coffeeFormula==null){
+	    			return;
+	    		}
+	    		
+	    		for(Coffee coffee:coffeeFormula){
+	    			//if(coffee.getName().equals(context.getString(R.string.name_americano))){
+	    			Log.e(Tag, coffee.toString());
+	    			if(coffee.getId()==id){
+	    				if(coffee.getNeedCoffee()!=null){//需要打咖啡
+		    				int needCoffee=new Integer(coffee.getNeedCoffee());
+		    				if(needCoffee==1){
+		    					makingStep&=~CoffeeFinish;
+		    					myMachine.dropCoffee();
+		    				}
+	    				}
+	    				int sugar=0;
+	    				String[] sugar_levels=coffee.getSugerLever().split(";");
+	    					if(sugar_levels!=null&&sugar_levels.length>=4){
+	    						
+	    					if(level==0){
+	    						sugar=0;
+	    					}else{
+	    						sugar=new Integer(sugar_levels[level]);
+	    					}
+	    					makingStep&=~PowderFinish;
+	    					deliveryController.cmd_pushLeftPowder(sugar,coffee.getSugerPreWater(),coffee.getSugerWater());
+	    				}
+		    				Integer milkWater=coffee.getMilkWater();
+		    				if(milkWater!=0){
+		    					makingStep&=~PowderFinish;
+		    					deliveryController.cmd_pushCenterPowder(coffee.getMilkLever(),coffee.getMilkPreWater(),coffee.getMilkWater());
+		    				}
+	    				}
+	    					
+		    		}
+	    				
+	    		}
+	    		
+		    
+	
 		    /**
 		     *没有杯子了
 		     *提示用户，并通知服务器做退款处理
 		     */
-		    
-		    
-		    
-		    
 		    void mc_noCups(){
-		    	hasCup=false;
+		    	//hasCup=false;
 		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.noCup));
 		    	myHandler.postDelayed(new Runnable() {		
 					@Override
 					public void run() {
-						closeOder();
-						
+						closeOder();					
 						setAssitMcEnable(false,context.getString(R.string.noCup));
-
 					}
 				},2000);
 		    }
@@ -1099,7 +1159,7 @@ void existMask(){
 		     *提示用户，并通知服务器做退款处理
 		     */
 		    void mc_noWater(){
-		    	hasWater=false;
+		    	//hasWater=false;
 		    	myHandler.postDelayed(new Runnable() {		
 					@Override
 					public void run() {
@@ -1366,18 +1426,20 @@ void existMask(){
 						stateDialog.setState(state);
 					}
 				}
-				void setCoffeeType(int type){
+				boolean  setCoffeeType(int type){
 					
 					if(type==-1){
 						cur_goodId=-1;
 						//t_coffeeType.setText(R.string.pleaseChooseCoffee);
 						//setPayEnable(false);
-						return ;
+						return false;
 					}
 					coffeeType=type;
 					if(goodId.containsKey(type)){
 						cur_goodId=goodId.get(type);
+						return true;
 					}
+					return false;
 				}
 				
 				boolean  hasNetWork(){

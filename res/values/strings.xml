@@ -167,6 +167,13 @@
     <string name="medium">中</string>
     <string name="high">高</string>
     <string name="wait">等待更新</string>
-    <string name="version">v3.0.3-160511-6</string>
+    <string name="name_americano">Americano</string>
+    <string name="name_Latte">Latte</string>
+    <string name="name_Espresso">Espresso</string>
+    <string name="name_Cappuccino">Cappuccino</string>
+    <string name="name_Water">Water</string>
+    <string name="name_Milk">Milk</string>
+    <string name="name_chocolate">Chocolate</string>
+    <string name="version">v3.0.4-160512-2</string>
 
 </resources>

@@ -778,8 +778,7 @@ public class DeliveryProtocol {
 	public void cmd_pushCenterPowder(int power,int preWater,int water){
 		curState=Cmd_pushPowder;
 		packCmd(Cmd_setCenterPreWater,(byte) preWater);
-		packCmd(Cmd_setCenterWater,(byte) water);
-		
+		packCmd(Cmd_setCenterWater,(byte) water);	
 		packCmd(Cmd_setCenterPowder,(byte) power);
 		packCmd(Cmd_pushPowder,BIT1);
 	}
