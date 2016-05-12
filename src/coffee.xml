@@ -25,7 +25,7 @@
 		<need_coffee>1</need_coffee>
 		<sugar_level>0;30;50;70</sugar_level>
 		<sugar_preWater>10</sugar_preWater>
-		<sugar_water>60</sugar_water>
+		<sugar_water>30</sugar_water>
 		<milk_level>70</milk_level>
 		<milk_preWater>10</milk_preWater>
 		<milk_water>30</milk_water>
@@ -36,7 +36,7 @@
 		<sugar_level>0;30;50;70</sugar_level>
 		<sugar_preWater>10</sugar_preWater>
 		<sugar_water>30</sugar_water>
-		<milk_level>70</milk_level>
+		<milk_level>30</milk_level>
 		<milk_preWater>10</milk_preWater>
 		<milk_water>30</milk_water>
 	</coffee>

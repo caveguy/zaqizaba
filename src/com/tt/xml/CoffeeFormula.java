@@ -9,11 +9,14 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 import android.util.Xml;
 
 
 public class CoffeeFormula {
+	
+	public static String xml_path=Environment.getExternalStorageDirectory().toString()+"/coffee.xml";
 	
 	private static String objiect="coffee";
 	private  static String id="id";
@@ -181,7 +184,12 @@ public class CoffeeFormula {
 	
 	
 	public static List<Coffee>  getCoffeeFormula(Context contex) throws Exception{
-		InputStream xml = contex.getClass().getClassLoader().getResourceAsStream("coffee.xml");
+		InputStream xml=null;
+		Log.e("Coffee",xml_path);
+		 xml = contex.getClass().getClassLoader().getResourceAsStream(xml_path);
+		 if(xml==null){
+			 xml = contex.getClass().getClassLoader().getResourceAsStream("coffee.xml");
+		 }
 		return CoffeeFormula.getPersons(xml);
 //		for(Coffee person : persons){
 //			Log.i(TAG, person.toString());

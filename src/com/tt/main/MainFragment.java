@@ -830,6 +830,9 @@ void existMask(){
 	                       for(DeviceGoods goods:rsp.getGoods()){
 	                    	   
 	                    	   int id=goods.getGoodsId().intValue();
+	                    	   if(coffeeFormula==null){
+	                    		   return;
+	                    	   }
 	                    	   CoffeeFormula.setName(coffeeFormula, id, goods.getGoodsName());
 	                    	   CoffeeFormula.setPrice(coffeeFormula, id, goods.getGoodsPrice().toString());
 	       
