@@ -18,23 +18,24 @@ public class CoffeeFormula {
 	
 	public static String xml_path=Environment.getExternalStorageDirectory().toString()+"/coffee.xml";
 	
-	private static String objiect="coffee";
-	private  static String id="id";
-	private  static String name="name";
-	private  static String need_coffee="need_coffee";
-	private  static String sugar_level="sugar_level";
-	private  static String sugar_preWater="sugar_preWater";
-	private  static String sugar_water="sugar_water";
-	private  static String milk_level="milk_level";
-	private  static String milk_preWater="milk_preWater";
-	private  static String milk_water="milk_water";
-	private  static String chocolate_level="chocolate_level";
-	private  static String chocolate_preWater="chocolate_preWater";
-	private  static String chocolate_water="chocolate_water";
+	private  final static String objiect="coffee";
+	private  final static String id="id";
+	private  final static String name="name";
+	private  final static String need_coffee="need_coffee";
+	private  final static String sugar_level="sugar_level";
+	private  final static String ch1r_powder_level="ch1r_powder_level";
+	private  final static String ch2l_powder_level="ch2l_powder_level";
+	private  final static String ch2r_powder_level="ch2r_powder_level";
+	private  final static String ch3l_powder_level="ch3l_powder_level";
+	private  final static String ch3r_powder_level="ch3r_powder_level";
+	private  final static String ch4l_powder_level="ch4l_powder_level";
+	private  final static String ch4r_powder_level="ch4r_powder_level";
+	private  final static String ch1_water="ch1_water";
+	private  final static String ch2_water="ch2_water";
+	private  final static String ch3_water="ch3_water";
+	private  final static String ch4_water="ch4_water";
 	
-	
-	
-	
+
 	public static boolean setName(List<Coffee> list,Integer id,String name){
 		for(Coffee coffee:list){
 			if(coffee.getId()==id){
@@ -90,37 +91,49 @@ public class CoffeeFormula {
 					String name = pullParser.nextText();
 					coffee.setSugarLever(name);
 				}
-				else if(sugar_preWater.equals(pullParser.getName())){
+				else if(ch1r_powder_level.equals(pullParser.getName())){
 					int value = new Integer(pullParser.nextText());
-					coffee.setSugarPreWater(value);
+					coffee.setCh1r_powder_lever(value);
 				}
-				else if(sugar_water.equals(pullParser.getName())){
+				else if(ch2l_powder_level.equals(pullParser.getName())){
 					int value = new Integer(pullParser.nextText());
-					coffee.setSugarWater(value);
+					coffee.setCh2l_powder_lever(value);
 				}
-				else if(milk_level.equals(pullParser.getName())){
+				else if(ch2r_powder_level.equals(pullParser.getName())){
 					int value = new Integer(pullParser.nextText());
-					coffee.setMilkLever(value);
+					coffee.setCh2r_powder_lever(value);
 				}
-				else if(milk_preWater.equals(pullParser.getName())){
+				else if(ch3l_powder_level.equals(pullParser.getName())){
 					int value = new Integer(pullParser.nextText());
-					coffee.setMilkPreWater(value);
+					coffee.setCh3l_powder_lever(value);
 				}
-				else if(milk_water.equals(pullParser.getName())){
+				else if(ch3r_powder_level.equals(pullParser.getName())){
 					int value = new Integer(pullParser.nextText());
-					coffee.setMilkWater(value);
+					coffee.setCh3r_powder_lever(value);
 				}
-				else if(chocolate_level.equals(pullParser.getName())){
+				else if(ch4l_powder_level.equals(pullParser.getName())){
 					int value = new Integer(pullParser.nextText());
-					coffee.setChocolateLever(value);
+					coffee.setCh4l_powder_lever(value);
 				}
-				else if(chocolate_preWater.equals(pullParser.getName())){
+				else if(ch4r_powder_level.equals(pullParser.getName())){
 					int value = new Integer(pullParser.nextText());
-					coffee.setChocolatePreWater(value);
+					coffee.setCh4r_powder_lever(value);
 				}
-				else if(chocolate_water.equals(pullParser.getName())){
+				else if(ch1_water.equals(pullParser.getName())){
 					int value = new Integer(pullParser.nextText());
-					coffee.setChocolateWater(value);
+					coffee.setCh1Water(value);
+				}
+				else if(ch2_water.equals(pullParser.getName())){
+					int value = new Integer(pullParser.nextText());
+					coffee.setCh2Water(value);
+				}
+				else if(ch3_water.equals(pullParser.getName())){
+					int value = new Integer(pullParser.nextText());
+					coffee.setCh3Water(value);
+				}
+				else if(ch4_water.equals(pullParser.getName())){
+					int value = new Integer(pullParser.nextText());
+					coffee.setCh4Water(value);
 				}
 	
 				break;
@@ -158,22 +171,44 @@ public class CoffeeFormula {
 			serializer.startTag(null,sugar_level);
 			serializer.text(person.getSugarLever().toString());
 			serializer.endTag(null, sugar_level);
-			serializer.startTag(null,sugar_preWater);
-			serializer.text(person.getSugarPreWater().toString());
-			serializer.endTag(null, sugar_preWater);
-			serializer.startTag(null,sugar_water);
-			serializer.text(person.getSugarWater().toString());
-			serializer.endTag(null, sugar_water);
-			serializer.startTag(null,milk_level);
-			serializer.text(person.getMilkLever().toString());
-			serializer.endTag(null, milk_level);
-			serializer.startTag(null,milk_preWater);
-			serializer.text(person.getMilkPreWater().toString());
-			serializer.endTag(null, milk_preWater);
-			serializer.startTag(null,milk_water);
-			serializer.text(person.getMilkWater().toString());
-			serializer.endTag(null, milk_water);
 			
+			serializer.startTag(null,ch1r_powder_level);
+			serializer.text(person.getCh1r_powder_lever().toString());
+			serializer.endTag(null, ch1r_powder_level);
+			
+			serializer.startTag(null,ch2l_powder_level);
+			serializer.text(person.getCh2l_powder_lever().toString());
+			serializer.endTag(null, ch2l_powder_level);
+			serializer.startTag(null,ch2r_powder_level);
+			serializer.text(person.getCh2r_powder_lever().toString());
+			serializer.endTag(null, ch2r_powder_level);
+			
+			serializer.startTag(null,ch3l_powder_level);
+			serializer.text(person.getCh3l_powder_lever().toString());
+			serializer.endTag(null, ch3l_powder_level);
+			serializer.startTag(null,ch3r_powder_level);
+			serializer.text(person.getCh3r_powder_lever().toString());
+			serializer.endTag(null, ch3r_powder_level);
+			serializer.startTag(null,ch4l_powder_level);
+			serializer.text(person.getCh4l_powder_lever().toString());
+			serializer.endTag(null, ch4l_powder_level);
+			serializer.startTag(null,ch4r_powder_level);
+			serializer.text(person.getCh4r_powder_lever().toString());
+			serializer.endTag(null, ch4r_powder_level);
+			
+			serializer.startTag(null,ch1_water);
+			serializer.text(person.getCh1Water().toString());
+			serializer.endTag(null, ch1_water);
+			serializer.startTag(null,ch2_water);
+			serializer.text(person.getCh2Water().toString());
+			serializer.endTag(null, ch2_water);
+			serializer.startTag(null,ch3_water);
+			serializer.text(person.getCh3Water().toString());
+			serializer.endTag(null, ch3_water);
+			serializer.startTag(null,ch4_water);
+			serializer.text(person.getCh4Water().toString());
+			serializer.endTag(null, ch4_water);
+	
 			serializer.endTag(null, "person");
 		}
 		serializer.endTag(null, "persons");

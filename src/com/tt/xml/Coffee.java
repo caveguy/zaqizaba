@@ -6,17 +6,38 @@ public class Coffee {
 	private String price=null;
 
 	
-	private Integer needCoffee=null;
-	private String sugar_level=null;//用string是为了一个中分出4个
-
-	private Integer sugar_preWater=null;
-	private Integer sugar_water=null;
-	private Integer milk_level=null;
-	private Integer milk_preWater=null;
-	private Integer milk_water=null;
-	private Integer chocolate_level=null;
-	private Integer chocolate_preWater=null;
-	private Integer chocolate_water=null;
+	private Integer needCoffee=0;
+	/*
+	 * 糖比较特殊，用户需要选择，用string splite四份
+	 */
+	private String ch1l_sugar_level=null;//用string是为了一个中分出4个
+	private Integer ch1r_powder_lever=0;
+	private Integer ch2l_powder_lever=0;
+	private Integer ch2r_powder_lever=0;
+	private Integer ch3l_powder_lever=0;
+	private Integer ch3r_powder_lever=0;
+	private Integer ch4l_powder_lever=0;
+	private Integer ch4r_powder_lever=0;
+	private Integer ch1_water=0;
+	private Integer ch2_water=0;
+	private Integer ch3_water=0;
+	private Integer ch4_water=0;
+	
+	
+//	
+//	private Integer sugar_preWater=null;
+//	private Integer sugar_water=null;
+//	private Integer milk_level=null;
+//	private Integer milk_preWater=null;
+//	private Integer milk_water=null;
+//	private Integer chocolate_level=null;
+//	private Integer chocolate_preWater=null;
+//	private Integer chocolate_water=null;
+	
+	
+	
+	
+	
 	public Integer getId() {
 		return id;
 	}
@@ -42,66 +63,90 @@ public class Coffee {
 		this.needCoffee = value;
 	}
 	public String getSugarLever() {
-		return sugar_level;
+		return ch1l_sugar_level;
 	}
 	public void setSugarLever(String l) {
-		this.sugar_level = l;
+		this.ch1l_sugar_level = l;
 	}
-	public Integer getSugarPreWater() {
-		return sugar_preWater;
+	public void setCh1r_powder_lever(Integer l) {
+		this.ch1r_powder_lever=l;
 	}
-	public void setSugarPreWater(Integer l) {
-		this.sugar_preWater = l;
+	public void setCh2l_powder_lever(Integer l) {
+		this.ch2l_powder_lever=l;
 	}
-	public Integer getSugarWater() {
-		return sugar_water;
+	public void setCh2r_powder_lever(Integer l) {
+		this.ch2r_powder_lever=l;
 	}
-	public void setSugarWater(Integer l) {
-		this.sugar_water = l;
+	public void setCh3l_powder_lever(Integer l) {
+		this.ch3l_powder_lever=l;
 	}
-	public Integer getMilkLever() {
-		return milk_level;
+	public void setCh3r_powder_lever(Integer l) {
+		this.ch3r_powder_lever=l;
 	}
-	public void setMilkLever(Integer l) {
-		this.milk_level = l;
+	public void setCh4l_powder_lever(Integer l) {
+		this.ch4l_powder_lever=l;
 	}
-	public Integer getMilkPreWater() {
-		return milk_preWater;
+	public void setCh4r_powder_lever(Integer l) {
+		this.ch4r_powder_lever=l;
 	}
-	public void setMilkPreWater(Integer l) {
-		this.milk_preWater = l;
+	public Integer getCh1r_powder_lever() {
+		return ch1r_powder_lever;
 	}
-	public Integer getMilkWater() {
-		return milk_water;
+	public Integer getCh2l_powder_lever() {
+		return ch2l_powder_lever;
 	}
-	public void setMilkWater(Integer l) {
-		this.milk_water = l;
+	public Integer getCh2r_powder_lever() {
+		return ch2r_powder_lever;
 	}
-	public Integer getChocolateLever() {
-		return chocolate_level;
+	public Integer getCh3l_powder_lever() {
+		return ch3l_powder_lever;
 	}
-	public void setChocolateLever(Integer l) {
-		this.chocolate_level = l;
+	public Integer getCh3r_powder_lever() {
+		return ch3r_powder_lever;
 	}
-	public Integer getChocolatePreWater() {
-		return chocolate_preWater;
+	public Integer getCh4l_powder_lever() {
+		return ch4l_powder_lever;
 	}
-	public void setChocolatePreWater(Integer l) {
-		this.chocolate_preWater = l;
+	public Integer getCh4r_powder_lever() {
+		return ch4r_powder_lever;
 	}
-	public Integer getChocolateWater() {
-		return chocolate_water;
+	
+	public Integer getCh1Water() {
+		return ch1_water;
 	}
-	public void setChocolateWater(Integer l) {
-		this.chocolate_water = l;
+	public Integer getCh2Water() {
+		return ch2_water;
 	}
+	public Integer getCh3Water() {
+		return ch3_water;
+	}
+	public Integer getCh4Water() {
+		return ch4_water;
+	}
+	public void setCh1Water(Integer l) {
+		this.ch1_water = l;
+	}
+	public void setCh2Water(Integer l) {
+		this.ch2_water = l;
+	}
+	public void setCh3Water(Integer l) {
+		this.ch3_water = l;
+	}
+	public void setCh4Water(Integer l) {
+		this.ch4_water = l;
+	}
+
 	@Override
 	public String toString() { 
 	
 		return "Coffee [id="+id + ", name=" + name+"" +" needCoffee="+needCoffee+
-				",\n sugar_level="+sugar_level+ ",sugar_preWater"+sugar_preWater+",sugar_water"+sugar_water+
-				",\n milk_level="+milk_level+ ",milk_preWater"+milk_preWater+",milk_water"+milk_water+
-				",\n chocolate_level="+chocolate_level+ ",chocolate_preWater"+chocolate_preWater+",chocolate_water"+chocolate_water+
+				",\n ch1l_sugar_level="+ch1l_sugar_level+" ch1r_powder_lever="+ch1r_powder_lever+
+				",\n ch2l_powder_lever="+ch2l_powder_lever+" ch2r_powder_lever="+ch2r_powder_lever+
+				",\n ch3l_powder_lever="+ch3l_powder_lever+" ch3r_powder_lever="+ch3r_powder_lever+
+				",\n ch4l_powder_lever="+ch4l_powder_lever+" ch4r_powder_lever="+ch4r_powder_lever+
+				",\n ch1_water="+ch1_water+" ch2_water="+ch2_water+
+				",\n ch3_water="+ch3_water+" ch4_water="+ch4_water+
+				
 				"]";
 	}
 //	public Coffee(int id, String name, String sugar_lev,int sugar_pre,int sugar_water,int milk_lev,int milk_pre,int milk_water) {

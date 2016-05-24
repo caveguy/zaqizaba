@@ -3,72 +3,117 @@
 	<coffee id="1">
 		<name>Espresso</name>
 		<need_coffee>1</need_coffee>
-		<sugar_level>0;30;50;70</sugar_level>
-		<sugar_preWater>10</sugar_preWater>
-		<sugar_water>30</sugar_water>
-		<milk_level>0</milk_level>
-		<milk_preWater>0</milk_preWater>
-		<milk_water>0</milk_water>
+		<sugar_level>0;3;5;7</sugar_level>
+		<ch1r_powder_level>0</ch1r_powder_level>
+		<ch2l_powder_level>0</ch2l_powder_level>
+		<ch2r_powder_level>0</ch2r_powder_level>
+		<ch3l_powder_level>0</ch3l_powder_level>
+		<ch3r_powder_level>0</ch3r_powder_level>
+		<ch4l_powder_level>0</ch4l_powder_level>
+		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1_water>10</ch1_water>
+		<ch1_water>0</ch1_water>
+		<ch1_water>0</ch1_water>
+		<ch1_water>0</ch1_water>
+
 	</coffee>
 	<coffee id="2">
 		<name>Americano</name>
 		<need_coffee>1</need_coffee>
-		<sugar_level>0;30;50;70</sugar_level>
-		<sugar_preWater>10</sugar_preWater>
-		<sugar_water>70</sugar_water>
-		<milk_level>0</milk_level>
-		<milk_preWater>0</milk_preWater>
-		<milk_water>0</milk_water>
+		<sugar_level>0;3;5;7</sugar_level>
+		<ch1r_powder_level>0</ch1r_powder_level>
+		<ch2l_powder_level>0</ch2l_powder_level>
+		<ch2r_powder_level>0</ch2r_powder_level>
+		<ch3l_powder_level>0</ch3l_powder_level>
+		<ch3r_powder_level>0</ch3r_powder_level>
+		<ch4l_powder_level>0</ch4l_powder_level>
+		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1_water>20</ch1_water>
+		<ch1_water>0</ch1_water>
+		<ch1_water>0</ch1_water>
+		<ch1_water>0</ch1_water>
+
 	</coffee>
 	<coffee id="3">
 		<name>Cappuccino</name>
 		<need_coffee>1</need_coffee>
-		<sugar_level>0;30;50;70</sugar_level>
-		<sugar_preWater>10</sugar_preWater>
-		<sugar_water>30</sugar_water>
-		<milk_level>70</milk_level>
-		<milk_preWater>10</milk_preWater>
-		<milk_water>30</milk_water>
+		<sugar_level>0;3;5;7</sugar_level>
+		<ch1r_powder_level>0</ch1r_powder_level>
+		<ch2l_powder_level>5</ch2l_powder_level>
+		<ch2r_powder_level>0</ch2r_powder_level>
+		<ch3l_powder_level>0</ch3l_powder_level>
+		<ch3r_powder_level>0</ch3r_powder_level>
+		<ch4l_powder_level>0</ch4l_powder_level>
+		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1_water>10</ch1_water>
+		<ch1_water>10</ch1_water>
+		<ch1_water>0</ch1_water>
+		<ch1_water>0</ch1_water>
+		
 	</coffee>
 	<coffee id="4">
 		<name>Latte</name>
 		<need_coffee>1</need_coffee>
-		<sugar_level>0;30;50;70</sugar_level>
-		<sugar_preWater>10</sugar_preWater>
-		<sugar_water>30</sugar_water>
-		<milk_level>70</milk_level>
-		<milk_preWater>10</milk_preWater>
-		<milk_water>30</milk_water>
+		<sugar_level>0;3;5;7</sugar_level>
+		<ch1r_powder_level>0</ch1r_powder_level>
+		<ch2l_powder_level>5</ch2l_powder_level>
+		<ch2r_powder_level>0</ch2r_powder_level>
+		<ch3l_powder_level>0</ch3l_powder_level>
+		<ch3r_powder_level>0</ch3r_powder_level>
+		<ch4l_powder_level>0</ch4l_powder_level>
+		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1_water>10</ch1_water>
+		<ch1_water>10</ch1_water>
+		<ch1_water>0</ch1_water>
+		<ch1_water>0</ch1_water>
 	</coffee>
 	<coffee id="5">
 		<name>Water</name>
 		<need_coffee>0</need_coffee>
-		<sugar_level>0;30;50;70</sugar_level>
-		<sugar_preWater>10</sugar_preWater>
-		<sugar_water>80</sugar_water>
-		<milk_level>0</milk_level>
-		<milk_preWater>0</milk_preWater>
-		<milk_water>0</milk_water>
+		<sugar_level>0;3;5;7</sugar_level>
+		<ch1r_powder_level>0</ch1r_powder_level>
+		<ch2l_powder_level>0</ch2l_powder_level>
+		<ch2r_powder_level>0</ch2r_powder_level>
+		<ch3l_powder_level>0</ch3l_powder_level>
+		<ch3r_powder_level>0</ch3r_powder_level>
+		<ch4l_powder_level>0</ch4l_powder_level>
+		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1_water>10</ch1_water>
+		<ch1_water>0</ch1_water>
+		<ch1_water>0</ch1_water>
+		<ch1_water>0</ch1_water>
 	</coffee>
 	<coffee id="6">
 		<name>Milk</name>
 		<need_coffee>0</need_coffee>
-		<sugar_level>0;30;50;70</sugar_level>
-		<sugar_preWater>10</sugar_preWater>
-		<sugar_water>50</sugar_water>
-		<milk_level>70</milk_level>
-		<milk_preWater>10</milk_preWater>
-		<milk_water>80</milk_water>
+		<sugar_level>0;3;5;7</sugar_level>
+		<ch1r_powder_level>0</ch1r_powder_level>
+		<ch2l_powder_level>5</ch2l_powder_level>
+		<ch2r_powder_level>0</ch2r_powder_level>
+		<ch3l_powder_level>0</ch3l_powder_level>
+		<ch3r_powder_level>0</ch3r_powder_level>
+		<ch4l_powder_level>0</ch4l_powder_level>
+		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1_water>0</ch1_water>
+		<ch1_water>40</ch1_water>
+		<ch1_water>0</ch1_water>
+		<ch1_water>0</ch1_water>
 	</coffee>
 	<coffee id="7">
 		<name>Chocolate</name>
 		<need_coffee>0</need_coffee>
-		<sugar_level>0;30;50;70</sugar_level>
-		<sugar_preWater>10</sugar_preWater>
-		<sugar_water>50</sugar_water>
-		<chocolate_level>70</chocolate_level>
-		<chocolate_preWater>10</chocolate_preWater>
-		<chocolate_water>80</chocolate_water>
+		<sugar_level>0;3;5;7</sugar_level>
+		<ch1r_powder_level>0</ch1r_powder_level>
+		<ch2l_powder_level>0</ch2l_powder_level>
+		<ch2r_powder_level>0</ch2r_powder_level>
+		<ch3l_powder_level>5</ch3l_powder_level>
+		<ch3r_powder_level>0</ch3r_powder_level>
+		<ch4l_powder_level>0</ch4l_powder_level>
+		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1_water>0</ch1_water>
+		<ch1_water>0</ch1_water>
+		<ch1_water>40</ch1_water>
+		<ch1_water>0</ch1_water>
 	</coffee>
 
 </coffees>

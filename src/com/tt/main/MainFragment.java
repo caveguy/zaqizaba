@@ -1,7 +1,6 @@
 package com.tt.main;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,7 +34,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android_serialport_api.DeliveryProtocol;
+import android_serialport_api.AssistProtocol;
 import android_serialport_api.MachineProtocol;
 import android_serialport_api.ParseReceiveCommand;
 import coffee.shop.po.DeviceGoods;
@@ -126,6 +125,7 @@ public class MainFragment extends Fragment {
 	//目前辅助板的几种不能工作的状态：
 	boolean hasCup=true;
 	boolean hasWater=true;
+	boolean isHeating=false;
 	boolean getXml=false;
 
 	
@@ -150,7 +150,7 @@ public class MainFragment extends Fragment {
     Timer closeTimer=null;
 	CloseTimeTask closeTask=null;
 	TimerOutTask timeOutTask=null;
-	DeliveryProtocol deliveryController=null;
+	AssistProtocol assistProtocol=null;
 	private MachineProtocol myMachine=null;	
 	
 //	 MaintainFragment.DevCallBack  devCallBack=null;
@@ -321,8 +321,8 @@ void initMachines(){
     	
     	myMachine=new MachineProtocol(context);
     	mcSetCallBack();
-        deliveryController=new DeliveryProtocol(context);
-        deliveryController.setCallBack(new DeliveryProtocol.CallBack(){
+    	assistProtocol=new AssistProtocol(context);
+    	assistProtocol.setCallBack(new AssistProtocol.CallBack(){
 
         	
 			@Override
@@ -330,18 +330,9 @@ void initMachines(){
 				//杯子已经掉下，可以打咖啡了
 				mc_makeCoffee(getCurType());
 			}
-
-
-
 			@Override
 			public void cupStuck() {
 				mc_cupStuck();
-				
-			}
-
-			@Override
-			public void noCupDrop() {
-				mc_noCups();
 				
 			}
 
@@ -397,14 +388,28 @@ void initMachines(){
 				resumeTimeOutTime();
 				mc_makeCoffee(getCurType());
 			}
-			@Override
-			public void noWater() {
-				mc_noWater();
-			}
+		
 			@Override
 			public void onGetConnect() {
 				setAssitMcEnable(true,context.getString(R.string.cmd1_ready));				
 			}
+
+
+
+			@Override
+			public void onFault(byte fault) {
+				
+				mc_assistFault(fault);
+			}
+
+
+
+			@Override
+			public void onKeyPressed(byte key) {
+				// TODO Auto-generated method stub
+				
+			}
+
         	
         });
         if(hasNetWork()){
@@ -670,7 +675,7 @@ void existMask(){
 	@Override
 	public void onDestroy() {
 		try {
-			deliveryController.finalize();
+			assistProtocol.finalize();
 			myMachine.finalize();
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
@@ -1080,7 +1085,7 @@ void existMask(){
 					}
 				});
 		    	
-		    	deliveryController.cmd_dropCup(); 	
+		    	assistProtocol.cmd_dropCup(); 	
 		    }
 		    void mc_readCup(){
 		    
@@ -1092,7 +1097,7 @@ void existMask(){
 					//	t_coffeeType.setText(R.string.putCup);
 					}
 				});
-		    	deliveryController.cmd_isCupReady();
+		    	assistProtocol.cmd_isCupReady();
 		    }
 		    /**
 		     * 制作咖啡接口
@@ -1153,9 +1158,9 @@ void existMask(){
 		    				}
 	    				}
 	    				
-	    				Integer sugarWater=coffee.getSugarWater();
+	    				Integer sugarWater=coffee.getCh1Water();
 	    				if(sugarWater!=null&&sugarWater!=0){//出糖水
-	    					int sugar=0;
+	    					Integer sugar=0;
 		    				String[] sugar_levels=coffee.getSugarLever().split(";");	
 		    					if(level==0){
 		    						//sugar=0;
@@ -1163,19 +1168,29 @@ void existMask(){
 		    						sugar=new Integer(sugar_levels[level]);
 		    					}
 		    					makingStep&=~PowderFinish;
-		    					deliveryController.cmd_pushLeftPowder(sugar,coffee.getSugarPreWater(),coffee.getSugarWater());
+		    					int ch1r=coffee.getCh1r_powder_lever();
+		    					int ch2l=coffee.getCh2l_powder_lever();
+		    					int ch2r=coffee.getCh2r_powder_lever();
+		    					int ch3l=coffee.getCh3l_powder_lever();
+		    					int ch3r=coffee.getCh3r_powder_lever();
+		    					int ch4l=coffee.getCh4l_powder_lever();
+		    					int ch4r=coffee.getCh4r_powder_lever();
+		    					assistProtocol.cmd_setPowder(sugar,ch1r,ch2l,ch2r ,ch3l,ch3r,ch4l,ch4r);
+		    					assistProtocol.cmd_setWater(coffee.getCh1Water(), coffee.getCh2Water(), coffee.getCh3Water(),coffee.getCh4Water());
+		    					assistProtocol.cmd_startDropPowder(sugar==0?false:true, ch1r==0?false:true, ch2l==0?false:true, ch2r==0?false:true, ch3l==0?false:true, ch3r==0?false:true, ch4l==0?false:true, ch4r==0?false:true);
+		    					//deliveryController.cmd_pushLeftPowder(sugar,coffee.getSugarPreWater(),coffee.getSugarWater());
 		    				
 	    				}
-		    				Integer milkWater=coffee.getMilkWater();
-		    				if(milkWater!=null&&milkWater!=0){  //出奶水
-		    					makingStep&=~PowderFinish;
-		    					deliveryController.cmd_pushCenterPowder(coffee.getMilkLever(),coffee.getMilkPreWater(),coffee.getMilkWater());
-		    				}
-		    				Integer chocolateWater=coffee.getChocolateWater();
-		    				if(chocolateWater!=null&&chocolateWater!=0){  //出巧克力水
-		    					makingStep&=~PowderFinish;
-		    					deliveryController.cmd_pushRightPowder(coffee.getChocolateLever(),coffee.getChocolatePreWater(),coffee.getChocolateWater());
-		    				}
+//		    				Integer milkWater=coffee.getCh1rWater();
+//		    				if(milkWater!=null&&milkWater!=0){  //出奶水
+//		    					makingStep&=~PowderFinish;
+//		    					deliveryController.cmd_pushCenterPowder(coffee.getMilkLever(),coffee.getMilkPreWater(),coffee.getMilkWater());
+//		    				}
+//		    				Integer chocolateWater=coffee.getChocolateWater();
+//		    				if(chocolateWater!=null&&chocolateWater!=0){  //出巧克力水
+//		    					makingStep&=~PowderFinish;
+//		    					deliveryController.cmd_pushRightPowder(coffee.getChocolateLever(),coffee.getChocolatePreWater(),coffee.getChocolateWater());
+//		    				}
 	    				}
 	    					
 		    		}
@@ -1184,39 +1199,54 @@ void existMask(){
 	    		
 		    
 	
-		    /**
-		     *没有杯子了
-		     *提示用户，并通知服务器做退款处理
-		     */
-		    void mc_noCups(){
-		    	
-		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.noCup));
+//		    /**
+//		     *没有杯子了
+//		     *提示用户，并通知服务器做退款处理
+//		     */
+//		    void mc_noCups(){
+//		    	
+//		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.noCup));
+//		    	myHandler.postDelayed(new Runnable() {		
+//					@Override
+//					public void run() {
+//						closeOder();
+//						hasCup=false;
+//						setAssitMcEnable(false,"");
+//					}
+//				},2000);
+//		    }
+//		    /**
+//		     *没有水了
+//		     *提示用户，并通知服务器做退款处理
+//		     */
+//		    void mc_noWater(){
+//		    	
+//		    	myHandler.postDelayed(new Runnable() {		
+//					@Override
+//					public void run() {
+//						//t_payType.setText(R.string.noWater);
+//						hasWater=false;
+//						setAssitMcEnable(false,"");
+////						sendMsgToHandler(Handler_mcDisp, ParseReceiveCommand.getDispStringId(context));
+////						setEnable(false);
+//					}
+//				},1000);
+//
+//		    }
+		    void mc_assistFault(byte fault){
+		    	hasWater=(fault&AssistProtocol.Fault_noWater)==0?true:false;
+		    	hasCup=(fault&AssistProtocol.Fault_noCup)==0?true:false;
 		    	myHandler.postDelayed(new Runnable() {		
-					@Override
-					public void run() {
-						closeOder();
-						hasCup=false;
-						setAssitMcEnable(false,"");
-					}
-				},2000);
-		    }
-		    /**
-		     *没有水了
-		     *提示用户，并通知服务器做退款处理
-		     */
-		    void mc_noWater(){
-		    	
-		    	myHandler.postDelayed(new Runnable() {		
-					@Override
-					public void run() {
-						//t_payType.setText(R.string.noWater);
-						hasWater=false;
-						setAssitMcEnable(false,"");
+		    		@Override
+		    		public void run() {
+		    			//t_payType.setText(R.string.noWater);
+		    			hasWater=false;
+		    			setAssitMcEnable(false,"");
 //						sendMsgToHandler(Handler_mcDisp, ParseReceiveCommand.getDispStringId(context));
 //						setEnable(false);
-					}
-				},1000);
-
+		    		}
+		    	},1000);
+		    	
 		    }
 
 		    /**
@@ -1247,7 +1277,7 @@ void existMask(){
 				if(timeOutTask!=null){
 					timeOutTask.closeCnt=CloseCnt_TakingCup;
 				}
-		   		deliveryController.cmd_QueryCupToken();
+				assistProtocol.cmd_QueryCupToken();
 		   }
 		   
 		    /**
@@ -1277,7 +1307,7 @@ void existMask(){
 		    }
 		    void mc_cupStuck(){
 		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.cupStuck));
-		    	deliveryController.cmd_isCupReady();
+		    	assistProtocol.cmd_isCupReady();
 		    }
 		    /**
 		     * 跟辅助板通信超时
@@ -1470,7 +1500,7 @@ void existMask(){
 					cancelTimeOutTask();
 //					deliveryController.cancelQueryTimerTask();
 //					deliveryController.cmd_readError();//交易完成之后读取水位
-					deliveryController.startQueryErrorTask();
+					assistProtocol.cmd_handShake();
 					resetChoice();
 				}
 				
