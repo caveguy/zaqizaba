@@ -120,7 +120,7 @@ public class MainFragment extends Fragment {
 	//boolean needBean=true ;   //
 	//private boolean dispDevLayout=false;
 	private int dispMskLayout=0;
-	private final int Msk_none=1;
+	private final int Msk_none=0;
 	private final int Msk_dev=1;
 	private final int Msk_maintain=2;
 
@@ -255,7 +255,7 @@ public class MainFragment extends Fragment {
 	}
 	
 	void  enterMaintainMode(boolean refund){
-		Log.d(Tag, "enterMaintainMode");
+		Log.e(Tag, "enterMaintainMode");
 		if(dispMskLayout==Msk_none){
 			dispMskLayout=Msk_maintain;
 			if(myCallback!=null){
@@ -266,7 +266,7 @@ public class MainFragment extends Fragment {
 	
 	void leaveDevOrMaintainMode(){
 		if(dispMskLayout!=Msk_none){
-		Log.d(Tag, "leaveDevOrMaintainMode");
+		Log.e(Tag, "leaveDevOrMaintainMode");
 		dispMskLayout=0;
 			if(myCallback!=null){
 				myCallback. hide();
@@ -454,6 +454,7 @@ void existMask(){
         mIndicator.setViewPager(mPager);
         
         setArrow(0);
+        setDevCallBack();
         mIndicator.setOnPageChangeListener(new OnPageChangeListener() {
 
 			@Override
@@ -526,7 +527,7 @@ void existMask(){
 		        };
 		    };
        
-		    setDevCallBack();
+		    
 	}
 	public void setDevCallBack(){
 		MaintainFragment.back=new MaintainFragment.DevCallBack() {
@@ -551,6 +552,7 @@ void existMask(){
 
 		@Override
 		public void leave() {
+			Log.e(Tag, "in mian frag leave");
 			updateEnable();		
 		}
 

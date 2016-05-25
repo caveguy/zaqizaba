@@ -86,6 +86,8 @@ public class UpdateManager {
 		try {
 			URL serverURL = new URL(url+"/ver.aspx");
 			HttpURLConnection connect = (HttpURLConnection) serverURL.openConnection();
+			connect.setConnectTimeout(5000);  
+			connect.setReadTimeout(5000); 
 			BufferedInputStream bis = new BufferedInputStream(connect.getInputStream());
 			int n = 0;
 			while((n = bis.read(buffer))!= -1){
@@ -138,16 +140,20 @@ public class UpdateManager {
 	//比较服务器版本与本地版本弹出对话框
 	public boolean compareVersion(){
 		
-		
+		final Context contextTemp = context;
 		version=getVersion();
-		new Thread(){
+		versionName=getVersionName();
+		Log.e(TAG, "compareVersion!!!!!!!!!!!0");
+		
+		Thread thread=new Thread(){
 			public void run() {
-				Looper.prepare();
-				version=getVersion();
-				versionName=getVersionName();
-				String serverJson = manager.getServerVersion();
-				if(serverJson!=null&&versionName!=null){
 				
+				Looper.prepare();
+				Log.e(TAG, "compareVersion!!!!!!!!!!!1");
+				String serverJson = manager.getServerVersion();
+				Log.e(TAG, "compareVersion!!!!!!!!!!!2");
+				if(serverJson!=null&&versionName!=null){
+				Log.e(TAG, "compareVersion!!!!!!!!!!!3");
 					//解析Json数据
 					try {
 						JSONArray array = new JSONArray(serverJson);
@@ -166,7 +172,7 @@ public class UpdateManager {
 				                	   new Thread(){
 				                		   public void run() {
 				                			   Looper.prepare();
-				                			   downloadApkFile(context);
+				                			   downloadApkFile(contextTemp);
 				                			   Looper.loop();
 				                		   };
 				                	   }.start();
@@ -192,17 +198,13 @@ public class UpdateManager {
 						Log.e(TAG,context.getString(R.string.errorGetServerVer));
 					}
 				}else{
-					dispDialog(context.getString(R.string.error),context.getString(R.string.unknowError),context.getString(R.string.ok),null,null);
+				//	dispDialog(context.getString(R.string.error),context.getString(R.string.unknowError),context.getString(R.string.ok),null,null);
 				}
 				Looper.loop();
 			};
-			
-		}.start();
-		
-		
-		
-		
-		
+		};
+		//thread.setPriority(Thread.MAX_PRIORITY);
+		thread.start();
 		return false;
 	}
 	

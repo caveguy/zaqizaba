@@ -63,6 +63,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	
 	void leave(){
 		//layout_mask.setVisibility(View.GONE);
+		Log.e("Maintain", "leave-------");
 		if(back!=null){
 			back.leave();
 		}
@@ -234,6 +235,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		}
 	}
 	void hide(){
+		Log.e("maintain","hide-----");
 		layout_mask.setVisibility(View.GONE);
 	}
 	
