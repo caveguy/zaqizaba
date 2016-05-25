@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.coffemachinev3.R;
+
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -55,8 +57,8 @@ public class UpdateManager {
 			version = context.getPackageManager().getPackageInfo(  
 					pkName, 0).versionCode;  
         } catch (Exception e) { 
-        	dispDialog("错误","获取版本号异常！","确定",null,null);
-        	Log.e(TAG,"获取版本号异常！");
+        	dispDialog(context.getString(R.string.error),context.getString(R.string.getVerError),context.getString(R.string.ok),null,null);
+			Log.e(TAG,context.getString(R.string.getVerError));
         	// System.out.println("获取版本号异常！");
         }  
 		return version;
@@ -70,8 +72,8 @@ public class UpdateManager {
 			versionName = context.getPackageManager().getPackageInfo(
 					pkName, 0).versionName;
 		} catch (Exception e) {
-			dispDialog("错误","获取版本名异常！","确定",null,null);
-			Log.e(TAG,"获取版本名异常！");
+			dispDialog(context.getString(R.string.error),context.getString(R.string.getVerError),context.getString(R.string.ok),null,null);
+			Log.e(TAG,context.getString(R.string.getVerError));
 		}
 		return versionName;
 	}
@@ -90,8 +92,9 @@ public class UpdateManager {
 				serverJson = new String(buffer);
 			}
 		} catch (Exception e) {
-			dispDialog("错误","连接服务器异常！","确定",null,null);
-			Log.e(TAG,"获取服务器版本号异常！"+e);
+			serverJson=null;
+			dispDialog(context.getString(R.string.error),context.getString(R.string.errorToserver),context.getString(R.string.ok),null,null);
+			Log.e(TAG,context.getString(R.string.errorToserver)+e);
 		}
 		
 		return serverJson;
@@ -172,18 +175,24 @@ public class UpdateManager {
 				                   
 				               };
 							
-							
-							dispDialog("版本更新","当前版本："+versionName
-				            		+"\n"+"服务器版本："+serverVersionName,"立即更新","下次再说",listen);
+				               dispDialog(context.getString(R.string.update),context.getString(R.string.curVer)+versionName
+				            		   +"\n"+context.getString(R.string.serverVer)+serverVersionName 
+				            		   ,context.getString(R.string.doNow),context.getString(R.string.nextTime),listen);
+//							dispDialog("版本更新","当前版本："+versionName
+//				            		+"\n"+"服务器版本："+serverVersionName,"立即更新","下次再说",listen);
 	
 						}else{
-							dispDialog("版本信息","当前已经是最新版本","确定",null,null);
+							dispDialog(context.getString(R.string.update),context.getString(R.string.newest),context.getString(R.string.ok),null,null);
+						//	dispDialog("版本信息","当前已经是最新版本","确定",null,null);
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
-						dispDialog("错误","获取服务器版本线程异常！","确定",null,null);
-						Log.e(TAG,"获取服务器版本线程异常！"+e);
+
+						dispDialog(context.getString(R.string.error),context.getString(R.string.errorGetServerVer),context.getString(R.string.ok),null,null);
+						Log.e(TAG,context.getString(R.string.errorGetServerVer));
 					}
+				}else{
+					dispDialog(context.getString(R.string.error),context.getString(R.string.unknowError),context.getString(R.string.ok),null,null);
 				}
 				Looper.loop();
 			};

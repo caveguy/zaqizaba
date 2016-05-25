@@ -177,6 +177,16 @@
     <string name="errgetXml">获取配方表失败</string>
     <string name="deviceId">设备ID:</string>
     <string name="update">检查更新</string>
+    <string name="error">错误</string>
+    <string name="errorToserver">连接更新服务器异常</string>
+    <string name="getVerError">获取版本异常</string>
+    <string name="errorGetServerVer">获取服务器端应用出错</string>
+    <string name="serverVer">服务器端版本:</string>
+    <string name="curVer">当前版本:</string>
+    <string name="doNow">立刻更新</string>
+    <string name="nextTime">下次再说</string>
+    <string name="newest">已经是最新版本</string>
+    <string name="unknowError">更新出错</string>
     <string name="version">v3.1.0-160525-5</string>
     
 
