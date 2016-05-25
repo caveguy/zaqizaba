@@ -2,6 +2,7 @@
 <coffees>
 	<coffee id="1">
 		<name>Espresso</name>
+		<price>0.1</price>
 		<need_coffee>1</need_coffee>
 		<sugar_level>0;3;5;7</sugar_level>
 		<ch1r_powder_level>0</ch1r_powder_level>
@@ -20,6 +21,7 @@
 	<coffee id="2">
 		<name>Americano</name>
 		<need_coffee>1</need_coffee>
+		<price>0.2</price>
 		<sugar_level>0;3;5;7</sugar_level>
 		<ch1r_powder_level>0</ch1r_powder_level>
 		<ch2l_powder_level>0</ch2l_powder_level>
@@ -36,6 +38,7 @@
 	</coffee>
 	<coffee id="3">
 		<name>Cappuccino</name>
+		<price>3</price>
 		<need_coffee>1</need_coffee>
 		<sugar_level>0;3;5;7</sugar_level>
 		<ch1r_powder_level>0</ch1r_powder_level>
@@ -53,6 +56,7 @@
 	</coffee>
 	<coffee id="4">
 		<name>Latte</name>
+		<price>0.1</price>
 		<need_coffee>1</need_coffee>
 		<sugar_level>0;3;5;7</sugar_level>
 		<ch1r_powder_level>0</ch1r_powder_level>
@@ -69,6 +73,7 @@
 	</coffee>
 	<coffee id="5">
 		<name>Water</name>
+		<price>0.1</price>
 		<need_coffee>0</need_coffee>
 		<sugar_level>0;3;5;7</sugar_level>
 		<ch1r_powder_level>0</ch1r_powder_level>
@@ -85,6 +90,7 @@
 	</coffee>
 	<coffee id="6">
 		<name>Milk</name>
+		<price>0.1</price>
 		<need_coffee>0</need_coffee>
 		<sugar_level>0;3;5;7</sugar_level>
 		<ch1r_powder_level>0</ch1r_powder_level>
@@ -101,6 +107,7 @@
 	</coffee>
 	<coffee id="7">
 		<name>Chocolate</name>
+		<price>0.05</price>
 		<need_coffee>0</need_coffee>
 		<sugar_level>0;3;5;7</sugar_level>
 		<ch1r_powder_level>0</ch1r_powder_level>

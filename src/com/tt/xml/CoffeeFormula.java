@@ -21,6 +21,7 @@ public class CoffeeFormula {
 	private  final static String objiect="coffee";
 	private  final static String id="id";
 	private  final static String name="name";
+	private  final static String price="price";
 	private  final static String need_coffee="need_coffee";
 	private  final static String sugar_level="sugar_level";
 	private  final static String ch1r_powder_level="ch1r_powder_level";
@@ -82,6 +83,10 @@ public class CoffeeFormula {
 				else if(name.equals(pullParser.getName())){
 					String name = pullParser.nextText();
 					coffee.setName(name);
+				}
+				else if(price.equals(pullParser.getName())){
+					String value = pullParser.nextText();
+					coffee.setPrice(value);
 				}
 				else if(need_coffee.equals(pullParser.getName())){
 					int value =new Integer(pullParser.nextText());

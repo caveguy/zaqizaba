@@ -121,8 +121,8 @@ public class AssistProtocol {
 
 	
 		
-	final int SendTimerDuaration=200;
-	final int AckTimerDuaration=150;
+	final int SendTimerDuaration=300;
+	final int AckTimerDuaration=200;
 	final int QueryTimerDuaration=500;
 //	final int ErrorQueryTimerDuaration=5*1000;
 	

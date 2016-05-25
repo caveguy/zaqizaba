@@ -537,6 +537,8 @@ void existMask(){
 		
 		@Override
 		public void onDevModeChanged(boolean is) {
+			
+			simulateGoodId(is);
 			isDebug=is;
 		}
 		
@@ -826,8 +828,18 @@ void existMask(){
 	    		mc_readCup();
 	    	}
 	    }
-	    
-	    
+	    /*
+	     * 为了不能注册的机子debug
+	     */
+	   void simulateGoodId(boolean is){
+		   if(is){
+			   if(goodId.isEmpty()){
+				   for(int i=0;i<7;i++){
+					   goodId.put(i, i+1);
+				   }
+			   }
+		   }
+	    }
 	    
 	    void updatePrice(){
 	    	
@@ -1290,7 +1302,7 @@ void existMask(){
 		     * 
 		     */
 		    void mc_toAssistControllerTimeOut(){
-		    	AssistState.getXml=false;
+		    	AssistState.isConnect=false;
 		    	updateAssitMcEnable();
 		    	//setAssitMcEnable(false,context.getString(R.string.toAssisTimeOut));
 		    	
