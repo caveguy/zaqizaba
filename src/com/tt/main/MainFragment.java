@@ -122,11 +122,7 @@ public class MainFragment extends Fragment {
 	private int dispMskLayout=0;
 	private int Msk_dev=1;
 	private int Msk_maintain=2;
-	//目前辅助板的几种不能工作的状态：
-	boolean hasCup=true;
-	boolean hasWater=true;
-	boolean isHeating=false;
-	boolean getXml=false;
+
 
 	
 	boolean isConnectToServer=false;
@@ -162,6 +158,18 @@ public class MainFragment extends Fragment {
 	 String oldNetStr="";
 
 	UpdateMsgCallBack msgCallBack=null;
+	
+	static class AssistState{
+		//目前辅助板的几种不能工作的状态：
+		public static boolean hasCup=true;
+		public static boolean hasWater=true;
+		public static boolean isConnect=false;	
+		public static boolean getXml=false;
+		public static boolean getEnable(){
+			return hasCup&hasWater&isConnect&getXml;
+		}
+	}
+	
 	public  void setMsgCallBack(UpdateMsgCallBack call) {
 		// TODO Auto-generated method stub
 		msgCallBack = call;
@@ -193,12 +201,13 @@ public class MainFragment extends Fragment {
 	void getCoffeeFormula(){
 		try {
 			coffeeFormula=CoffeeFormula.getCoffeeFormula(context);
-			getXml=true;
+			AssistState.getXml=true;
 		} catch (Exception e) {
 			Log.e(Tag, e.toString());
-			getXml=false;
-			setAssitMcEnable(false, "");
+			AssistState.getXml=false;		
 			e.printStackTrace();
+		}finally{
+			updateAssitMcEnable();
 		}
 	}
 	
@@ -285,6 +294,8 @@ public class MainFragment extends Fragment {
 		context=getActivity();
 		initView(view);
 		getCoffeeFormula();
+		setMcEnable(false,context.getString(R.string.comErr));
+		setNetWorkEnable(false,context.getString(R.string.connectFailed));
 		return view;
 	}
 	
@@ -318,7 +329,7 @@ public class MainFragment extends Fragment {
     
 
 void initMachines(){
-    	
+
     	myMachine=new MachineProtocol(context);
     	mcSetCallBack();
     	assistProtocol=new AssistProtocol(context);
@@ -373,16 +384,7 @@ void initMachines(){
 			public void startDropCup() {
 				mc_startDropCup();
 			}
-			@Override
-			public void onDisable() {
-				// TODO Auto-generated method stub
-				
-			}
-//			@Override
-//			public void onEnable() {
-//				// TODO Auto-generated method stub
-//				
-//			}
+
 			@Override
 			public void cupReady() {
 				resumeTimeOutTime();
@@ -391,7 +393,9 @@ void initMachines(){
 		
 			@Override
 			public void onGetConnect() {
-				setAssitMcEnable(true,context.getString(R.string.cmd1_ready));				
+				AssistState.isConnect=true;
+				updateAssitMcEnable();
+				//setAssitMcEnable(true,context.getString(R.string.cmd1_ready));				
 			}
 
 
@@ -417,6 +421,7 @@ void initMachines(){
         }
 
         addNetworkChangedCallback();
+        
     }
 
 
@@ -495,8 +500,6 @@ void existMask(){
 				
 						break;
 					case Handler_mcDisp://
-						 //(hasCup?"":(context.getString(R.string.noCup)+"|"))+
-						//(hasWater?"":(context.getString(R.string.noWater)+"|"))+
 						String dsp= msg.obj.toString();
 				
 						setDevMcState(dsp);
@@ -539,9 +542,6 @@ void existMask(){
 
 		@Override
 		public void leave() {
-//			hasWater=true;
-//			hasCup=true;
-//			setAssitMcEnable(true,context.getString(R.string.cmd1_ready));
 			updateEnable();		
 		}
 
@@ -1196,56 +1196,22 @@ void existMask(){
 		    		}
 	    				
 	    		}
-	    		
-		    
-	
-//		    /**
-//		     *没有杯子了
-//		     *提示用户，并通知服务器做退款处理
-//		     */
-//		    void mc_noCups(){
-//		    	
-//		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.noCup));
+
+		    void mc_assistFault(byte fault){
+		    	AssistState.hasWater=(fault&AssistProtocol.Fault_noWater)==0?true:false;
+		    	AssistState.hasCup=(fault&AssistProtocol.Fault_noCup)==0?true:false;  	
+		    	//setAssitMcEnable(false,"");
+		    	updateAssitMcEnable();
 //		    	myHandler.postDelayed(new Runnable() {		
-//					@Override
-//					public void run() {
-//						closeOder();
-//						hasCup=false;
-//						setAssitMcEnable(false,"");
-//					}
-//				},2000);
-//		    }
-//		    /**
-//		     *没有水了
-//		     *提示用户，并通知服务器做退款处理
-//		     */
-//		    void mc_noWater(){
-//		    	
-//		    	myHandler.postDelayed(new Runnable() {		
-//					@Override
-//					public void run() {
-//						//t_payType.setText(R.string.noWater);
-//						hasWater=false;
-//						setAssitMcEnable(false,"");
+//		    		@Override
+//		    		public void run() {
+//		    			//t_payType.setText(R.string.noWater);
+//		    			//hasWater=false;
+//		    			setAssitMcEnable(false,"");
 ////						sendMsgToHandler(Handler_mcDisp, ParseReceiveCommand.getDispStringId(context));
 ////						setEnable(false);
-//					}
-//				},1000);
-//
-//		    }
-		    void mc_assistFault(byte fault){
-		    	hasWater=(fault&AssistProtocol.Fault_noWater)==0?true:false;
-		    	hasCup=(fault&AssistProtocol.Fault_noCup)==0?true:false;
-		    	myHandler.postDelayed(new Runnable() {		
-		    		@Override
-		    		public void run() {
-		    			//t_payType.setText(R.string.noWater);
-		    			hasWater=false;
-		    			setAssitMcEnable(false,"");
-//						sendMsgToHandler(Handler_mcDisp, ParseReceiveCommand.getDispStringId(context));
-//						setEnable(false);
-		    		}
-		    	},1000);
+//		    		}
+//		    	},1000);
 		    	
 		    }
 
@@ -1311,14 +1277,13 @@ void existMask(){
 		    }
 		    /**
 		     * 跟辅助板通信超时
-		     * 目前这个函数没有实际意义 2016.05.09
+		     * 
 		     * 
 		     */
 		    void mc_toAssistControllerTimeOut(){
-//		    	isAssistMcWork=false;//20160507
-//		    	updateEnable();
-//		    	sendMsgToHandler(Handler_mcDisp, context.getString(R.string.toAssisTimeOut));
-		    	setAssitMcEnable(false,context.getString(R.string.toAssisTimeOut));
+		    	AssistState.getXml=false;
+		    	updateAssitMcEnable();
+		    	//setAssitMcEnable(false,context.getString(R.string.toAssisTimeOut));
 		    	
 		    }
 
@@ -1460,20 +1425,24 @@ void existMask(){
 			 }
 
 			 
-			 void setAssitMcEnable(boolean  enable,String msg){
-				 
-				 if(isAssistMcWork!=enable||(!oldAssisStr.equals(msg))){
-					 isAssistMcWork=enable&&hasCup&&hasWater&&getXml;
+			 void updateAssitMcEnable(){
+				 String msg=null;
+				 boolean enable=AssistState.getEnable();
+				// if(isAssistMcWork!=enable||(!oldAssisStr.equals(msg))){
+					 isAssistMcWork=enable;
 					 if(!isAssistMcWork){
-					 msg=(hasCup?"":context.getString(R.string.noCup)+"/")+
-						(hasWater?"":context.getString(R.string.noWater)+"/")+
-						(getXml?"":context.getString(R.string.errgetXml)+"/")+
-						 (enable?"":msg);
+					 msg=(AssistState.hasCup?"":context.getString(R.string.noCup))+
+						(AssistState.hasWater?"":("/"+context.getString(R.string.noWater)))+
+						(AssistState.getXml?"":("/"+context.getString(R.string.errgetXml)))+
+						(AssistState.isConnect?"":("/"+context.getString(R.string.toAssisTimeOut)));
+						 
+					 }else{
+					// oldAssisStr=msg;
+						 msg=context.getString(R.string.cmd1_ready); 
 					 }
-					 oldAssisStr=msg;
 					 updateEnable();
 					 sendMsgToHandler(Handler_assiMcDisp, msg);
-				 }
+				// }
 			 }
 			 void setNetWorkEnable(boolean  enable,String msg){
 				 if(isConnectToServer!=enable||(!oldNetStr.equals(msg))){

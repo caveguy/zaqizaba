@@ -62,8 +62,9 @@ public class AssistProtocol {
 	//错误bit
 	public static  final byte Fault_noWater=BIT0;
 	public static final byte Fault_noCup=BIT1;
-	public static final byte Fault_1heating=BIT2;
-	public static final byte Fault_2heating=BIT3;
+	public static final byte Fault_timeOut=BIT2;
+	public static final byte Fault_1heating=BIT3;
+	public static final byte Fault_2heating=BIT4;
 	final byte Key1=BIT0;
 	final byte Key2=BIT1;
 	final byte Key3=BIT2;
@@ -157,7 +158,7 @@ public class AssistProtocol {
 	ArrayList<byte[]> sendList=new ArrayList<byte[]>();
 	
 	void getAck(){
-		Log.e(TAG,"getAck");
+		//Log.e(TAG,"getAck");
 		hasAck=true;	
 		cancelAckTimerTask();
 		onGetAckCallBack();
@@ -835,12 +836,8 @@ public class AssistProtocol {
 	}
 
 	public interface CallBack {
-		
-//		void noCupDrop();
-//		void noWater();	
 		void onFault(byte fault);
 		void onKeyPressed(byte key);
-		//void isHeating(boolean is);
 		void cupDroped();
 		void cupStuck();
 		void dropCupTimeOut();
@@ -849,16 +846,13 @@ public class AssistProtocol {
 		void sendTimeOut();
 		void tradeFinish();
 		void startDropCup();
-		void onDisable();
 		void onGetConnect();
 		void cupReady();//为了不落杯的程序准备
-	//	void cupNotReady();//为了不落杯的程序准备
 	}
 	
 	private void tradeFinishCallBack(){
 	//	cmd_cancelLight(); //交易结束后关灯
 		Log.d(TAG,"!!!!tradeFinishCallBack");
-		//cancelQueryTimerTask();
 		if(callBack!=null)
 			callBack.tradeFinish();
 		
