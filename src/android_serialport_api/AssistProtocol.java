@@ -105,18 +105,19 @@ public class AssistProtocol {
 	byte dropCupState_old=0;
 	byte inD0_bit3_4_flowState=0;
 	byte flowState_old=0;
-	byte inD0_bit5_firstHeatingState=0;
-	byte inD0_bit6_secondHeatingState=0;
-	byte inD0_bit7_waterState=0;
-	byte inD1_bit0_key1=0;
-	byte inD1_bit1_key2=0;
-	byte inD1_bit2_key3=0;
-	byte inD1_bit3_key4=0;
+	boolean inD0_bit5_firstHeatingState=false;
+	boolean inD0_bit6_secondHeatingState=false;
+	boolean inD0_bit7_waterState=false;
+	boolean inD1_bit0_key1=false;
+	boolean inD1_bit1_key2=false;
+	boolean inD1_bit2_key3=false;
+	boolean inD1_bit3_key4=false;
+
+	boolean inD2_bit0_doorState=false;
+	boolean inD3_bit1_noCup=false;
+	boolean inD3_bit3_noDirtyCup=false;//
 	byte inD2_H8bitInputState=0;
 	byte inD3_L8bitInputState=0;
-	byte inD2_bit0_doorState=0;
-	byte inD3_bit1_noCup=0;
-	byte inD3_bit3_dirtyCup=0;//
 	byte query_step=QueryStep_handshake;
 
 	
@@ -219,20 +220,20 @@ public class AssistProtocol {
 		if(data[0]==(byte)0xaa&&data[1]==(byte)0x80){
 			if(data[num-1]==getCheckSun(data,num)){
 				getAck();
-				inD0_bit0_2_cupState=(byte) (data[2]&(BIT0|BIT1|BIT2));
-				inD0_bit3_4_flowState=(byte) (data[2]&(BIT3|BIT4));
-				inD0_bit5_firstHeatingState=(byte) (data[2]&(BIT5));
-				inD0_bit6_secondHeatingState=(byte) (data[2]&(BIT6));
-				inD0_bit7_waterState=(byte) (data[2]&(BIT7));
-				inD1_bit0_key1=(byte) (data[3]&(BIT0));
-				inD1_bit1_key2=(byte) (data[3]&(BIT1));
-				inD1_bit2_key3=(byte) (data[3]&(BIT2));
-				inD1_bit3_key4=(byte) (data[3]&(BIT3));
-				inD2_H8bitInputState=(byte) (data[4]);
-				inD3_L8bitInputState=(byte) (data[5]);
-				inD2_bit0_doorState=(byte) (data[4]&(BIT0));
-				inD3_bit1_noCup=(byte) (data[5]&(BIT1));
-				inD3_bit3_dirtyCup=(byte) (data[5]&(BIT3));
+				inD0_bit0_2_cupState=(byte) (data[3]&(BIT0|BIT1|BIT2));
+				inD0_bit3_4_flowState=(byte) ( (data[3]&(BIT3|BIT4))>>3);
+				inD0_bit5_firstHeatingState= (data[3]&(BIT5))==0?false:true;
+				inD0_bit6_secondHeatingState= (data[3]&(BIT6))==0?false:true;
+				inD0_bit7_waterState= (data[3]&(BIT7))==0?false:true;
+				inD1_bit0_key1= (data[4]&(BIT0))==0?false:true;
+				inD1_bit1_key2= (data[4]&(BIT1))==0?false:true;
+				inD1_bit2_key3= (data[4]&(BIT2))==0?false:true;
+				inD1_bit3_key4= (data[4]&(BIT3))==0?false:true;
+				inD2_H8bitInputState=(byte) (data[5]);
+				inD3_L8bitInputState=(byte) (data[6]);
+				inD2_bit0_doorState=(data[5]&(BIT0))==0?false:true;
+				inD3_bit1_noCup= (data[6]&(BIT1))==0?false:true;
+				inD3_bit3_noDirtyCup= (data[6]&(BIT3))==0?false:true;
 				dealInput();
 			}
 		}
@@ -311,7 +312,7 @@ public class AssistProtocol {
 	 */
 
 	 void deal_comm(){
-		 if(inD0_bit7_waterState==1){//缺水
+		 if(inD0_bit7_waterState){//缺水
 			fault_state|=Fault_noWater;
 		 }else{
 			 fault_state&=~Fault_noWater; 
@@ -322,17 +323,17 @@ public class AssistProtocol {
 			 fault_state&=~Fault_noCup; 
 		 }
 
-		 if(inD0_bit5_firstHeatingState==1){//加热
+		 if(inD0_bit5_firstHeatingState){//加热
 			 fault_state|=Fault_1heating;
 		 }else{
 			 fault_state&=~Fault_1heating;
 		 }
-		 if(inD0_bit6_secondHeatingState==1){//加热
+		 if(inD0_bit6_secondHeatingState){//加热
 			 fault_state|=Fault_2heating;
 		 }else{
 			 fault_state&=~Fault_2heating;
 		 }
-		 if(inD1_bit2_key3==1){ //按键3
+		 if(inD1_bit2_key3){ //按键3
 			 onKeyPressedCallBack(Key3);
 		 }
 		 
@@ -353,13 +354,13 @@ public class AssistProtocol {
 	  * 
 	  */
 	void deal_handShake(){
-		 if(inD1_bit0_key1==1){
+		 if(inD1_bit0_key1){
 			 onKeyPressedCallBack(Key1);
 		 }
-		 if(inD1_bit1_key2==1){
+		 if(inD1_bit1_key2){
 			 onKeyPressedCallBack(Key2);
 		 }
-		 if(inD1_bit3_key4==1){
+		 if(inD1_bit3_key4){
 			 onKeyPressedCallBack(Key4);
 		 }
 
@@ -368,7 +369,7 @@ public class AssistProtocol {
 	}
 	void deal_isDirtyCupTaken(){
 
-		if(inD3_bit3_dirtyCup==1){
+		if(inD3_bit3_noDirtyCup){
 			cmd_dropCup();
 		 }else {
 			 
@@ -377,7 +378,7 @@ public class AssistProtocol {
 
 	}
 	void deal_isCupReady(){
-		if(inD3_bit3_dirtyCup==0){
+		if(!inD3_bit3_noDirtyCup){
 			cupReadyCallBack();
 		}
 	}
@@ -412,7 +413,8 @@ public class AssistProtocol {
 		flowState_old=inD0_bit3_4_flowState;
 	}
 	void deal_takingCup(){
-		if(inD3_bit3_dirtyCup==1){
+		if(inD3_bit3_noDirtyCup){
+		//if(inD0_bit0_2_cupState==0x04){
 			tradeFinishCallBack();
 		}
 	}
@@ -895,7 +897,7 @@ public class AssistProtocol {
 	}
 	private void cupReadyCallBack(){
 		
-		Log.d(TAG,"!!!!cupReadyCallBack");
+		Log.e(TAG,"!!!!cupReadyCallBack");
 		if(callBack!=null)
 			callBack.cupReady();
 		

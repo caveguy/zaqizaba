@@ -13,9 +13,9 @@
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
 		<ch1_water>10</ch1_water>
-		<ch1_water>0</ch1_water>
-		<ch1_water>0</ch1_water>
-		<ch1_water>0</ch1_water>
+		<ch2_water>0</ch2_water>
+		<ch3_water>0</ch3_water>
+		<ch4_water>0</ch4_water>
 
 	</coffee>
 	<coffee id="2">
@@ -31,10 +31,9 @@
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
 		<ch1_water>20</ch1_water>
-		<ch1_water>0</ch1_water>
-		<ch1_water>0</ch1_water>
-		<ch1_water>0</ch1_water>
-
+		<ch2_water>0</ch2_water>
+		<ch3_water>0</ch3_water>
+		<ch4_water>0</ch4_water>
 	</coffee>
 	<coffee id="3">
 		<name>Cappuccino</name>
@@ -49,9 +48,9 @@
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
 		<ch1_water>10</ch1_water>
-		<ch1_water>10</ch1_water>
-		<ch1_water>0</ch1_water>
-		<ch1_water>0</ch1_water>
+		<ch2_water>10</ch2_water>
+		<ch3_water>0</ch3_water>
+		<ch4_water>0</ch4_water>
 		
 	</coffee>
 	<coffee id="4">
@@ -67,9 +66,9 @@
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
 		<ch1_water>10</ch1_water>
-		<ch1_water>10</ch1_water>
-		<ch1_water>0</ch1_water>
-		<ch1_water>0</ch1_water>
+		<ch2_water>10</ch2_water>
+		<ch3_water>0</ch3_water>
+		<ch4_water>0</ch4_water>
 	</coffee>
 	<coffee id="5">
 		<name>Water</name>
@@ -84,9 +83,9 @@
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
 		<ch1_water>10</ch1_water>
-		<ch1_water>0</ch1_water>
-		<ch1_water>0</ch1_water>
-		<ch1_water>0</ch1_water>
+		<ch2_water>0</ch2_water>
+		<ch3_water>0</ch3_water>
+		<ch4_water>0</ch4_water>
 	</coffee>
 	<coffee id="6">
 		<name>Milk</name>
@@ -101,9 +100,9 @@
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
 		<ch1_water>0</ch1_water>
-		<ch1_water>40</ch1_water>
-		<ch1_water>0</ch1_water>
-		<ch1_water>0</ch1_water>
+		<ch2_water>40</ch2_water>
+		<ch3_water>0</ch3_water>
+		<ch4_water>0</ch4_water>
 	</coffee>
 	<coffee id="7">
 		<name>Chocolate</name>
@@ -118,9 +117,9 @@
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
 		<ch1_water>0</ch1_water>
-		<ch1_water>0</ch1_water>
-		<ch1_water>40</ch1_water>
-		<ch1_water>0</ch1_water>
+		<ch2_water>0</ch2_water>
+		<ch3_water>40</ch3_water>
+		<ch4_water>0</ch4_water>
 	</coffee>
 
 </coffees>
