@@ -116,7 +116,7 @@ public class AssistProtocol {
 	byte inD2_bit0_doorState=0;
 	byte inD3_bit1_noCup=0;
 	byte inD3_bit3_dirtyCup=0;//
-	byte query_step=0;
+	byte query_step=QueryStep_handshake;
 
 	
 		
@@ -157,6 +157,7 @@ public class AssistProtocol {
 	ArrayList<byte[]> sendList=new ArrayList<byte[]>();
 	
 	void getAck(){
+		Log.e(TAG,"getAck");
 		hasAck=true;	
 		cancelAckTimerTask();
 		onGetAckCallBack();
@@ -214,8 +215,9 @@ public class AssistProtocol {
 	byte inD3_bit3_dirtyCup=0;//
 	 */
 	private void getInput(byte[] data,int num){
-		if(data[0]==(byte)0xaa&&data[1]==(byte)0x80&&num==8){
+		if(data[0]==(byte)0xaa&&data[1]==(byte)0x80){
 			if(data[num-1]==getCheckSun(data,num)){
+				getAck();
 				inD0_bit0_2_cupState=(byte) (data[2]&(BIT0|BIT1|BIT2));
 				inD0_bit3_4_flowState=(byte) (data[2]&(BIT3|BIT4));
 				inD0_bit5_firstHeatingState=(byte) (data[2]&(BIT5));
@@ -420,7 +422,7 @@ public class AssistProtocol {
 		int length=len-1;
 		byte ck=0;
 		for(int i=0;i<length;i++){
-			ck=(byte) (ck^data[i]);
+			ck=(byte) (ck+data[i]);
 		}
 		return ck;
 	}
