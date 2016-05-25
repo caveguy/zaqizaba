@@ -187,6 +187,7 @@ public class MainFragment extends Fragment {
 	}
 
 
+
 	
 	public interface SetDevCallBack{
 		void onMcStateChanged(String state);
@@ -195,7 +196,7 @@ public class MainFragment extends Fragment {
 		void enterDevMode();
 		void enterMaintainMode(boolean refund);
 		void hide();
-		
+		void updateId(String id);
 	}
 	
 	void getCoffeeFormula(){
@@ -216,7 +217,12 @@ public class MainFragment extends Fragment {
 	 * 
 	 * @return
 	 */
-	
+	private void updateIdCallBack(String msg){
+		Log.e(Tag, "feedid="+msg);
+		if(myCallback!=null){
+			myCallback.updateId(msg);
+		}
+	}
 	void setDevMcState(String state){
 		if(myCallback!=null){
 			myCallback.onMcStateChanged(state);
@@ -824,6 +830,7 @@ void existMask(){
 	    
 	    
 	    void updatePrice(){
+	    	
 	        new QueryDeviceGoodsAsyncTask(){
 	            @Override
 	            protected void onPostExecute(QueryDeviceGoodsRsp rsp) {
@@ -899,7 +906,8 @@ void existMask(){
 	                super.onLoad();
 	                cancelTimeOutTask();//取消超时定时器
 	                /*获得设备商品列表*/
-	                
+	              String feedid=deviceInterfaceAdapter.getDevice().getFeedId();
+		 	    	updateIdCallBack(feedid);
 	                setNetWorkEnable(true,context.getString(R.string.connectServer));
 	                
 	                updatePrice();
@@ -945,9 +953,10 @@ void existMask(){
 
 	        	
 	        };
+	       
 	    	}
 	    	if(deviceInterfaceAdapter==null){
-	    		deviceInterfaceAdapter = new CoffeeDeviceInterfaceAdapter(context,myHandler,coffeeDeviceEvent);
+	    		deviceInterfaceAdapter = new CoffeeDeviceInterfaceAdapter(context,myHandler,coffeeDeviceEvent);	    		
 	    	}
 	    }
 		private void sendMsgToHandler(int what,String dsp){

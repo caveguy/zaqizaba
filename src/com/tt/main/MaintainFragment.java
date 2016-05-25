@@ -21,7 +21,7 @@ import com.tt.main.CoffeeFragmentPage1.CheckedCallBack;
 
 public class MaintainFragment extends Fragment implements OnClickListener,android.widget.CompoundButton.OnCheckedChangeListener{
 
-	TextView t_maintain,t_mcDetail,t_netDetail,t_version,t_refund,t_assistDetail;
+	TextView t_maintain,t_mcDetail,t_netDetail,t_version,t_refund,t_assistDetail,t_id;
 	RadioButton radioCup1,radioCup2;
 	RadioButton radio_needBean,radio_noBean;
 	CheckBox btn_debug;
@@ -38,6 +38,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	private final int Handler_enterDev=1005;
 	private final int Handler_enterMaintain=1006;
 	private final int Handler_hide=1007;
+	private final int Handler_id=1008;
 			
 	
 	
@@ -144,6 +145,14 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			
 		}
 
+		@Override
+		public void updateId(String id) {
+			Message message=new Message();
+			message.what=Handler_id;
+			message.obj=id;
+			myHandler.sendMessage(message);
+		}
+
 
 		
 
@@ -188,6 +197,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		radio_needBean.setVisibility(View.VISIBLE);
 		radio_noBean.setVisibility(View.VISIBLE);
 		t_version.setVisibility(View.VISIBLE);
+		t_id.setVisibility(View.VISIBLE);
 		t_refund.setVisibility(View.GONE);
 	}
 	void enterMaintain(Boolean refund){
@@ -202,6 +212,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		radio_noBean.setVisibility(View.GONE);
 		btn_debug.setVisibility(View.GONE);
 		t_version.setVisibility(View.GONE);
+		t_id.setVisibility(View.GONE);
 		if(refund){//已经付款状态,应该提示退款
 			t_refund.setVisibility(View.VISIBLE);
 		}else{
@@ -230,6 +241,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	t_mcDetail=(TextView)view.findViewById(R.id.t_mcDetail);
     	t_assistDetail=(TextView)view.findViewById(R.id.t_assistDetail);
     	t_version=(TextView)view.findViewById(R.id.t_version);
+    	t_id=(TextView)view.findViewById(R.id.t_id);
     	t_refund=(TextView)view.findViewById(R.id.t_refund);
     	t_netDetail=(TextView)view.findViewById(R.id.t_netDetail);
     	radioCup1=(RadioButton)view.findViewById(R.id.radio_cup1);
@@ -279,6 +291,9 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 							break;
 						case Handler_hide:
 							hide(); 
+							break;
+						case Handler_id:
+							t_id.setText((String)msg.obj);
 							break;
 			    		}
 							

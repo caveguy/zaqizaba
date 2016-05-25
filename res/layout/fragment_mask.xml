@@ -179,25 +179,53 @@
 	        android:textColor="@color/brown_title"
 	        /> 	
    	     
-   	     
-	         <Button
-   	        android:id="@+id/btn_clean"
-	    	android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textSize="@dimen/dialog_state_size"
-	        android:text="@string/clean"
-	        
-	        android:textColor="@color/brown_title"
-	        /> 
-	        <Button
-   	        android:id="@+id/btn_mskCancel"
-	    	android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textSize="@dimen/dialog_state_size"
-	        android:text="@string/hide"
-	        android:textColor="@color/brown_title"
-	        /> 
-        
+   	       <LinearLayout 	    
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:gravity="center"
+		    android:orientation="horizontal"
+			     >
+		         <Button
+	   	        android:id="@+id/btn_clean"
+		    	android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textSize="@dimen/dialog_state_size"
+		        android:text="@string/clean"
+		        
+		        android:textColor="@color/brown_title"
+		        /> 
+		        <Button
+	   	        android:id="@+id/btn_mskCancel"
+		    	android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textSize="@dimen/dialog_state_size"
+		        android:text="@string/hide"
+		        android:textColor="@color/brown_title"
+		        /> 
+        	</LinearLayout>
+        	<LinearLayout 	    
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:gravity="center"
+		    android:orientation="horizontal">
+		          	<TextView 
+		    	android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textSize="@dimen/devState_text_size"
+		        android:text="@string/deviceId" 
+		        android:textColor="@color/brown_title"
+	            
+	            />
+        	<TextView 
+		        android:id="@+id/t_id"
+		    	android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textSize="@dimen/devState_text_size"
+		        android:text="" 
+		        android:textColor="@color/brown_title"
+	            
+	            />
+        	</LinearLayout>
 	        <TextView 
 		        android:id="@+id/t_version"
 		    	android:layout_width="wrap_content"
