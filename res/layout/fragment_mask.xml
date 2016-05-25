@@ -202,20 +202,27 @@
 		        android:text="@string/hide"
 		        android:textColor="@color/brown_title"
 		        /> 
-        	</LinearLayout>
-        	<LinearLayout 	    
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:gravity="center"
-		    android:orientation="horizontal">
-		          	<TextView 
-		    	android:layout_width="wrap_content"
+		        <Button 
+			    android:id="@+id/btn_update"
+	    		android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textSize="@dimen/devState_text_size"
-		        android:text="@string/deviceId" 
+		        android:textSize="@dimen/dialog_state_size"
+		        android:text="@string/update"
 		        android:textColor="@color/brown_title"
-	            
-	            />
+			    />
+
+        	</LinearLayout>
+        	<ProgressBar 
+		    android:id="@+id/progressBar"
+		    style="@android:style/Widget.ProgressBar.Horizontal"  
+		    android:layout_width="match_parent"
+		    android:layout_height="10dp"
+		    android:layout_marginLeft="30dp"
+		    android:layout_marginRight="30dp"
+		    android:visibility="gone"/>
+   	       
+
+
         	<TextView 
 		        android:id="@+id/t_id"
 		    	android:layout_width="wrap_content"
@@ -225,7 +232,6 @@
 		        android:textColor="@color/brown_title"
 	            
 	            />
-        	</LinearLayout>
 	        <TextView 
 		        android:id="@+id/t_version"
 		    	android:layout_width="wrap_content"

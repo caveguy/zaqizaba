@@ -120,8 +120,9 @@ public class MainFragment extends Fragment {
 	//boolean needBean=true ;   //
 	//private boolean dispDevLayout=false;
 	private int dispMskLayout=0;
-	private int Msk_dev=1;
-	private int Msk_maintain=2;
+	private final int Msk_none=1;
+	private final int Msk_dev=1;
+	private final int Msk_maintain=2;
 
 
 	
@@ -255,7 +256,7 @@ public class MainFragment extends Fragment {
 	
 	void  enterMaintainMode(boolean refund){
 		Log.d(Tag, "enterMaintainMode");
-		if(dispMskLayout!=Msk_maintain){
+		if(dispMskLayout==Msk_none){
 			dispMskLayout=Msk_maintain;
 			if(myCallback!=null){
 				myCallback.enterMaintainMode(refund);
@@ -264,7 +265,7 @@ public class MainFragment extends Fragment {
 	}
 	
 	void leaveDevOrMaintainMode(){
-		if(dispMskLayout!=0){
+		if(dispMskLayout!=Msk_none){
 		Log.d(Tag, "leaveDevOrMaintainMode");
 		dispMskLayout=0;
 			if(myCallback!=null){
@@ -1453,9 +1454,9 @@ void existMask(){
 					 isAssistMcWork=enable;
 					 if(!isAssistMcWork){
 					 msg=(AssistState.hasCup?"":context.getString(R.string.noCup))+
-						(AssistState.hasWater?"":("/"+context.getString(R.string.noWater)))+
-						(AssistState.getXml?"":("/"+context.getString(R.string.errgetXml)))+
-						(AssistState.isConnect?"":("/"+context.getString(R.string.toAssisTimeOut)));
+						(AssistState.hasWater?"":(" "+context.getString(R.string.noWater)))+
+						(AssistState.getXml?"":(" "+context.getString(R.string.errgetXml)))+
+						(AssistState.isConnect?"":(" "+context.getString(R.string.toAssisTimeOut)));
 						 
 					 }else{
 					// oldAssisStr=msg;

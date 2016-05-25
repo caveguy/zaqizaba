@@ -176,6 +176,8 @@
     <string name="name_chocolate">Chocolate</string>
     <string name="errgetXml">获取配方表失败</string>
     <string name="deviceId">设备ID:</string>
-    <string name="version">v3.1.0-160525-2</string>
+    <string name="update">检查更新</string>
+    <string name="version">v3.1.0-160525-5</string>
+    
 
 </resources>

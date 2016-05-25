@@ -1,7 +1,13 @@
 package com.tt.main;
 
+import java.io.File;
+
 import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -13,11 +19,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.example.coffemachinev3.R;
-import com.tt.main.CoffeeFragmentPage1.CheckedCallBack;
+import com.tt.util.UpdateManager;
 
 public class MaintainFragment extends Fragment implements OnClickListener,android.widget.CompoundButton.OnCheckedChangeListener{
 
@@ -29,7 +36,8 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	boolean needBean=true ;   	  //
 	public static DevCallBack back=null;
 	LinearLayout layout_mask;
-	Button btn_clean,btn_mskCancel;
+	Button btn_clean,btn_mskCancel,btn_update;
+	private ProgressBar proBar;
 	Handler myHandler=null;
 	private final int Handler_net=1001;
 	private final int Handler_mc=1002;
@@ -39,8 +47,10 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	private final int Handler_enterMaintain=1006;
 	private final int Handler_hide=1007;
 	private final int Handler_id=1008;
-			
-	
+	private final int Handler_progress=1009;
+	private final int Handler_ver=1009;
+	private com.tt.util.UpdateManager manager =null; 	
+	Context context=null;
 	
 	//MainFragment.SetDevCallBack mainCallback=null;
 	public interface DevCallBack{
@@ -191,12 +201,14 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		t_maintain.setText(getActivity().getString(R.string.devMode));
 		btn_mskCancel.setVisibility(View.VISIBLE);
 		btn_clean.setVisibility(View.VISIBLE);
+		btn_update.setVisibility(View.VISIBLE);
 		radioCup1.setVisibility(View.VISIBLE);
 		radioCup2.setVisibility(View.VISIBLE);
 		btn_debug.setVisibility(View.VISIBLE);
 		radio_needBean.setVisibility(View.VISIBLE);
 		radio_noBean.setVisibility(View.VISIBLE);
 		t_version.setVisibility(View.VISIBLE);
+		//proBar.setVisibility(View.VISIBLE);
 		t_id.setVisibility(View.VISIBLE);
 		t_refund.setVisibility(View.GONE);
 	}
@@ -211,8 +223,10 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		radio_needBean.setVisibility(View.GONE);
 		radio_noBean.setVisibility(View.GONE);
 		btn_debug.setVisibility(View.GONE);
+		btn_update.setVisibility(View.GONE);
 		t_version.setVisibility(View.GONE);
 		t_id.setVisibility(View.GONE);
+		proBar.setVisibility(View.GONE);
 		if(refund){//已经付款状态,应该提示退款
 			t_refund.setVisibility(View.VISIBLE);
 		}else{
@@ -234,6 +248,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		t_assistDetail.setText(state);
 	}
     void initView(View view){
+    	context=getActivity();
     	layout_mask=(LinearLayout)view.findViewById(R.id.layout_mask);
     	btn_debug=(CheckBox)view.findViewById(R.id.btn_debug);
     	btn_debug.setOnCheckedChangeListener(this);
@@ -268,6 +283,48 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	radioCup2.setOnCheckedChangeListener(this);
     	radio_needBean.setOnCheckedChangeListener(this);
     	radio_noBean.setOnCheckedChangeListener(this);
+    	
+		btn_update = (Button) view.findViewById(R.id.btn_update);
+		btn_update.setOnClickListener(this);
+		proBar=(ProgressBar)view.findViewById(R.id.progressBar);
+		
+		
+		manager=UpdateManager.getInstance(context);
+		manager.setCallBack(new com.tt.util.UpdateManager.CallBack(){
+
+
+
+			@Override
+			public void updateProgress(int gress) {
+				Message msg = new Message();
+				msg.what=Handler_progress;
+				msg.arg1 = gress;
+				myHandler.sendMessage(msg);
+				
+			}
+
+			@Override
+			public void onCurVerChanged(String ver, String verName) {
+				Message msg = new Message();
+				msg.what=Handler_ver;
+				msg.obj = ver;
+				String disp="当前版本号:"+ver+"\n"+"当前版本名:"+verName;
+				myHandler.sendMessage(msg);
+				
+			}
+
+			@Override
+			public void onServerVerChanged(String ver, String verName) {
+				Message msg = new Message();
+				msg.what=Handler_ver;
+				msg.obj = ver;
+				String disp="服务器版本号:"+ver+"\n"+"服务器版本名:"+verName;
+				myHandler.sendMessage(msg);
+				
+			}
+			
+		});
+    	
     	myHandler =new Handler(){
 
 			@Override
@@ -293,8 +350,21 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 							hide(); 
 							break;
 						case Handler_id:
-							t_id.setText((String)msg.obj);
+							t_id.setText(context.getString(R.string.deviceId) +(String)msg.obj);
 							break;
+						case Handler_progress:
+							
+							   proBar.setProgress(msg.arg1);
+							   proBar.setVisibility(View.VISIBLE);
+						       //textView.setText("下载进度："+msg.arg1);
+						       if(msg.arg1 == 100){
+						    	   Intent intent = new Intent(Intent.ACTION_VIEW); 
+							       String path = Environment.getExternalStorageDirectory()+UpdateManager.getFileName();
+							       intent.setDataAndType(Uri.fromFile(new File(path)), 
+							    		   "application/vnd.android.package-archive");   
+							       startActivity(intent);
+						       }
+						       break;
 			    		}
 							
 				super.handleMessage(msg);
@@ -353,6 +423,9 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			case R.id.btn_clean:
 				clean();
 			break;
+			case R.id.btn_update:
+				manager.compareVersion();
+				break;
 		}
 	}
 	

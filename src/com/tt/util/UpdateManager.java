@@ -25,31 +25,35 @@ import android.util.Log;
  */
 public class UpdateManager {
 	private final String TAG="UpdateManager";
-	private final static  String url="http://192.168.1.20";
+	private final static  String url="http://caveguy.wicp.net";
 	
 	private static UpdateManager manager = null;
 	Context context=null;
 	int version = 0;
 	int serverVersion = 0;
 	String versionName=null;
-	
+	final static String fileName="/CoffeMachineV3.apk";
+	final static String serverFileName="/CoffeMachineV3.zip";
 	String serverVersionName=null;
 	private UpdateManager(Context context){
 		this.context=context;
-		version=getVersion();
+		
 		
 	}
 	public static UpdateManager getInstance(Context context){
 		manager = new UpdateManager(context);
 		return manager;
 	}
-	
+	public static String getFileName(){
+		return fileName;
+	}
 	//获取版本号
 	public int getVersion(){
 		
 		try {  
+			String pkName = context.getPackageName();
 			version = context.getPackageManager().getPackageInfo(  
-                    "com.eric.androidupdatedemo", 0).versionCode;  
+					pkName, 0).versionCode;  
         } catch (Exception e) { 
         	dispDialog("错误","获取版本号异常！","确定",null,null);
         	Log.e(TAG,"获取版本号异常！");
@@ -62,8 +66,9 @@ public class UpdateManager {
 	public String getVersionName(){
 		//String versionName = null;
 		try {
+			String pkName = context.getPackageName();
 			versionName = context.getPackageManager().getPackageInfo(
-					"com.eric.androidupdatedemo", 0).versionName;
+					pkName, 0).versionName;
 		} catch (Exception e) {
 			dispDialog("错误","获取版本名异常！","确定",null,null);
 			Log.e(TAG,"获取版本名异常！");
@@ -85,7 +90,7 @@ public class UpdateManager {
 				serverJson = new String(buffer);
 			}
 		} catch (Exception e) {
-			dispDialog("错误","获取服务器版本号异常！","确定",null,null);
+			dispDialog("错误","连接服务器异常！","确定",null,null);
 			Log.e(TAG,"获取服务器版本号异常！"+e);
 		}
 		
@@ -95,67 +100,91 @@ public class UpdateManager {
 	
 	
 	void dispDialog(String title,String msg,String btn1,String btn2,DialogInterface.OnClickListener listen){
+
         AlertDialog.Builder builder  = new Builder(context);  
         builder.setTitle(title ) ;  
         builder.setMessage(msg ) ;  
-        if(btn1!=null)
-        	builder.setPositiveButton(btn1,listen); 
+        if(btn1!=null){
+        	if(listen==null){
+        		builder.setPositiveButton(btn1,new DialogInterface.OnClickListener(){
+
+    				@Override
+    				public void onClick(DialogInterface dialog, int which) {
+    					dialog.dismiss();
+    				}
+            		
+            	}); 
+        	}
+        	else{
+        		builder.setPositiveButton(btn1,listen);
+        	}
+        }
         if(btn2!=null)
-        	builder.setNegativeButton(btn2, null);  
+        	builder.setNegativeButton(btn2,new DialogInterface.OnClickListener(){
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+        		
+        	});  
         builder.show();
 	}
 	
 	
 	//比较服务器版本与本地版本弹出对话框
-	public boolean compareVersion(Context context){
+	public boolean compareVersion(){
 		
-		final Context contextTemp = context;
 		
+		version=getVersion();
 		new Thread(){
 			public void run() {
 				Looper.prepare();
 				version=getVersion();
 				versionName=getVersionName();
 				String serverJson = manager.getServerVersion();
+				if(serverJson!=null&&versionName!=null){
 				
-				//解析Json数据
-				try {
-					JSONArray array = new JSONArray(serverJson);
-					JSONObject object = array.getJSONObject(0);
-					String getServerVersion = object.getString("version");
-					serverVersion=new Integer(getServerVersion);
-					serverVersionName = object.getString("versionName");	
-					
-					onSeverVerChangedCallback(getServerVersion,serverVersionName);
-					if(version < serverVersion){
+					//解析Json数据
+					try {
+						JSONArray array = new JSONArray(serverJson);
+						JSONObject object = array.getJSONObject(0);
+						String getServerVersion = object.getString("version");
+						serverVersion=new Integer(getServerVersion);
+						serverVersionName = object.getString("versionName");	
 						
-						DialogInterface.OnClickListener listen=new DialogInterface.OnClickListener() {  
-			                   @Override  
-			                   public void onClick(DialogInterface dialog, int arg1) { 
-			                       //开启线程下载apk
-			                	   new Thread(){
-			                		   public void run() {
-			                			   Looper.prepare();
-			                			   downloadApkFile(contextTemp);
-			                			   Looper.loop();
-			                		   };
-			                	   }.start();
-			                   }  
-			               };
-						
-						
-						dispDialog("版本更新","当前版本："+versionName
-			            		+"\n"+"服务器版本："+serverVersionName,"立即更新","下次再说",listen);
-
-					}else{
-						dispDialog("版本信息","当前已经是最新版本","确定",null,null);
+						onSeverVerChangedCallback(getServerVersion,serverVersionName);
+						if(version < serverVersion){
+							
+							DialogInterface.OnClickListener listen=new DialogInterface.OnClickListener() {  
+				                   @Override  
+				                   public void onClick(DialogInterface dialog, int arg1) { 
+				                       //开启线程下载apk
+				                	   new Thread(){
+				                		   public void run() {
+				                			   Looper.prepare();
+				                			   downloadApkFile(context);
+				                			   Looper.loop();
+				                		   };
+				                	   }.start();
+				                	   dialog.dismiss();
+				                   } 
+				                   
+				               };
+							
+							
+							dispDialog("版本更新","当前版本："+versionName
+				            		+"\n"+"服务器版本："+serverVersionName,"立即更新","下次再说",listen);
+	
+						}else{
+							dispDialog("版本信息","当前已经是最新版本","确定",null,null);
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+						dispDialog("错误","获取服务器版本线程异常！","确定",null,null);
+						Log.e(TAG,"获取服务器版本线程异常！"+e);
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-					dispDialog("错误","获取服务器版本线程异常！","确定",null,null);
-					Log.e(TAG,"获取服务器版本线程异常！"+e);
 				}
-				
 				Looper.loop();
 			};
 			
@@ -171,8 +200,8 @@ public class UpdateManager {
 	
 	//下载apk文件
 	public void downloadApkFile(Context context){
-		String savePath = Environment.getExternalStorageDirectory()+"/AndroidUpdateDemo.apk";
-		String serverFilePath = url+"/AndroidUpdateDemo.zip";
+		String savePath = Environment.getExternalStorageDirectory()+fileName;
+		String serverFilePath = url+serverFileName;
 		try {
 			if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){  
 				URL serverURL = new URL(serverFilePath);
