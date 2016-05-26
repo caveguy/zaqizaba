@@ -80,7 +80,7 @@ public class SugarDialog implements OnClickListener{
     	radio1.setChecked(true);
 
 		
-		dialog = new Dialog(context);
+		dialog = new Dialog(context,R.style.Dialog_Fullscreen);
 		dialog.show();
 		Window win = dialog.getWindow();
 		//将dialog的背景透明化

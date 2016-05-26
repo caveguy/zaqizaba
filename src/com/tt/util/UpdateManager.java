@@ -143,17 +143,17 @@ public class UpdateManager {
 		final Context contextTemp = context;
 		version=getVersion();
 		versionName=getVersionName();
-		Log.e(TAG, "compareVersion!!!!!!!!!!!0");
+		//Log.e(TAG, "compareVersion!!!!!!!!!!!0");
 		
 		Thread thread=new Thread(){
 			public void run() {
 				
 				Looper.prepare();
-				Log.e(TAG, "compareVersion!!!!!!!!!!!1");
+				//Log.e(TAG, "compareVersion!!!!!!!!!!!1");
 				String serverJson = manager.getServerVersion();
-				Log.e(TAG, "compareVersion!!!!!!!!!!!2");
+				//Log.e(TAG, "compareVersion!!!!!!!!!!!2");
 				if(serverJson!=null&&versionName!=null){
-				Log.e(TAG, "compareVersion!!!!!!!!!!!3");
+				//Log.e(TAG, "compareVersion!!!!!!!!!!!3");
 					//解析Json数据
 					try {
 						JSONArray array = new JSONArray(serverJson);
@@ -184,12 +184,9 @@ public class UpdateManager {
 				               dispDialog(context.getString(R.string.update),context.getString(R.string.curVer)+versionName
 				            		   +"\n"+context.getString(R.string.serverVer)+serverVersionName 
 				            		   ,context.getString(R.string.doNow),context.getString(R.string.nextTime),listen);
-//							dispDialog("版本更新","当前版本："+versionName
-//				            		+"\n"+"服务器版本："+serverVersionName,"立即更新","下次再说",listen);
 	
 						}else{
 							dispDialog(context.getString(R.string.update),context.getString(R.string.newest),context.getString(R.string.ok),null,null);
-						//	dispDialog("版本信息","当前已经是最新版本","确定",null,null);
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();

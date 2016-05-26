@@ -57,7 +57,7 @@ public class AssistProtocol {
 	final byte QueryStep_dropCup=BIT3;		//落杯阶段
 	final byte QueryStep_flowing=BIT4;		//出粉/水阶段
 	final byte QueryStep_takingCup=BIT5;	//取杯阶段
-	
+	final int ReciveLength=8;
 	
 	//错误bit
 	public static  final byte Fault_noWater=BIT0;
@@ -195,7 +195,9 @@ public class AssistProtocol {
 		if(isDebug)
 			showLog("Recivedata", buffer,size);
 		//parseInput(buffer,size);
-		getInput(buffer,size);
+		if(size>=ReciveLength){
+			getInput(buffer,ReciveLength);
+		}
 	}
 	
 	/*

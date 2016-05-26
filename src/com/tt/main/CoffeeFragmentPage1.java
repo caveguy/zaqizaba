@@ -69,6 +69,7 @@ public class CoffeeFragmentPage1 extends Fragment implements OnClickListener,and
 
     }
 	public void setIconNames(String[] name){
+		
 		if(name.length>0)
 			btn_coffee1.setText(name[0]);
 		if(name.length>1)

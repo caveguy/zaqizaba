@@ -1,5 +1,6 @@
 package com.tt.xml;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -16,8 +17,8 @@ import android.util.Xml;
 
 public class CoffeeFormula {
 	
-	public static String xml_path=Environment.getExternalStorageDirectory().toString()+"/coffee.xml";
-	
+	public static String xml_path=Environment.getExternalStorageDirectory().toString()+"/coffeeV3.xml";
+	private final static String Tag="CoffeeFormula";
 	private  final static String objiect="coffee";
 	private  final static String id="id";
 	private  final static String name="name";
@@ -226,10 +227,17 @@ public class CoffeeFormula {
 	public static List<Coffee>  getCoffeeFormula(Context contex) throws Exception{
 		InputStream xml=null;
 		Log.e("Coffee",xml_path);
-		 xml = contex.getClass().getClassLoader().getResourceAsStream(xml_path);
-		 if(xml==null){
+		try{
+			xml=new FileInputStream(xml_path);
+		}
+		catch(Exception e){
+			Log.e(Tag,"getCoffeeFormula error="+e.getMessage());
 			 xml = contex.getClass().getClassLoader().getResourceAsStream("coffee.xml");
-		 }
+		}
+		// xml = contex.getClass().getClassLoader().getResourceAsStream(xml_path);
+		 
+			
+		 
 		return CoffeeFormula.getPersons(xml);
 //		for(Coffee person : persons){
 //			Log.i(TAG, person.toString());

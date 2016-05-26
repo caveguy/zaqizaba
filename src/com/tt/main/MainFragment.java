@@ -119,11 +119,12 @@ public class MainFragment extends Fragment {
 	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
 	//boolean needBean=true ;   //
 	//private boolean dispDevLayout=false;
-	private int dispMskLayout=0;
+	
 	private final int Msk_none=0;
-	private final int Msk_dev=1;
-	private final int Msk_maintain=2;
-
+	private final int Msk_dev=0x01;
+	private final int Msk_maintain=0x02;
+	private final int Msk_dev_leaving=0x04;//准备退出开发菜单
+	private int dispMskLayout=Msk_none;
 
 	
 	boolean isConnectToServer=false;
@@ -219,7 +220,7 @@ public class MainFragment extends Fragment {
 	 * @return
 	 */
 	private void updateIdCallBack(String msg){
-		Log.e(Tag, "feedid="+msg);
+		//Log.e(Tag, "feedid="+msg);
 		if(myCallback!=null){
 			myCallback.updateId(msg);
 		}
@@ -255,8 +256,8 @@ public class MainFragment extends Fragment {
 	}
 	
 	void  enterMaintainMode(boolean refund){
-		Log.e(Tag, "enterMaintainMode");
-		if(dispMskLayout==Msk_none){
+		//Log.e(Tag, "enterMaintainMode");
+		if((dispMskLayout&(Msk_maintain|Msk_dev))==0){
 			dispMskLayout=Msk_maintain;
 			if(myCallback!=null){
 				myCallback.enterMaintainMode(refund);
@@ -267,7 +268,7 @@ public class MainFragment extends Fragment {
 	void leaveDevOrMaintainMode(){
 		if(dispMskLayout!=Msk_none){
 		Log.e(Tag, "leaveDevOrMaintainMode");
-		dispMskLayout=0;
+		dispMskLayout=Msk_none;
 			if(myCallback!=null){
 				myCallback. hide();
 			}
@@ -553,6 +554,7 @@ void existMask(){
 		@Override
 		public void leave() {
 			Log.e(Tag, "in mian frag leave");
+			dispMskLayout=Msk_dev_leaving;
 			updateEnable();		
 		}
 
@@ -889,6 +891,9 @@ void existMask(){
 	    
 	    void setGoodMsg(){
 	    	long id;
+	    	if(coffeeFormula==null){
+	    		return;
+	    	}
 	    	String[] name = new String[coffeeFormula.size()];
 	    	int i=0;
 	    	for(Coffee coffee:coffeeFormula){
@@ -904,11 +909,11 @@ void existMask(){
 //	    	}
 	    	page1.setIconNames(name);
 	    	if(name.length>4){
-	    	String[] name2=new String[name.length-4];
-	    	for( i=4;i<name.length;i++){
-	    		name2[i-4]=name[i]	;
-	    	}
-	    	page2.setIconNames(name2);
+		    	String[] name2=new String[name.length-4];
+		    	for( i=4;i<name.length;i++){
+		    		name2[i-4]=name[i]	;
+		    	}
+		    	page2.setIconNames(name2);
 	    	}
 	    }
 	    void initPayServer(){

@@ -209,7 +209,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		radio_needBean.setVisibility(View.VISIBLE);
 		radio_noBean.setVisibility(View.VISIBLE);
 		t_version.setVisibility(View.VISIBLE);
-		//proBar.setVisibility(View.VISIBLE);
+		proBar.setVisibility(View.GONE);
 		t_id.setVisibility(View.VISIBLE);
 		t_refund.setVisibility(View.GONE);
 	}
