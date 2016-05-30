@@ -35,8 +35,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android_serialport_api.AssistProtocol;
-import android_serialport_api.MachineProtocol;
-import android_serialport_api.ParseReceiveCommand;
+import android_serialport_api.CoffeeMcProtocol;
 import coffee.shop.po.DeviceGoods;
 import coffee.shop.po.request.ApplyRefundReq;
 import coffee.shop.po.request.MakeOrderReq;
@@ -149,7 +148,8 @@ public class MainFragment extends Fragment {
 	CloseTimeTask closeTask=null;
 	TimerOutTask timeOutTask=null;
 	AssistProtocol assistProtocol=null;
-	private MachineProtocol myMachine=null;	
+//	private MachineProtocol myMachine=null;	
+	private CoffeeMcProtocol coffeeMachine=null;	
 	
 //	 MaintainFragment.DevCallBack  devCallBack=null;
 //	private PageIndicator mIndicator;
@@ -309,7 +309,9 @@ public class MainFragment extends Fragment {
 	
     @Override
 	public void onStart() {
-        initMachines();
+      //  initMachines();
+    	initCoffeeMachine();
+        initAssistMachine();
 		super.onStart();
 	}
     Integer getCurType(){
@@ -335,11 +337,132 @@ public class MainFragment extends Fragment {
     	return "";
     }
     
-
-void initMachines(){
-
-    	myMachine=new MachineProtocol(context);
-    	mcSetCallBack();
+	void initCoffeeMachine(){
+	coffeeMachine=new CoffeeMcProtocol(context);
+	coffeeMachine.setCallBack(new CoffeeMcProtocol.CallBack() {
+		
+		@Override
+		public void sendTimeOut() {
+			setMcEnable(false,context.getString(R.string.comErr));	
+			
+		}
+		
+		@Override
+		public void onReady() {
+			setMcEnable(true,context.getString(R.string.cmd1_ready));
+			
+		}
+		
+		@Override
+		public void onMaking() {
+			sendMsgToHandler(Handler_mcDisp, context.getString(R.string.dropPowder));
+			
+		}
+		
+		@Override
+		public void onGetConnect() {
+			setMcEnable(true,context.getString(R.string.cmd1_ready));
+			
+		}
+		
+		@Override
+		public void onFinish() {
+			mc_coffeeDroped();
+		}
+		
+		@Override
+		public void onFault(String fault) {
+			//isMachineWork=false;
+			//先申述后进维护界面
+			if(tradeStep==StepMaking){//在制作过程中出现错误，这个时候应该退款
+				if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
+					appealed=true;
+					appeal();
+					myHandler.post(new Runnable() {
+						
+						@Override
+						public void run() {
+							closeOder(); //从故障中恢复，直接关闭之前的订单	
+						}
+					});
+					
+				}
+			}
+			setMcEnable(false,fault);	
+		}
+	});
+	}
+//		 ParseReceiveCommand.setCallBack(new ParseReceiveCommand.CallBack() {
+//			
+//			@Override
+//			public void onParsed(int cmd) {
+//				// TODO Auto-generated method stub
+//				 if(cmd==1){
+//					String dispString= ParseReceiveCommand.getDispStringId(context);
+//					if(dispMskLayout!=0){
+//						sendMsgToHandler(Handler_mcDisp, dispString);
+//						
+//					}
+//					if(dispString!=oldMcString){
+//						mylog.log_i("****Machine String****"+dispString);
+//						if(dispString.equals(context.getString(R.string.cmd1_pressRinse))){
+//							myMachine.sendCleanCmd();
+//						}					
+//					}
+//					oldMcString=dispString;
+//				 }
+//				 else if(cmd==0x19){
+//					 byte windowstate=ParseReceiveCommand.getWindow();
+//					// myToast.toastShow("cmd0x19="+windowstate);
+//					 if(windowstate==2&&mcWindowLast==5){
+//						 mc_coffeeDroped();
+//						 
+//						 
+//					 }					 
+//					 mcWindowLast=windowstate;
+//					//myMachine.initMachine();
+//				 }
+//			}
+//
+//			@Override
+//			public void onFault(String msg) {
+//				//isMachineWork=false;
+//				//先申述后进维护界面
+//				if(tradeStep==StepMaking){//在制作过程中出现错误，这个时候应该退款
+//					if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
+//						appealed=true;
+//						appeal();
+//						myHandler.post(new Runnable() {
+//							
+//							@Override
+//							public void run() {
+//								closeOder(); //从故障中恢复，直接关闭之前的订单	
+//							}
+//						});
+//						
+//					}
+//				}
+//				setMcEnable(false,msg);
+////				if(!dispDevLayout){
+//					
+////					updateEnable();
+////					sendMsgToHandler(Handler_mcDisp, msg);
+////				}
+//
+//	
+//			}
+//
+//			@Override
+//			public void onWork() {
+//				setMcEnable(true,context.getString(R.string.cmd1_ready));
+////				isMachineWork=true;
+////				if(!dispDevLayout){
+////					updateEnable();
+////				}
+//			}
+//		});
+//	}
+void initAssistMachine(){
     	assistProtocol=new AssistProtocol(context);
     	assistProtocol.setCallBack(new AssistProtocol.CallBack(){
 
@@ -560,87 +683,18 @@ void existMask(){
 
 		@Override
 		public void clean() {
-			myMachine.sendCleanCmd();
+		//	myMachine.sendCleanCmd();
+			coffeeMachine.cmd_cleaning();
 		}
 	}; 
 	}
 	String oldMcString=null;
 	void setBeanMode(boolean need){
 		//needBean=need;
-		ParseReceiveCommand.setBeanMake(need);
+	//	ParseReceiveCommand.setBeanMake(need);
 	}
 	
-	void mcSetCallBack(){
-		 ParseReceiveCommand.setCallBack(new ParseReceiveCommand.CallBack() {
-			
-			@Override
-			public void onParsed(int cmd) {
-				// TODO Auto-generated method stub
-				 if(cmd==1){
-					String dispString= ParseReceiveCommand.getDispStringId(context);
-					if(dispMskLayout!=0){
-						sendMsgToHandler(Handler_mcDisp, dispString);
-						
-					}
-					if(dispString!=oldMcString){
-						mylog.log_i("****Machine String****"+dispString);
-						if(dispString.equals(context.getString(R.string.cmd1_pressRinse))){
-							myMachine.sendCleanCmd();
-						}					
-					}
-					oldMcString=dispString;
-				 }
-				 else if(cmd==0x19){
-					 byte windowstate=ParseReceiveCommand.getWindow();
-					// myToast.toastShow("cmd0x19="+windowstate);
-					 if(windowstate==2&&mcWindowLast==5){
-						 mc_coffeeDroped();
-						 
-						 
-					 }					 
-					 mcWindowLast=windowstate;
-					//myMachine.initMachine();
-				 }
-			}
 
-			@Override
-			public void onFault(String msg) {
-				//isMachineWork=false;
-				//先申述后进维护界面
-				if(tradeStep==StepMaking){//在制作过程中出现错误，这个时候应该退款
-					if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
-						appealed=true;
-						appeal();
-						myHandler.post(new Runnable() {
-							
-							@Override
-							public void run() {
-								closeOder(); //从故障中恢复，直接关闭之前的订单	
-							}
-						});
-						
-					}
-				}
-				setMcEnable(false,msg);
-//				if(!dispDevLayout){
-					
-//					updateEnable();
-//					sendMsgToHandler(Handler_mcDisp, msg);
-//				}
-
-	
-			}
-
-			@Override
-			public void onWork() {
-				setMcEnable(true,context.getString(R.string.cmd1_ready));
-//				isMachineWork=true;
-//				if(!dispDevLayout){
-//					updateEnable();
-//				}
-			}
-		});
-	}
 	
 	
     void updateQRPic(String path,int type){
@@ -689,7 +743,7 @@ void existMask(){
 	public void onDestroy() {
 		try {
 			assistProtocol.finalize();
-			myMachine.finalize();
+			coffeeMachine.finalize();
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1137,36 +1191,6 @@ void existMask(){
 		    	//test
 		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.dropPowder));
 		    	makeCoffee(type+1,sweetness);
-//		    	switch(type){//这里要根据sweetness选择出糖量
-//		    	case CoffeeType1://美式
-//		    		myMachine.dropCoffee();
-//			    //	deliveryController.cmd_pushLeftPowder(70, 50,150);//落糖
-//			    	deliveryController.cmd_pushLeftPowder(70, 10,50);//落糖
-//			    	break;
-//		    	case CoffeeType2://卡布
-//		    		myMachine.dropCoffee();		
-//		    		deliveryController.cmd_pushCenterPowder(70, 10,30);
-//		    		deliveryController.cmd_pushLeftPowder(70, 10,30);
-//		    		break;
-//		    	case CoffeeType3://意式
-//		    		myMachine.dropCoffee();
-//		    		makingStep|=PowderFinish;
-//		    		break;
-//		    	case CoffeeType4://拿铁
-//		    		myMachine.dropCoffee();
-//		    		deliveryController.cmd_pushCenterPowder(70,10,40);
-//		    		deliveryController.cmd_pushLeftPowder(70,10,30);
-//		    		break;
-//		    	case CoffeeType5://糖
-//		    		makingStep|=CoffeeFinish;
-//		    		deliveryController.cmd_pushLeftPowder(70, 20,60);
-//		    		
-//		    		break;
-//		    	case CoffeeType6://奶
-//		    		makingStep|=CoffeeFinish;
-//		    		deliveryController.cmd_pushCenterPowder(70, 20,60);
-//		    		break;
-//		    	}
 		    }
 		    
 		    void makeCoffee(int id,int level){
@@ -1183,7 +1207,8 @@ void existMask(){
 		    				int needCoffee=new Integer(coffee.getNeedCoffee());
 		    				if(needCoffee==1){ //出咖啡
 		    					makingStep&=~CoffeeFinish;
-		    					myMachine.dropCoffee();
+		    					coffeeMachine.cmd_making();
+		    					//myMachine.dropCoffee();
 		    				}
 	    				}
 	    				
