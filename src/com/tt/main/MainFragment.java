@@ -1206,7 +1206,7 @@ void existMask(){
 		    					int ch4r=coffee.getCh4r_powder_lever();
 		    					assistProtocol.cmd_setPowder(sugar,ch1r,ch2l,ch2r ,ch3l,ch3r,ch4l,ch4r);
 		    					assistProtocol.cmd_setWater(coffee.getCh1Water(), coffee.getCh2Water(), coffee.getCh3Water(),coffee.getCh4Water());
-		    					assistProtocol.cmd_startDropPowder(sugar==0?false:true, ch1r==0?false:true, ch2l==0?false:true, ch2r==0?false:true, ch3l==0?false:true, ch3r==0?false:true, ch4l==0?false:true, ch4r==0?false:true);
+		    					assistProtocol.cmd_startDropPowder(coffee.getCh1Water()==0?false:true, coffee.getCh1Water()==0?false:true, coffee.getCh2Water()==0?false:true, coffee.getCh2Water()==0?false:true, coffee.getCh3Water()==0?false:true, coffee.getCh3Water()==0?false:true, coffee.getCh4Water()==0?false:true, coffee.getCh4Water()==0?false:true);
 		    					//deliveryController.cmd_pushLeftPowder(sugar,coffee.getSugarPreWater(),coffee.getSugarWater());
 		    				
 	    				}

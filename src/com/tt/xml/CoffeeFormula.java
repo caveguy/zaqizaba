@@ -17,7 +17,8 @@ import android.util.Xml;
 
 public class CoffeeFormula {
 	
-	public static String xml_path=Environment.getExternalStorageDirectory().toString()+"/coffeeV3.xml";
+//	public static String xml_path=Environment.getExternalStorageDirectory().toString()+"/coffeeV3.xml";
+	public static String xml_path="/storage/udisk/coffeeConfig.xml";
 	private final static String Tag="CoffeeFormula";
 	private  final static String objiect="coffee";
 	private  final static String id="id";
