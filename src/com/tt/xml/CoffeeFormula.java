@@ -16,15 +16,20 @@ import android.util.Xml;
 
 
 public class CoffeeFormula {
-	
 //	public static String xml_path=Environment.getExternalStorageDirectory().toString()+"/coffeeV3.xml";
 	public static String xml_path="/storage/udisk/coffeeConfig.xml";
 	private final static String Tag="CoffeeFormula";
 	private  final static String objiect="coffee";
+	private  final static String objiect_temper="temperature";
 	private  final static String id="id";
 	private  final static String name="name";
 	private  final static String price="price";
+	//咖啡机配置
 	private  final static String need_coffee="need_coffee";
+	private  final static String coffee_powder="coffee_powder";
+	private  final static String coffee_water="coffee_water";
+	private  final static String coffee_preWater="coffee_preWater";
+	//辅助机配置
 	private  final static String sugar_level="sugar_level";
 	private  final static String ch1r_powder_level="ch1r_powder_level";
 	private  final static String ch2l_powder_level="ch2l_powder_level";
@@ -37,6 +42,8 @@ public class CoffeeFormula {
 	private  final static String ch2_water="ch2_water";
 	private  final static String ch3_water="ch3_water";
 	private  final static String ch4_water="ch4_water";
+
+	static MachineTemper coffeeTemper=null;
 	
 
 	public static boolean setName(List<Coffee> list,Integer id,String name){
@@ -82,6 +89,15 @@ public class CoffeeFormula {
 					coffee = new Coffee();
 					coffee.setId(id);
 				}
+				else if(objiect_temper.equals(pullParser.getName())){
+					int goal = new Integer(pullParser.getAttributeValue(0));
+					int backlash = new Integer(pullParser.getAttributeValue(1));
+					int min = new Integer(pullParser.getAttributeValue(2));
+					if(goal*backlash*min!=0){
+						coffeeTemper =new MachineTemper(goal,backlash,min);
+					}
+					
+				}
 				else if(name.equals(pullParser.getName())){
 					String name = pullParser.nextText();
 					coffee.setName(name);
@@ -93,6 +109,18 @@ public class CoffeeFormula {
 				else if(need_coffee.equals(pullParser.getName())){
 					int value =new Integer(pullParser.nextText());
 					coffee.setNeedCoffee(value);
+				}
+				else if(coffee_powder.equals(pullParser.getName())){
+					int value =new Integer(pullParser.nextText());
+					coffee.setCoffeePowder(value);
+				}
+				else if(coffee_water.equals(pullParser.getName())){
+					int value =new Integer(pullParser.nextText());
+					coffee.setCoffeeWater(value);
+				}
+				else if(coffee_preWater.equals(pullParser.getName())){
+					int value =new Integer(pullParser.nextText());
+					coffee.setCoffeePreWater(value);
 				}
 				else if(sugar_level.equals(pullParser.getName())){
 					String name = pullParser.nextText();
@@ -142,6 +170,7 @@ public class CoffeeFormula {
 					int value = new Integer(pullParser.nextText());
 					coffee.setCh4Water(value);
 				}
+
 	
 				break;
 				
@@ -166,14 +195,14 @@ public class CoffeeFormula {
 		XmlSerializer serializer = Xml.newSerializer();
 		serializer.setOutput(out, "UTF-8");
 		serializer.startDocument("UTF-8", true);
-		serializer.startTag(null, "persons");
+		serializer.startTag(null, "coffees");
 		for(Coffee person : persons){
-			serializer.startTag(null, "person");
+			serializer.startTag(null, objiect);
 			serializer.attribute(null, "id", person.getId().toString());
 			
-			serializer.startTag(null, "name");
+			serializer.startTag(null, name);
 			serializer.text(person.getName());
-			serializer.endTag(null, "name");
+			serializer.endTag(null, name);
 			
 			serializer.startTag(null,sugar_level);
 			serializer.text(person.getSugarLever().toString());
@@ -216,9 +245,9 @@ public class CoffeeFormula {
 			serializer.text(person.getCh4Water().toString());
 			serializer.endTag(null, ch4_water);
 	
-			serializer.endTag(null, "person");
+			serializer.endTag(null, objiect);
 		}
-		serializer.endTag(null, "persons");
+		serializer.endTag(null, "coffees");
 		serializer.endDocument();
 		out.flush();
 		out.close();
@@ -244,4 +273,10 @@ public class CoffeeFormula {
 //			Log.i(TAG, person.toString());
 //		}
 	}
+	
+	public static MachineTemper getTemper(){
+		return coffeeTemper;
+	}
+	
+
 }

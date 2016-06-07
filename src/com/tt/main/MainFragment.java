@@ -47,13 +47,13 @@ import com.tt.main.PayDialog.PayListener;
 import com.tt.main.SugarDialog.ConfirmListener;
 import com.tt.util.Encode;
 import com.tt.util.Settings;
-import com.tt.util.SharePreferenceUtil;
 import com.tt.util.TTLog;
 import com.tt.util.ToastShow;
 import com.tt.view.GuideFragmentAdapter;
 import com.tt.view.MainViewPager;
 import com.tt.xml.Coffee;
 import com.tt.xml.CoffeeFormula;
+import com.tt.xml.MachineTemper;
 import com.viewpagerindicator.CirclePageIndicator;
 import com.viewpagerindicator.PageIndicator;
 
@@ -366,9 +366,11 @@ public class MainFragment extends Fragment {
 		
 		@Override
 		public void onGetConnect() {
+			MachineTemper temp=CoffeeFormula.getTemper();
+			if(temp!=null){	
+				coffeeMachine.cmd_setTemper(temp.getTemper_goal(), temp.getTemper_backLash(), temp.getTemper_min());
+			}
 			coffeeMachine.cmd_openBoiler(true);
-			coffeeMachine.cmd_setCoffee((byte)7,(byte)50);
-			coffeeMachine.cmd_setInfiltrateWater((byte)5);
 			setMcEnable(true,context.getString(R.string.cmd1_ready));
 			
 		}
@@ -1213,6 +1215,15 @@ void existMask(){
 		    				int needCoffee=new Integer(coffee.getNeedCoffee());
 		    				if(needCoffee==1){ //出咖啡
 		    					makingStep&=~CoffeeFinish;
+		    					int powder= coffee.getCoffeePowder();
+		    					int water=coffee.getCoffeeWater();
+		    					int preWater=coffee.getCoffeePreWater();
+		    					if(powder!=0&&water!=0){
+		    						coffeeMachine.cmd_setCoffee(powder, water);
+		    					}
+		    					if(preWater!=0){
+		    						coffeeMachine.cmd_setInfiltrateWater(preWater);
+		    					}
 		    					coffeeMachine.cmd_making();
 		    					//myMachine.dropCoffee();
 		    				}
@@ -1221,12 +1232,15 @@ void existMask(){
 	    				Integer sugarWater=coffee.getCh1Water();
 	    				if(sugarWater!=null&&sugarWater!=0){//出糖水
 	    					Integer sugar=0;
-		    				String[] sugar_levels=coffee.getSugarLever().split(";");	
-		    					if(level==0){
-		    						//sugar=0;
-		    					}else if(sugar_levels!=null&&sugar_levels.length>=4){
-		    						sugar=new Integer(sugar_levels[level]);
-		    					}
+		    				String[] sugar_levels=coffee.getSugarLever().split(";");
+		    				if(sugar_levels!=null&&sugar_levels.length>=4){
+	    						sugar=new Integer(sugar_levels[level]);
+		    				}
+//		    					if(level==0){
+//		    						//sugar=0;
+//		    					}else if(sugar_levels!=null&&sugar_levels.length>=4){
+//		    						sugar=new Integer(sugar_levels[level]);
+//		    					}
 		    					makingStep&=~PowderFinish;
 		    					int ch1r=coffee.getCh1r_powder_lever();
 		    					int ch2l=coffee.getCh2l_powder_lever();

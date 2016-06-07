@@ -7,6 +7,10 @@ public class Coffee {
 
 	
 	private Integer needCoffee=0;
+	private Integer coffeePowder=0;
+	private Integer coffeeWater=0;
+	private Integer coffeePreWater=0;
+
 	/*
 	 * 糖比较特殊，用户需要选择，用string splite四份
 	 */
@@ -59,8 +63,26 @@ public class Coffee {
 	public Integer getNeedCoffee() {
 		return needCoffee;
 	}
+	public Integer getCoffeePowder() {
+		return coffeePowder;
+	}
+	public Integer getCoffeeWater() {
+		return coffeeWater;
+	}
+	public Integer getCoffeePreWater() {
+		return coffeePreWater;
+	}
 	public void setNeedCoffee(Integer value) {
 		this.needCoffee = value;
+	}
+	public void setCoffeePowder(Integer value) {
+		this.coffeePowder = value;
+	}
+	public void setCoffeeWater(Integer value) {
+		this.coffeeWater = value;
+	}
+	public void setCoffeePreWater(Integer value) {
+		this.coffeePreWater = value;
 	}
 	public String getSugarLever() {
 		return ch1l_sugar_level;
@@ -140,6 +162,7 @@ public class Coffee {
 	public String toString() { 
 	
 		return "Coffee [id="+id + ", name=" + name+"" +" needCoffee="+needCoffee+
+				",\n coffeePowder="+coffeePowder+" coffeeWater="+coffeeWater+" coffeePreWater="+coffeePreWater+
 				",\n ch1l_sugar_level="+ch1l_sugar_level+" ch1r_powder_lever="+ch1r_powder_lever+
 				",\n ch2l_powder_lever="+ch2l_powder_lever+" ch2r_powder_lever="+ch2r_powder_lever+
 				",\n ch3l_powder_lever="+ch3l_powder_lever+" ch3r_powder_lever="+ch3r_powder_lever+

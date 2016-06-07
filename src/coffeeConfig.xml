@@ -4,7 +4,11 @@
 		<name>Espresso</name>
 		<price>0.1</price>
 		<need_coffee>1</need_coffee>
+		<coffee_powder>10</coffee_powder>
+		<coffee_water>100</coffee_water>
+		<coffee_preWater>5</coffee_preWater>
 		<sugar_level>0;3;5;7</sugar_level>
+		<ch1l_powder_level>0</ch1l_powder_level>
 		<ch1r_powder_level>0</ch1r_powder_level>
 		<ch2l_powder_level>0</ch2l_powder_level>
 		<ch2r_powder_level>0</ch2r_powder_level>
@@ -12,7 +16,7 @@
 		<ch3r_powder_level>0</ch3r_powder_level>
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
-		<ch1_water>10</ch1_water>
+		<ch1_water>5</ch1_water>
 		<ch2_water>0</ch2_water>
 		<ch3_water>0</ch3_water>
 		<ch4_water>0</ch4_water>
@@ -20,9 +24,13 @@
 	</coffee>
 	<coffee id="2">
 		<name>Americano</name>
-		<need_coffee>1</need_coffee>
 		<price>0.2</price>
+		<need_coffee>1</need_coffee>
+		<coffee_powder>7</coffee_powder>
+		<coffee_water>50</coffee_water>
+		<coffee_preWater>5</coffee_preWater>
 		<sugar_level>0;3;5;7</sugar_level>
+		<ch1l_powder_level>5</ch1l_powder_level>
 		<ch1r_powder_level>0</ch1r_powder_level>
 		<ch2l_powder_level>0</ch2l_powder_level>
 		<ch2r_powder_level>0</ch2r_powder_level>
@@ -30,68 +38,78 @@
 		<ch3r_powder_level>0</ch3r_powder_level>
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
-		<ch1_water>20</ch1_water>
+		<ch1_water>30</ch1_water>
 		<ch2_water>0</ch2_water>
 		<ch3_water>0</ch3_water>
 		<ch4_water>0</ch4_water>
 	</coffee>
 	<coffee id="3">
 		<name>Cappuccino</name>
-		<price>3</price>
+		<price>0.3</price>
 		<need_coffee>1</need_coffee>
+		<coffee_powder>7</coffee_powder>
+		<coffee_water>50</coffee_water>
+		<coffee_preWater>5</coffee_preWater>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1r_powder_level>0</ch1r_powder_level>
-		<ch2l_powder_level>5</ch2l_powder_level>
-		<ch2r_powder_level>0</ch2r_powder_level>
+		<ch1l_powder_level>5</ch1l_powder_level>
+		<ch1r_powder_level>5</ch1r_powder_level>
+		<ch2l_powder_level>7</ch2l_powder_level>
+		<ch2r_powder_level>7</ch2r_powder_level>
 		<ch3l_powder_level>0</ch3l_powder_level>
 		<ch3r_powder_level>0</ch3r_powder_level>
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
-		<ch1_water>10</ch1_water>
-		<ch2_water>10</ch2_water>
+		<ch1_water>20</ch1_water>
+		<ch2_water>16</ch2_water>
 		<ch3_water>0</ch3_water>
 		<ch4_water>0</ch4_water>
 		
 	</coffee>
 	<coffee id="4">
 		<name>Latte</name>
-		<price>0.1</price>
+		<price>0.4</price>
 		<need_coffee>1</need_coffee>
+		<coffee_powder>7</coffee_powder>
+		<coffee_water>50</coffee_water>
+		<coffee_preWater>5</coffee_preWater>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1r_powder_level>0</ch1r_powder_level>
-		<ch2l_powder_level>5</ch2l_powder_level>
-		<ch2r_powder_level>0</ch2r_powder_level>
+		<ch1l_powder_level>5</ch1l_powder_level>
+		<ch1r_powder_level>5</ch1r_powder_level>
+		<ch2l_powder_level>7</ch2l_powder_level>
+		<ch2r_powder_level>7</ch2r_powder_level>
 		<ch3l_powder_level>0</ch3l_powder_level>
 		<ch3r_powder_level>0</ch3r_powder_level>
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
-		<ch1_water>10</ch1_water>
-		<ch2_water>10</ch2_water>
+		<ch1_water>20</ch1_water>
+		<ch2_water>16</ch2_water>
 		<ch3_water>0</ch3_water>
 		<ch4_water>0</ch4_water>
 	</coffee>
 	<coffee id="5">
 		<name>Water</name>
-		<price>0.1</price>
+		<price>0.5</price>
 		<need_coffee>0</need_coffee>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1r_powder_level>0</ch1r_powder_level>
+		<ch1l_powder_level>5</ch1l_powder_level>
+		<ch1r_powder_level>5</ch1r_powder_level>
 		<ch2l_powder_level>0</ch2l_powder_level>
 		<ch2r_powder_level>0</ch2r_powder_level>
 		<ch3l_powder_level>0</ch3l_powder_level>
 		<ch3r_powder_level>0</ch3r_powder_level>
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
-		<ch1_water>10</ch1_water>
+		<ch1_water>30</ch1_water>
 		<ch2_water>0</ch2_water>
 		<ch3_water>0</ch3_water>
 		<ch4_water>0</ch4_water>
 	</coffee>
 	<coffee id="6">
 		<name>Milk</name>
-		<price>0.1</price>
+		<price>0.6</price>
 		<need_coffee>0</need_coffee>
 		<sugar_level>0;3;5;7</sugar_level>
+		<ch1l_powder_level>5</ch1l_powder_level>
 		<ch1r_powder_level>0</ch1r_powder_level>
 		<ch2l_powder_level>5</ch2l_powder_level>
 		<ch2r_powder_level>0</ch2r_powder_level>
@@ -106,9 +124,10 @@
 	</coffee>
 	<coffee id="7">
 		<name>Chocolate</name>
-		<price>0.05</price>
+		<price>0.7</price>
 		<need_coffee>0</need_coffee>
 		<sugar_level>0;3;5;7</sugar_level>
+		<ch1l_powder_level>0</ch1l_powder_level>
 		<ch1r_powder_level>0</ch1r_powder_level>
 		<ch2l_powder_level>0</ch2l_powder_level>
 		<ch2r_powder_level>0</ch2r_powder_level>
@@ -121,5 +140,8 @@
 		<ch3_water>40</ch3_water>
 		<ch4_water>0</ch4_water>
 	</coffee>
-
+	<!--锅炉温度设置  -->
+	<temperature 	goal="90" backlash="2"  min="70"/>
+	    
+ 
 </coffees>

@@ -447,15 +447,16 @@ public class CoffeeMcProtocol {
 		packCmd_cleaning();
 	}
 
-	public void cmd_setTemper(byte temper,byte backlash,byte minTemper){
+	public void cmd_setTemper(int temper,int backlash,int minTemper){
+		Log.e(TAG, "temper="+temper+" backlash="+backlash+" minTemper="+minTemper);
 		packCmd_setTemper((byte) temper,(byte) backlash,(byte) minTemper);
 	}
 
-	public void cmd_setCoffee(byte powder, byte water ){
+	public void cmd_setCoffee(int powder, int water ){
 		packCmd_setCoffee((byte)powder,(byte)water,(byte)0,(byte)0);
 	}
-	public void cmd_setInfiltrateWater(byte water){
-		packCmd_setInfiltrateWater(water);
+	public void cmd_setInfiltrateWater(int water){
+		packCmd_setInfiltrateWater((byte)water);
 	}
 	
 	public void cmd_openBoiler(boolean  open){
