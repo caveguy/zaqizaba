@@ -46,6 +46,8 @@ import com.example.coffemachinev3.R;
 import com.tt.main.PayDialog.PayListener;
 import com.tt.main.SugarDialog.ConfirmListener;
 import com.tt.util.Encode;
+import com.tt.util.Settings;
+import com.tt.util.SharePreferenceUtil;
 import com.tt.util.TTLog;
 import com.tt.util.ToastShow;
 import com.tt.view.GuideFragmentAdapter;
@@ -109,13 +111,13 @@ public class MainFragment extends Fragment {
 	PayDialog payDialog;
 	MakingStateDialog stateDialog;
 	 TTLog mylog=null;
-	
+	 
 	
 	byte makingStep=0;  //出粉跟出咖啡完成标志
 	int tradeStep=0;    //整个交易步骤
 //	boolean isDeliverEnable=false;  //辅助板是否工作正常
 //	boolean isMcEnable=false;      //咖啡机是否工作正常
-	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
+	
 	//boolean needBean=true ;   //
 	//private boolean dispDevLayout=false;
 	
@@ -131,7 +133,10 @@ public class MainFragment extends Fragment {
 	boolean isAssistMcWork=false;
 	
 	boolean appealed=false;//是否已经申述
-	boolean isDebug=false;
+	
+
+	
+	
 	byte mcWindowLast=0; //为了知道咖啡有没有制作完成
 	private List<Coffee> coffeeFormula =null;
 	HashMap<Integer,Integer> goodId=new HashMap<Integer,Integer>();
@@ -659,21 +664,19 @@ void existMask(){
 	public void setDevCallBack(){
 		MaintainFragment.back=new MaintainFragment.DevCallBack() {
 		
-		@Override
-		public void ondropcupModeChanged(boolean drop) {
-			 dropcupMode=drop ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
-		}
-		
+//		@Override
+//		public void ondropcupModeChanged(boolean drop) {
+//			Settings.setDropcupMode(context, drop);
+//
+//		}
+//		
 		@Override
 		public void onDevModeChanged(boolean is) {
-			
 			simulateGoodId(is);
-			isDebug=is;
 		}
 		
 		@Override
 		public void onBeanModeChanged(boolean need) {
-			//needBean=need;
 			setBeanMode(need);
 		}
 
@@ -849,7 +852,7 @@ void existMask(){
 			@Override
 			public void onOKClick(int position, int choose) {
 				setSweetness(choose);
-				if(isDebug){
+				if(Settings.getIsDebug(context)){
 					startMaking();
 				}else{
 					showPayDialog(position,choose);
@@ -884,7 +887,7 @@ void existMask(){
 	    		return;
 	    	tradeStep=StepMaking; //进入制作阶段
 	    	startTimeOutTimer(TradeTimeOutDuaration,TimerOutTask.Event_trade_timeOut);
-	    	if(dropcupMode){
+	    	if(Settings.getDropcupMode(context)){
 	    		mc_dropCup();
 	    	}else{
 	    		mc_readCup();
@@ -1563,4 +1566,7 @@ void existMask(){
 					
 					return isConnected;
 				}
+				
+
+				
 }

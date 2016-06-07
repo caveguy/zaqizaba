@@ -24,6 +24,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.example.coffemachinev3.R;
+import com.tt.util.Settings;
 import com.tt.util.UpdateManager;
 
 public class MaintainFragment extends Fragment implements OnClickListener,android.widget.CompoundButton.OnCheckedChangeListener{
@@ -32,7 +33,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	RadioButton radioCup1,radioCup2;
 	RadioButton radio_needBean,radio_noBean;
 	CheckBox btn_debug;
-	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
+//	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
 	boolean needBean=true ;   	  //
 	public static DevCallBack back=null;
 	LinearLayout layout_mask;
@@ -55,7 +56,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	//MainFragment.SetDevCallBack mainCallback=null;
 	public interface DevCallBack{
 		void onBeanModeChanged(boolean need);
-		void ondropcupModeChanged(boolean drop);
+	//	void ondropcupModeChanged(boolean drop);
 		void onDevModeChanged(boolean is);
 		void leave();
 		void clean();
@@ -74,16 +75,19 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		}
 	}
 	void setBeanMode(boolean need){
-		if(back!=null){
-			back.onBeanModeChanged(need);
-		}
+		Settings.setNeedBean(context, need);
+//		if(back!=null){
+//			back.onBeanModeChanged(need);
+//		}
 	}
 	void setdropcupMode(boolean drop){
-		if(back!=null){
-			back.ondropcupModeChanged(drop);
-		}
+		Settings.setDropcupMode(context, drop);
+//		if(back!=null){
+//			back.ondropcupModeChanged(drop);
+//		}
 	}
 	void setDevMode(boolean is){
+		Settings.setIsDebug(context, is);
 		if(back!=null){
 			back.onDevModeChanged(is);
 		}
@@ -254,6 +258,9 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	layout_mask=(LinearLayout)view.findViewById(R.id.layout_mask);
     	btn_debug=(CheckBox)view.findViewById(R.id.btn_debug);
     	btn_debug.setOnCheckedChangeListener(this);
+    	btn_debug.setChecked(Settings.getIsDebug(context));
+    	
+    	
     	t_maintain=(TextView)view.findViewById(R.id.t_maintain);
     	t_mcDetail=(TextView)view.findViewById(R.id.t_mcDetail);
     	t_assistDetail=(TextView)view.findViewById(R.id.t_assistDetail);
@@ -269,7 +276,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	btn_clean=(Button)view.findViewById(R.id.btn_clean);
     	btn_clean.setOnClickListener(this);
     	btn_mskCancel.setOnClickListener(this);
-    	if(dropcupMode){
+    	if(Settings.getDropcupMode(context)){
     		radioCup1.setChecked(true);	
     	}else{
     		radioCup2.setChecked(true);
