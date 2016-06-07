@@ -48,7 +48,8 @@ public class MakingStateDialog implements OnClickListener{
 	protected void createDialog(){
 		View view = View.inflate(context, getMainXML(), null);
 		initView( view);
-		dialog = new Dialog(context,R.style.Dialog_Fullscreen);
+		//dialog = new Dialog(context,R.style.Dialog_Fullscreen);
+		dialog = new Dialog(context);
 		dialog.show();
 		Window win = dialog.getWindow();
 		//将dialog的背景透明化

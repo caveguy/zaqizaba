@@ -80,7 +80,8 @@ public class SugarDialog implements OnClickListener{
     	radio1.setChecked(true);
 
 		
-		dialog = new Dialog(context,R.style.Dialog_Fullscreen);
+		dialog = new Dialog(context);
+	//	dialog = new Dialog(context,R.style.Dialog_Fullscreen);
 		dialog.show();
 		Window win = dialog.getWindow();
 		//将dialog的背景透明化
@@ -89,6 +90,7 @@ public class SugarDialog implements OnClickListener{
 		LinearLayout layout_bg=(LinearLayout)view.findViewById(R.id.layout_bg);
 		LinearLayout.LayoutParams params= (android.widget.LinearLayout.LayoutParams) layout_bg.getLayoutParams();
 		int left=0;
+		//int bottom=context.getResources().getDimensionPixelSize(R.dimen.dialog_margin_bottom);
 		switch(place){
 			case 0:
 				default:
