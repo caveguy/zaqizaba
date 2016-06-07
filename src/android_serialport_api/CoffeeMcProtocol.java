@@ -39,14 +39,15 @@ public class CoffeeMcProtocol {
 	final byte Cmd_setTemper=0x04;
 	final byte Cmd_setCoffee=0x05;
 	final byte Cmd_setInfiltrateWater=0x06;
+	final byte Cmd_openBoiler=0x07;
 	final byte Cmd_test=0x30;
-	final byte Cmd_in_normal=0x21;
-	final byte Cmd_in_test=0x31;
+	//final byte Cmd_in_normal=0x21;
+	//final byte Cmd_in_test=0x31;
     final byte Start_byte=(byte) 0xaa;
     final byte End_byte=0x55;
     final byte Data_start=4;
-    final byte Min_length=6;
-	final byte Normal_size=Min_length+0x16;
+    final byte Min_length=5;
+	final byte Normal_size=Min_length+16;
 	final byte Test_size=Min_length+0x04;
 	
     
@@ -89,6 +90,7 @@ public class CoffeeMcProtocol {
 	byte cmd0x5_d3_reserve=0;
 	
 	byte cmd0x6_d0_infiltrateWater=0;
+	byte cmd0x7_d0_openBoiler=0;
 
 	byte cmd0x30_d0_testType=0;
 
@@ -122,7 +124,7 @@ public class CoffeeMcProtocol {
 	Timer sendTimer=null;
 	Timer ackTimer=null;
 	Timer queryTimer=null;
-	final String TAG="DeliveryProtocol";
+	final String TAG="CoffeeMcProtocol";
 	AckTimerTask ackTimerTask=null;
 	QueryTimerTask queryTimerTask=null;
 	SendTimerTask sendTimerTask=null;
@@ -165,6 +167,7 @@ public class CoffeeMcProtocol {
 
 	protected void onDataReceived(final byte[] buffer, final int size) {
 		//Log.d(TAG,"onDataReceived!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	
 		if(isDebug)
 			showLog("Recivedata", buffer,size);
 		if(size>=Min_length){
@@ -178,13 +181,14 @@ public class CoffeeMcProtocol {
 		int i=0;
 		boolean find=false;
 		int cmd_lenth=1;
+	//	Log.e(TAG, "splite!!!!!!!!!!!!");
 		while(i<=size-Min_length){
 			find=false;
 			if(buffer[i]==Start_byte){//一条指令开始
 
 				int data_len=(int)buffer[3+i];
 				//int check_order=i+4+data_len;
-				int end_order=i+5+data_len;
+				int end_order=i+4+data_len;
 				 cmd_lenth=Min_length+data_len;
 				if(end_order<=size-1){
 					if(buffer[end_order]==End_byte){
@@ -210,20 +214,23 @@ public class CoffeeMcProtocol {
 
 	private boolean getInput(byte[] data,int num){
 		int data_len=data[3];
-		int check_order=4+data_len;
-		int end_order=5+data_len;
+		int check_order=1;
+		int end_order=4+data_len;
 		int all_lenth=Min_length+data_len;
 		if(all_lenth>num){
 			return false;
 		}
-		if(data[0]==(byte)0xaa&&data[end_order]==0x55&&(data[check_order]==getCheckSun(data,all_lenth))){
+		if(data[0]==(byte)0xaa&&data[end_order]==0x55&&(data[check_order]==getCheckSun(data))){
 			getAck();
-			if(data[1]==(byte)Cmd_in_normal){
-				parseNormal(data);
-				return true;
-			}else if(data[1]==(byte)Cmd_in_test){
+//			if(data[2]>=Cmd_handshake&&data[2]<=Cmd_openBoiler){
+//
+//			}
+			if(data[2]==(byte)Cmd_test){
 				parseTest(data);
 				return true;
+			}else {
+				parseNormal(data);
+				return true;	
 			}
 			
 		}
@@ -276,7 +283,7 @@ public class CoffeeMcProtocol {
     final byte State_fillingSystem=0x35;
 	 */
 	void dealNormalInput(){
-		if(in_runningState_old!=State_Ready){
+		if(in_runningState_old!=in_cmd0x21D0_runningState){
 			switch(in_cmd0x21D0_runningState){
 			case State_Ready:	
 				if(in_runningState_old==State_making){
@@ -285,6 +292,10 @@ public class CoffeeMcProtocol {
 					readyCallBack();
 				}
 				break;
+			case State_making:
+				onMakingCallBack();
+				break;
+				
 			case State_heating:
 			case State_rinsing:
 			case State_tooHot:
@@ -303,24 +314,25 @@ public class CoffeeMcProtocol {
 				break;
 			}
 		}
-		in_runningState_old=State_Ready;
+		in_runningState_old=in_cmd0x21D0_runningState;
 	}
 
 
 
-	byte getCheckSun(byte[] data,int len){	
-		int length=len-1;
-		byte ck=0;
-		for(int i=0;i<length;i++){
-			ck=(byte) (ck+data[i]);
-		}
-		return ck;
-	}
+//	byte getCheckSun(byte[] data,int len){	
+//		int length=data[3];
+//		byte ck=0;
+//		for(int i=Data_start;i<Data_start+length;i++){
+//			ck=(byte) (ck+data[i]);
+//		}
+//		return ck;
+//	}
 
 	byte getCheckSun(byte[] data){	
-		int length=data.length-1;
+		int length=data[3];
 		byte ck=0;
-		for(int i=0;i<length;i++){
+		int start=2;
+		for(int i=start;i<start+length+2;i++){
 			ck=(byte) (ck+data[i]);
 		}
 		return ck;
@@ -331,31 +343,32 @@ public class CoffeeMcProtocol {
 	private void packCmd_handshake(){
 		byte[] data = new byte[] { 
 				(byte) Start_byte,
+				(byte) 0,//校验
 				(byte) Cmd_handshake,
 				(byte) 0,//数据长度
-				(byte) 0,//校验
+				
 				(byte)End_byte};
-		data[data.length-2]=getCheckSun(data);
+		data[1]=getCheckSun(data);
 		writeToUartCached(data);
 	}
 	private void packCmd_making(){
 		byte[] data = new byte[] { 
 				(byte) Start_byte,
+				(byte) 0,//校验
 				(byte) Cmd_making,
 				(byte) 0,//数据长度
-				(byte) 0,//校验
 				(byte)End_byte};
-		data[data.length-2]=getCheckSun(data);
+		data[1]=getCheckSun(data);
 		writeToUartCached(data);
 	}
 	private void packCmd_cleaning(){
 		byte[] data = new byte[] { 
 				(byte) Start_byte,
-				(byte) Cmd_clean,
-				(byte) 0,//数据长度
 				(byte) 0,//校验
+				(byte) Cmd_clean,
+				(byte) 0,//数据长度	
 				(byte)End_byte};
-		data[data.length-2]=getCheckSun(data);
+		data[1]=getCheckSun(data);
 		writeToUartCached(data);
 	}
 	private void packCmd_setTemper(byte temper,byte backlash,byte min){
@@ -364,14 +377,14 @@ public class CoffeeMcProtocol {
 		cmd0x4_d2_minTemper=min;
 		byte[] data = new byte[] { 
 				(byte) Start_byte,
+				(byte) 0,//校验
 				(byte) Cmd_setTemper,
 				(byte) 3,//数据长度
 				(byte) cmd0x4_d0_goalTemper,//d0
 				(byte) cmd0x4_d1_backlash,//d1
 				(byte) cmd0x4_d2_minTemper,//d2
-				(byte) 0,//校验
 				(byte)End_byte};
-		data[data.length-2]=getCheckSun(data);
+		data[1]=getCheckSun(data);
 		writeToUartCached(data);
 	}
 	private void packCmd_setCoffee(byte powder,byte water,byte reserve1,byte reserve2){
@@ -381,15 +394,15 @@ public class CoffeeMcProtocol {
 			cmd0x5_d3_reserve=reserve2;
 		byte[] data = new byte[] { 
 				(byte) Start_byte,
+				(byte) 0,//校验
 				(byte) Cmd_setCoffee,
 				(byte) 4,//数据长度
 				(byte) cmd0x5_d0_powder,//d0
 				(byte) cmd0x5_d1_water,//d1
 				(byte) cmd0x5_d2_reserve,//d2
 				(byte) cmd0x5_d3_reserve,//d2
-				(byte) 0,//校验
 				(byte)End_byte};
-		data[data.length-2]=getCheckSun(data);
+		data[1]=getCheckSun(data);
 		writeToUartCached(data);
 	}
 	private void packCmd_setInfiltrateWater(byte water){
@@ -397,12 +410,28 @@ public class CoffeeMcProtocol {
 
 		byte[] data = new byte[] { 
 				(byte) Start_byte,
+				(byte) 0,//校验
 				(byte) Cmd_setInfiltrateWater,
 				(byte) 1,//数据长度
 				(byte) cmd0x6_d0_infiltrateWater,//d0
-				(byte) 0,//校验
 				(byte)End_byte};
-		data[data.length-2]=getCheckSun(data);
+		data[1]=getCheckSun(data);
+		writeToUartCached(data);
+	}
+	private void packCmd_openBoiler(boolean  open){
+		if(open){
+			cmd0x7_d0_openBoiler=(byte) 0xa0;
+		}else{
+			cmd0x7_d0_openBoiler=(byte) 0x50;
+		}
+		byte[] data = new byte[] { 
+				(byte) Start_byte,
+				(byte) 0,//校验
+				(byte) Cmd_openBoiler,
+				(byte) 1,//数据长度
+				(byte) cmd0x7_d0_openBoiler,//d0
+				(byte)End_byte};
+		data[1]=getCheckSun(data);
 		writeToUartCached(data);
 	}
 
@@ -415,7 +444,7 @@ public class CoffeeMcProtocol {
 		packCmd_making();
 	}
 	public void cmd_cleaning(){
-		packCmd_making();
+		packCmd_cleaning();
 	}
 
 	public void cmd_setTemper(byte temper,byte backlash,byte minTemper){
@@ -425,11 +454,13 @@ public class CoffeeMcProtocol {
 	public void cmd_setCoffee(byte powder, byte water ){
 		packCmd_setCoffee((byte)powder,(byte)water,(byte)0,(byte)0);
 	}
-	public void set_setInfiltrateWater(byte water){
+	public void cmd_setInfiltrateWater(byte water){
 		packCmd_setInfiltrateWater(water);
 	}
 	
-
+	public void cmd_openBoiler(boolean  open){
+		packCmd_openBoiler(open);
+	}
 	
 	private void showLog(String tag, byte[] showArr,int num) {
 		int i;
@@ -684,6 +715,11 @@ public class CoffeeMcProtocol {
 		void onFinish();
 		void onGetConnect();
 		void sendTimeOut();
+	}
+
+	void onMakingCallBack(){
+		if(callBack!=null)
+			callBack.onMaking();
 	}
 	
 	private void finishCallBack(){

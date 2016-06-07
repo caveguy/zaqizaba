@@ -113,8 +113,8 @@ public class MainFragment extends Fragment {
 	
 	byte makingStep=0;  //出粉跟出咖啡完成标志
 	int tradeStep=0;    //整个交易步骤
-	boolean isDeliverEnable=false;  //辅助板是否工作正常
-	boolean isMcEnable=false;      //咖啡机是否工作正常
+//	boolean isDeliverEnable=false;  //辅助板是否工作正常
+//	boolean isMcEnable=false;      //咖啡机是否工作正常
 	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
 	//boolean needBean=true ;   //
 	//private boolean dispDevLayout=false;
@@ -361,6 +361,9 @@ public class MainFragment extends Fragment {
 		
 		@Override
 		public void onGetConnect() {
+			coffeeMachine.cmd_openBoiler(true);
+			coffeeMachine.cmd_setCoffee((byte)7,(byte)50);
+			coffeeMachine.cmd_setInfiltrateWater((byte)5);
 			setMcEnable(true,context.getString(R.string.cmd1_ready));
 			
 		}
@@ -530,7 +533,6 @@ void initAssistMachine(){
 			}
 
 
-
 			@Override
 			public void onFault(byte fault) {
 				
@@ -541,8 +543,9 @@ void initAssistMachine(){
 
 			@Override
 			public void onKeyPressed(byte key) {
-				// TODO Auto-generated method stub
-				
+				if(key==AssistProtocol.BIT3){
+					enterDevMode();
+				}
 			}
 
         	
@@ -633,7 +636,7 @@ void existMask(){
 						break;
 					case Handler_mcDisp://
 						String dsp= msg.obj.toString();
-				
+						myToast.toastShow(dsp)	;
 						setDevMcState(dsp);
 						break;
 					case Handler_TradeTimeOut:

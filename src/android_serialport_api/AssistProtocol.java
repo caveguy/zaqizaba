@@ -24,14 +24,14 @@ public class AssistProtocol {
 	private InputStream mInputStream;
 	private ReadThread mReadThread; 
 	
-	final static byte BIT0=(byte) 0x01;
-	final static byte BIT1=(byte) 0x02;
-	final static byte BIT2=(byte) 0x04;
-	final static byte BIT3=(byte) 0x08;
-	final static byte BIT4=(byte) 0x10;
-	final static byte BIT5=(byte) 0x20;
-	final static byte BIT6=(byte) 0x40;
-	final static byte BIT7=(byte) 0x80;	
+	public final static byte BIT0=(byte) 0x01;
+	public final static byte BIT1=(byte) 0x02;
+	public final static byte BIT2=(byte) 0x04;
+	public final static byte BIT3=(byte) 0x08;
+	public final static byte BIT4=(byte) 0x10;
+	public final static byte BIT5=(byte) 0x20;
+	public final static byte BIT6=(byte) 0x40;
+	public final static byte BIT7=(byte) 0x80;	
 	
 	final byte Cmd_handshake=0x11;
 	final byte Cmd_dropCup=0x21;
@@ -134,7 +134,7 @@ public class AssistProtocol {
 	Timer sendTimer=null;
 	Timer ackTimer=null;
 	Timer queryTimer=null;
-	final String TAG="DeliveryProtocol";
+	final String TAG="AssistProtocol";
 	AckTimerTask ackTimerTask=null;
 	QueryTimerTask queryTimerTask=null;
 	SendTimerTask sendTimerTask=null;
@@ -227,10 +227,10 @@ public class AssistProtocol {
 				inD0_bit5_firstHeatingState= (data[3]&(BIT5))==0?false:true;
 				inD0_bit6_secondHeatingState= (data[3]&(BIT6))==0?false:true;
 				inD0_bit7_waterState= (data[3]&(BIT7))==0?false:true;
-				inD1_bit0_key1= (data[4]&(BIT0))==0?false:true;
-				inD1_bit1_key2= (data[4]&(BIT1))==0?false:true;
-				inD1_bit2_key3= (data[4]&(BIT2))==0?false:true;
-				inD1_bit3_key4= (data[4]&(BIT3))==0?false:true;
+				inD1_bit0_key1= (data[1]&(BIT0))==0?false:true;
+				inD1_bit1_key2= (data[1]&(BIT1))==0?false:true;
+				inD1_bit2_key3= (data[1]&(BIT2))==0?false:true;
+				inD1_bit3_key4= (data[1]&(BIT3))==0?false:true;
 				inD2_H8bitInputState=(byte) (data[5]);
 				inD3_L8bitInputState=(byte) (data[6]);
 				inD2_bit0_doorState=(data[5]&(BIT0))==0?false:true;

@@ -31,6 +31,8 @@ import com.example.coffemachinev3.R;
 public class VideoFragment extends Fragment  implements OnClickListener
 
 {
+	public static String video_path="/storage/udisk/";
+	File dictory=new File(video_path);
 	private final String TAG = "VideoFrag";
 	private SurfaceView sv;
 	private SurfaceHolder surfaceHolder;
@@ -271,13 +273,13 @@ public class VideoFragment extends Fragment  implements OnClickListener
 	class FindThread extends Thread{
 		@Override
 		public void run() {
-			getVideoFile(allVideoList,Environment.getExternalStorageDirectory());// 获得视频文件  
+		//	getVideoFile(allVideoList,Environment.getExternalStorageDirectory());// 获得视频文件  
+		//	getVideoFile(allVideoList,dictory);// 获得视频文件  
 			super.run();
 		}
 
 	}
 
-	
 	class MyTimerTask extends TimerTask{
 
 		@Override
