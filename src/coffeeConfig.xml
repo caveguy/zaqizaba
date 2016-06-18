@@ -142,6 +142,8 @@
 	</coffee>
 	<!--锅炉温度设置  -->
 	<temperature 	goal="90" backlash="2"  min="70"/>
-	    
+	<clean_time   time="22:00"  />   
+	<clean_cnt    time="50"  />   
+
  
 </coffees>

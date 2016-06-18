@@ -23,7 +23,7 @@ public class AssistProtocol {
 	private OutputStream mOutputStream;
 	private InputStream mInputStream;
 	private ReadThread mReadThread; 
-	
+	final String Tag="AssistProtocol";
 	public final static byte BIT0=(byte) 0x01;
 	public final static byte BIT1=(byte) 0x02;
 	public final static byte BIT2=(byte) 0x04;
@@ -274,7 +274,7 @@ public class AssistProtocol {
 			deal_takingCup();
 			break;
 		}
-		
+		//Log.i(Tag,"fault_state="+fault_state);
 		if(fault_state!=old_fault_state){
 			onFaultCallBack(fault_state);
 		}
@@ -333,10 +333,21 @@ public class AssistProtocol {
 		 }else{
 			 fault_state&=~Fault_2heating;
 		 }
+		 
+		 if(inD1_bit0_key1){
+			 onKeyPressedCallBack(Key1);
+		 }
+		 if(inD1_bit1_key2){
+			 onKeyPressedCallBack(Key2);
+		 }
+
 		 if(inD1_bit2_key3){ //按键3
 			 onKeyPressedCallBack(Key3);
 		 }
-		 
+		 if(inD1_bit3_key4){
+			 onKeyPressedCallBack(Key4);
+		 }
+		  
 	 }
 
 	 
@@ -354,15 +365,7 @@ public class AssistProtocol {
 	  * 
 	  */
 	void deal_handShake(){
-		 if(inD1_bit0_key1){
-			 onKeyPressedCallBack(Key1);
-		 }
-		 if(inD1_bit1_key2){
-			 onKeyPressedCallBack(Key2);
-		 }
-		 if(inD1_bit3_key4){
-			 onKeyPressedCallBack(Key4);
-		 }
+
 
 		 
 		 

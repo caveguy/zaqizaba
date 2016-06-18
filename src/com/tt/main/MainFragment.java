@@ -418,76 +418,7 @@ public class MainFragment extends Fragment {
 		}
 	});
 	}
-//		 ParseReceiveCommand.setCallBack(new ParseReceiveCommand.CallBack() {
-//			
-//			@Override
-//			public void onParsed(int cmd) {
-//				// TODO Auto-generated method stub
-//				 if(cmd==1){
-//					String dispString= ParseReceiveCommand.getDispStringId(context);
-//					if(dispMskLayout!=0){
-//						sendMsgToHandler(Handler_mcDisp, dispString);
-//						
-//					}
-//					if(dispString!=oldMcString){
-//						mylog.log_i("****Machine String****"+dispString);
-//						if(dispString.equals(context.getString(R.string.cmd1_pressRinse))){
-//							myMachine.sendCleanCmd();
-//						}					
-//					}
-//					oldMcString=dispString;
-//				 }
-//				 else if(cmd==0x19){
-//					 byte windowstate=ParseReceiveCommand.getWindow();
-//					// myToast.toastShow("cmd0x19="+windowstate);
-//					 if(windowstate==2&&mcWindowLast==5){
-//						 mc_coffeeDroped();
-//						 
-//						 
-//					 }					 
-//					 mcWindowLast=windowstate;
-//					//myMachine.initMachine();
-//				 }
-//			}
-//
-//			@Override
-//			public void onFault(String msg) {
-//				//isMachineWork=false;
-//				//先申述后进维护界面
-//				if(tradeStep==StepMaking){//在制作过程中出现错误，这个时候应该退款
-//					if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
-//						appealed=true;
-//						appeal();
-//						myHandler.post(new Runnable() {
-//							
-//							@Override
-//							public void run() {
-//								closeOder(); //从故障中恢复，直接关闭之前的订单	
-//							}
-//						});
-//						
-//					}
-//				}
-//				setMcEnable(false,msg);
-////				if(!dispDevLayout){
-//					
-////					updateEnable();
-////					sendMsgToHandler(Handler_mcDisp, msg);
-////				}
-//
-//	
-//			}
-//
-//			@Override
-//			public void onWork() {
-//				setMcEnable(true,context.getString(R.string.cmd1_ready));
-////				isMachineWork=true;
-////				if(!dispDevLayout){
-////					updateEnable();
-////				}
-//			}
-//		});
-//	}
+
 void initAssistMachine(){
     	assistProtocol=new AssistProtocol(context);
     	assistProtocol.setCallBack(new AssistProtocol.CallBack(){
@@ -558,6 +489,19 @@ void initAssistMachine(){
 
 			@Override
 			public void onFault(byte fault) {
+				if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
+					appealed=true;
+					appeal();
+					myHandler.postDelayed(new Runnable() {
+						
+						@Override
+						public void run() {
+							closeOder(); //从故障中恢复，直接关闭之前的订单	
+						}
+					},3000);
+					
+				}
+				
 				
 				mc_assistFault(fault);
 			}
@@ -1290,8 +1234,10 @@ void existMask(){
 	    		}
 
 		    void mc_assistFault(byte fault){
+		    	
 		    	AssistState.hasWater=(fault&AssistProtocol.Fault_noWater)==0?true:false;
-		    	AssistState.hasCup=(fault&AssistProtocol.Fault_noCup)==0?true:false;  	
+		    	AssistState.hasCup=(fault&AssistProtocol.Fault_noCup)==0?true:false;  
+		    	mylog.log_e("mc_assistFault hasWater="+AssistState.hasWater+" hasCup="+AssistState.hasCup+"fault="+fault);
 		    	//setAssitMcEnable(false,"");
 		    	updateAssitMcEnable();
 //		    	myHandler.postDelayed(new Runnable() {		
