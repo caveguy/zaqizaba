@@ -317,11 +317,13 @@ public class MainFragment extends Fragment {
 	
     @Override
 	public void onStart() {
-      //  initMachines();
     	initCoffeeMachine();
         initAssistMachine();
+        initSever();
 		setMcEnable(false,context.getString(R.string.comErr));
 		setNetWorkEnable(false,context.getString(R.string.connectFailed));
+		simulateGoodId(Settings.getIsDebug(context));
+		
 		super.onStart();
 	}
     
@@ -564,14 +566,16 @@ void initAssistMachine(){
 
         	
         });
-        if(hasNetWork()){
-        	initPayServer();
-        }
 
-        addNetworkChangedCallback();
         
     }
+void initSever(){
+    if(hasNetWork()){
+    	initPayServer();
+    }
 
+    addNetworkChangedCallback();	
+}
 
 
 void existMask(){
