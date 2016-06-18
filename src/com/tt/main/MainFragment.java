@@ -317,9 +317,10 @@ public class MainFragment extends Fragment {
 	
     @Override
 	public void onStart() {
+    	 initSever();
     	initCoffeeMachine();
         initAssistMachine();
-        initSever();
+       
 		setMcEnable(false,context.getString(R.string.comErr));
 		setNetWorkEnable(false,context.getString(R.string.connectFailed));
 		restoreDevState();
@@ -489,19 +490,20 @@ void initAssistMachine(){
 
 			@Override
 			public void onFault(byte fault) {
-				if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
-					appealed=true;
-					appeal();
-					myHandler.postDelayed(new Runnable() {
+			if(tradeStep==StepMaking){//在制作过程中出现错误，这个时候应该退款
+					if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
+						appealed=true;
+						appeal();
+						myHandler.postDelayed(new Runnable() {
+							
+							@Override
+							public void run() {
+								closeOder(); //从故障中恢复，直接关闭之前的订单	
+							}
+						},3000);
 						
-						@Override
-						public void run() {
-							closeOder(); //从故障中恢复，直接关闭之前的订单	
-						}
-					},3000);
-					
-				}
-				
+					}
+			}
 				
 				mc_assistFault(fault);
 			}
@@ -1081,7 +1083,11 @@ void existMask(){
 	    
 	    void appeal(){
 	        /*退款申请*/
+	        if(deviceInterfaceAdapter==null){
+	        	return;
+	        }
 	        ApplyRefundReq refundReq = new ApplyRefundReq();
+
 	        refundReq.setFeedId(deviceInterfaceAdapter.getDevice().getFeedId());
 	        refundReq.setOrderId(System.currentTimeMillis());
 	        refundReq.setPhone("15824135596");

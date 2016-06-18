@@ -3,14 +3,17 @@ package com.tt.main;
 import java.io.File;
 
 import android.app.Fragment;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,6 +24,8 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.example.coffemachinev3.R;
@@ -31,12 +36,13 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 
 	TextView t_maintain,t_mcDetail,t_netDetail,t_version,t_refund,t_assistDetail,t_id;
 	RadioButton radioCup1,radioCup2;
-	RadioButton radio_needBean,radio_noBean;
+//	RadioButton radio_needBean,radio_noBean;
 	CheckBox btn_debug,btn_heating;
+	SeekBar seekSound;
 //	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
 	boolean needBean=true ;   	  //
 	public static DevCallBack back=null;
-	LinearLayout layout_mask;
+	LinearLayout layout_mask,layout_volume;
 	Button btn_clean,btn_mskCancel,btn_update;
 	private ProgressBar proBar;
 	Handler myHandler=null;
@@ -94,7 +100,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		}
 	}
 	void setEnableHeating(boolean is){
-		Settings.setIsDebug(context, is);
+		Settings.setIsHeating(context, is);
 		if(back!=null){
 			back.onEnableHeating(is);
 		}
@@ -219,12 +225,14 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		radioCup2.setVisibility(View.VISIBLE);
 		btn_debug.setVisibility(View.VISIBLE);
 		btn_heating.setVisibility(View.VISIBLE);
-		radio_needBean.setVisibility(View.VISIBLE);
-		radio_noBean.setVisibility(View.VISIBLE);
+//		radio_needBean.setVisibility(View.VISIBLE);
+//		radio_noBean.setVisibility(View.VISIBLE);
 		t_version.setVisibility(View.VISIBLE);
+		layout_volume.setVisibility(View.VISIBLE);
 		proBar.setVisibility(View.GONE);
 		t_id.setVisibility(View.VISIBLE);
 		t_refund.setVisibility(View.GONE);
+		
 	}
 	void enterMaintain(Boolean refund){
 		Log.e("maintain","enterMaintain ");
@@ -234,8 +242,8 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		btn_clean.setVisibility(View.GONE);
 		radioCup1.setVisibility(View.GONE);
 		radioCup2.setVisibility(View.GONE);
-		radio_needBean.setVisibility(View.GONE);
-		radio_noBean.setVisibility(View.GONE);
+//		radio_needBean.setVisibility(View.GONE);
+//		radio_noBean.setVisibility(View.GONE);
 		btn_debug.setVisibility(View.GONE);
 		btn_heating.setVisibility(View.GONE);
 		btn_update.setVisibility(View.GONE);
@@ -247,6 +255,8 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		}else{
 			t_refund.setVisibility(View.GONE);
 		}
+		layout_volume.setVisibility(View.GONE);
+		
 	}
 	void hide(){
 		Log.e("maintain","hide-----");
@@ -265,6 +275,8 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	}
     void initView(View view){
     	context=getActivity();
+    	layout_volume=(LinearLayout)view.findViewById(R.id.layout_volume);
+    	audioManager=(AudioManager)context.getSystemService(Service.AUDIO_SERVICE);
     	layout_mask=(LinearLayout)view.findViewById(R.id.layout_mask);
     	btn_debug=(CheckBox)view.findViewById(R.id.btn_debug);
     	btn_heating=(CheckBox)view.findViewById(R.id.btn_heating);
@@ -272,7 +284,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	btn_debug.setChecked(Settings.getIsDebug(context));
     	btn_heating.setOnCheckedChangeListener(this);
     	btn_heating.setChecked(Settings.getIsHeating(context));
-    	
+
     	
     	t_maintain=(TextView)view.findViewById(R.id.t_maintain);
     	t_mcDetail=(TextView)view.findViewById(R.id.t_mcDetail);
@@ -283,8 +295,8 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	t_netDetail=(TextView)view.findViewById(R.id.t_netDetail);
     	radioCup1=(RadioButton)view.findViewById(R.id.radio_cup1);
     	radioCup2=(RadioButton)view.findViewById(R.id.radio_cup2);
-    	radio_needBean=(RadioButton)view.findViewById(R.id.radio_needBean);
-    	radio_noBean=(RadioButton)view.findViewById(R.id.radio_noneedBean);
+    //	radio_needBean=(RadioButton)view.findViewById(R.id.radio_needBean);
+    //	radio_noBean=(RadioButton)view.findViewById(R.id.radio_noneedBean);
     	btn_mskCancel=(Button)view.findViewById(R.id.btn_mskCancel);
     	btn_clean=(Button)view.findViewById(R.id.btn_clean);
     	btn_clean.setOnClickListener(this);
@@ -294,22 +306,22 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	}else{
     		radioCup2.setChecked(true);
     	}
-    	if(needBean){
-    		setBeanMode(true);
-    		radio_needBean.setChecked(true);	
-    	}else{
-    		setBeanMode(false);
-    		radio_noBean.setChecked(true);
-    	}
+//    	if(needBean){
+//    		setBeanMode(true);
+//    		radio_needBean.setChecked(true);	
+//    	}else{
+//    		setBeanMode(false);
+//    		radio_noBean.setChecked(true);
+//    	}
     	radioCup1.setOnCheckedChangeListener(this);
     	radioCup2.setOnCheckedChangeListener(this);
-    	radio_needBean.setOnCheckedChangeListener(this);
-    	radio_noBean.setOnCheckedChangeListener(this);
-    	
+//    	radio_needBean.setOnCheckedChangeListener(this);
+//    	radio_noBean.setOnCheckedChangeListener(this);
+//    	
 		btn_update = (Button) view.findViewById(R.id.btn_update);
 		btn_update.setOnClickListener(this);
 		proBar=(ProgressBar)view.findViewById(R.id.progressBar);
-		
+
 		
 		manager=UpdateManager.getInstance(context);
 		manager.setCallBack(new com.tt.util.UpdateManager.CallBack(){
@@ -346,6 +358,30 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			}
 			
 		});
+    	seekSound=(SeekBar)view.findViewById(R.id.seek_sound);
+    	seekSound.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				if(fromUser)
+					setVolume(progress);	
+			}
+		});
+    	seekSound.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+    	seekSound.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
     	
     	myHandler =new Handler(){
 
@@ -410,13 +446,13 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 				}
 				break;
 				
-			case R.id.radio_needBean:
-				if(isChecked){
-					setBeanMode(true);
-				}else{
-					setBeanMode(false);
-				}
-				break;
+//			case R.id.radio_needBean:
+//				if(isChecked){
+//					setBeanMode(true);
+//				}else{
+//					setBeanMode(false);
+//				}
+//				break;
 				
 			case R.id.btn_debug:
 				if(isChecked){
@@ -441,7 +477,13 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 //				break;
 		}
 	}
-
+	AudioManager audioManager=null;
+	void setVolume(int volume){
+		if(audioManager==null){
+			audioManager=(AudioManager)context.getSystemService(Service.AUDIO_SERVICE);
+		}
+	    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,volume,0);//tempVolume:音量绝对值
+	}
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub

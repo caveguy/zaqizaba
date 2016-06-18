@@ -2,6 +2,7 @@ package com.tt.main;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 import com.example.coffemachinev3.R;
 import com.tt.util.LogCatHelper;
@@ -66,7 +67,15 @@ public class MainActivity extends Activity {
     }
     
     
-    
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	 
+        if (keyCode == KeyEvent.KEYCODE_BACK
+                 && event.getRepeatCount() == 0) {
+        	android.os.Process.killProcess(android.os.Process.myPid());
+             return true;
+         }
+         return super.onKeyDown(keyCode, event);
+     }
     
     
     
