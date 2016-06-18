@@ -261,18 +261,21 @@ public class MainFragment extends Fragment {
 	}
 	
 	void  enterMaintainMode(boolean refund){
-		//Log.e(Tag, "enterMaintainMode");
+		mylog.log_i( "enterMaintainMode");
 		if((dispMskLayout&(Msk_maintain|Msk_dev))==0){
 			dispMskLayout=Msk_maintain;
+			mylog.log_i( "enterMaintainMode1");
 			if(myCallback!=null){
+				mylog.log_i( "enterMaintainMode2");
 				myCallback.enterMaintainMode(refund);
 			}
 		}
 	}
 	
+	
 	void leaveDevOrMaintainMode(){
 		if(dispMskLayout!=Msk_none){
-		Log.e(Tag, "leaveDevOrMaintainMode");
+		mylog.log_i( "leaveDevOrMaintainMode");
 		dispMskLayout=Msk_none;
 			if(myCallback!=null){
 				myCallback. hide();
@@ -307,18 +310,21 @@ public class MainFragment extends Fragment {
 		context=getActivity();
 		initView(view);
 		getCoffeeFormula();
-		setMcEnable(false,context.getString(R.string.comErr));
-		setNetWorkEnable(false,context.getString(R.string.connectFailed));
+	
 		return view;
 	}
+	
 	
     @Override
 	public void onStart() {
       //  initMachines();
     	initCoffeeMachine();
         initAssistMachine();
+		setMcEnable(false,context.getString(R.string.comErr));
+		setNetWorkEnable(false,context.getString(R.string.connectFailed));
 		super.onStart();
 	}
+    
     Integer getCurType(){
     	Iterator it = goodId.entrySet().iterator(); 
     	while (it.hasNext()) {  	  
@@ -360,7 +366,8 @@ public class MainFragment extends Fragment {
 		
 		@Override
 		public void onMaking() {
-			sendMsgToHandler(Handler_mcDisp, context.getString(R.string.dropPowder));
+			setMcEnable(true,context.getString(R.string.dropPowder));
+			//sendMsgToHandler(Handler_mcDisp, context.getString(R.string.dropPowder));
 			
 		}
 		
@@ -388,13 +395,13 @@ public class MainFragment extends Fragment {
 				if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
 					appealed=true;
 					appeal();
-					myHandler.post(new Runnable() {
+					myHandler.postDelayed(new Runnable() {
 						
 						@Override
 						public void run() {
 							closeOder(); //从故障中恢复，直接关闭之前的订单	
 						}
-					});
+					},3000);
 					
 				}
 			}
@@ -550,7 +557,7 @@ void initAssistMachine(){
 
 			@Override
 			public void onKeyPressed(byte key) {
-				if(key==AssistProtocol.BIT3){
+				if(key==AssistProtocol.Key4){
 					enterDevMode();
 				}
 			}
@@ -645,6 +652,7 @@ void existMask(){
 						String dsp= msg.obj.toString();
 						myToast.toastShow(dsp)	;
 						setDevMcState(dsp);
+						myToast.toastShow(dsp);
 						break;
 					case Handler_TradeTimeOut:
 							closeOder();
@@ -684,7 +692,7 @@ void existMask(){
 
 		@Override
 		public void leave() {
-			Log.e(Tag, "in mian frag leave");
+			mylog.log_i( "in mian frag leave");
 			dispMskLayout=Msk_dev_leaving;
 			updateEnable();		
 		}
@@ -1094,7 +1102,7 @@ void existMask(){
 	    	/*下单*/
 	    	MakeOrderReq req = new MakeOrderReq();
 	    	String feedId=deviceInterfaceAdapter.getDevice().getFeedId();
-	    	Log.e(Tag, "*****************feedId="+feedId+"******************");
+	    	mylog.log_i( "*****************feedId="+feedId+"******************");
 	        req.setFeedId(feedId);
 	    	List<Long> goodsIds = new ArrayList<Long>();
 	    	goodsIds.add(goodId);
@@ -1138,7 +1146,7 @@ void existMask(){
 			NetChangedReciever.setCallBack(new NetChangedReciever.CallBack() {
 				@Override
 				public void netWorkChanged(boolean connected) {
-					Log.e(Tag, "!!!!!!!!!!!!!!netWorkChanged "+connected);
+					mylog.log_i( "!!!!!!!!!!!!!!netWorkChanged "+connected);
 					myToast.toastShow("netWorkChanged "+connected);
 					if(connected){
 						setNetWorkEnable(false,context.getString(R.string.hasnet));
@@ -1490,6 +1498,7 @@ void existMask(){
 
 			 
 			 void setMcEnable(boolean  enable,String msg){
+				 mylog.log_i("setMcEnable ="+enable+" msg="+msg);
 				 if(isMachineWork!=enable||(!oldMcStr.equals(msg))){
 					 oldMcStr=msg;
 					 isMachineWork=enable;
@@ -1528,6 +1537,7 @@ void existMask(){
 			 }
 			 
 			 void setEnable(boolean enable){
+				// Log.e(Tag, "setEnable!!!!!!!!!!="+enable);
 				if(enable){
 					leaveDevOrMaintainMode();
 				}else{
@@ -1535,6 +1545,7 @@ void existMask(){
 				}
 			 }
 			 void updateEnable(){
+				 mylog.log_i( "updateEnable!!!!!!!!!!isMachineWork="+isMachineWork+" isConnectToServer="+isConnectToServer+" isAssistMcWork="+isAssistMcWork);
 				 setEnable(isMachineWork&&isConnectToServer&&isAssistMcWork);
 			 }
 				void closeOder(){

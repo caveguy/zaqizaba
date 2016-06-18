@@ -65,10 +65,10 @@ public class AssistProtocol {
 	public static final byte Fault_timeOut=BIT2;
 	public static final byte Fault_1heating=BIT3;
 	public static final byte Fault_2heating=BIT4;
-	final byte Key1=BIT0;
-	final byte Key2=BIT1;
-	final byte Key3=BIT2;
-	final byte Key4=BIT3;
+	public final static byte Key1=BIT0;
+	public final static byte Key2=BIT1;
+	public final static byte Key3=BIT2;
+	public final static byte Key4=BIT3;
 	
 	byte fault_state=0; //0代表没有错误
 	byte old_fault_state=0; //0代表没有错误
@@ -191,10 +191,8 @@ public class AssistProtocol {
 	}
 
 	protected void onDataReceived(final byte[] buffer, final int size) {
-		//Log.d(TAG,"onDataReceived!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		if(isDebug)
 			showLog("Recivedata", buffer,size);
-		//parseInput(buffer,size);
 		if(size>=ReciveLength){
 			getInput(buffer,ReciveLength);
 		}
@@ -601,7 +599,7 @@ public class AssistProtocol {
 		stringBuilder.append(String.format("%02X ", byteChar));
 		
 	}
-	Log.i(tag, "##" + stringBuilder.toString() + "\n");
+	Log.d(tag, "##" + stringBuilder.toString() + "\n");
 
  }
 //	private final ReentrantLock lock = new ReentrantLock();	
@@ -758,7 +756,6 @@ public class AssistProtocol {
 		@Override
 		public void run() {
 			if(!hasAck&&inAckState){
-			//	Log.d("io","AckTimerTask !hasAck");
 				ackCnt++;				
 				if(ackCnt>Max_ackRetryCnt){
 					cancelAckTimerTask();
@@ -928,12 +925,9 @@ public class AssistProtocol {
 	}
 	private void hasDirtyCupCallBack(){
 		Log.d(TAG,"!!!!hasDirtyCupCallBack");
-		//cancelQueryTimerTask();
 		
 		if(callBack!=null)
 			callBack.hasDirtyCup();
-		//cmd_ReadCupIsToke();
-		//startQueryTimer(Query_dirtyCup);
 		setCurStep(QueryStep_takingDirtyCup);
 	}
 	/*
@@ -941,7 +935,7 @@ public class AssistProtocol {
 	 * 落粉完成 ，此时应该开始查询杯子是否被取走
 	 */
 	private void dropPowderCallBack(){
-		Log.d(TAG,"!!!!dropPowderCallBack");
+		Log.i(TAG,"!!!!dropPowderCallBack");
 		//cancelQueryTimerTask();
 		if(callBack!=null){
 			callBack.powderDroped();
@@ -954,7 +948,7 @@ public class AssistProtocol {
 	
 	
 	private void sendTimeOutCallBack(){
-		Log.d(TAG,"!!!!sendTimeOutCallBack");
+		Log.i(TAG,"!!!!sendTimeOutCallBack");
 		isConnect=false;
 		if(callBack!=null)
 			callBack.sendTimeOut();
@@ -968,7 +962,7 @@ public class AssistProtocol {
 	
 	//程序结束时调用
 	public void cleanTimer(){
-		Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!cleanTimer");
+		Log.i(TAG, "!!!!!!!!!!!!!!!!!!!!!!cleanTimer");
 		cancelQueryTimerTask();
 		cancelAckTimerTask();
 		cancelSendTimerTask();

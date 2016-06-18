@@ -21,8 +21,11 @@ public class MainActivity extends Activity {
             massageFrag=new MassageFragment();
             getFragmentManager().beginTransaction()
                     .add(R.id.frag_msg,massageFrag) .commitAllowingStateLoss(); 
+         	maintainFrag=new MaintainFragment();
+            getFragmentManager().beginTransaction()
+            .add(R.id.container, maintainFrag).commit();
+            
             coffeeFrag=new MainFragment();
-
             getFragmentManager().beginTransaction()
             .add(R.id.frag_work, coffeeFrag) .commitAllowingStateLoss();
 
@@ -33,9 +36,8 @@ public class MainActivity extends Activity {
             getFragmentManager().beginTransaction()
             .add(R.id.frag_video, videoFragment).commit();
 
-         	maintainFrag=new MaintainFragment();
-            getFragmentManager().beginTransaction()
-            .add(R.id.container, maintainFrag).commit();
+            
+            
             
             coffeecallback=new MainFragment.UpdateMsgCallBack(){
 

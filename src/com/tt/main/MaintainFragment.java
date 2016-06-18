@@ -145,6 +145,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 
 		@Override
 		public void enterMaintainMode(boolean refund) {
+			Log.e("maintain", "enterMaintainMode!!");
 			Message message=new Message();
 			message.what=Handler_enterMaintain;
 			message.obj=refund;

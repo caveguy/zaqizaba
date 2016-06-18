@@ -471,7 +471,7 @@ public class CoffeeMcProtocol {
 		stringBuilder.append(String.format("%02X ", byteChar));
 		
 	}
-	Log.i(tag, "##" + stringBuilder.toString() + "\n");
+	Log.d(tag, "##" + stringBuilder.toString() + "\n");
 
  }
 //	private final ReentrantLock lock = new ReentrantLock();	
@@ -731,7 +731,7 @@ public class CoffeeMcProtocol {
 		
 	}
 	private void readyCallBack(){
-		Log.d(TAG,"!!!!onReady");
+		Log.i(TAG,"!!!!onReady");
 		if(callBack!=null)
 			callBack.onReady();
 		
@@ -810,10 +810,11 @@ public class CoffeeMcProtocol {
 
 
 	private void onGetAckCallBack(){
-	//	Log.d(TAG,"!!!!onEnableCallBack");
+	
 		if(!isConnect){
 			isConnect=true;
 			if(callBack!=null){
+				Log.i(TAG,"!!!!onGetConnect");
 				callBack.onGetConnect();
 			}
 		}
@@ -826,7 +827,7 @@ public class CoffeeMcProtocol {
 	
 	
 	private void sendTimeOutCallBack(){
-		Log.d(TAG,"!!!!sendTimeOutCallBack");
+		Log.i(TAG,"!!!!sendTimeOutCallBack");
 		isConnect=false;
 		if(callBack!=null)
 			callBack.sendTimeOut();
