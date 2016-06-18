@@ -32,7 +32,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	TextView t_maintain,t_mcDetail,t_netDetail,t_version,t_refund,t_assistDetail,t_id;
 	RadioButton radioCup1,radioCup2;
 	RadioButton radio_needBean,radio_noBean;
-	CheckBox btn_debug;
+	CheckBox btn_debug,btn_heating;
 //	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
 	boolean needBean=true ;   	  //
 	public static DevCallBack back=null;
@@ -58,6 +58,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		void onBeanModeChanged(boolean need);
 	//	void ondropcupModeChanged(boolean drop);
 		void onDevModeChanged(boolean is);
+		void onEnableHeating(boolean is);
 		void leave();
 		void clean();
 	}
@@ -90,6 +91,12 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		Settings.setIsDebug(context, is);
 		if(back!=null){
 			back.onDevModeChanged(is);
+		}
+	}
+	void setEnableHeating(boolean is){
+		Settings.setIsDebug(context, is);
+		if(back!=null){
+			back.onEnableHeating(is);
 		}
 	}
 	
@@ -211,6 +218,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		radioCup1.setVisibility(View.VISIBLE);
 		radioCup2.setVisibility(View.VISIBLE);
 		btn_debug.setVisibility(View.VISIBLE);
+		btn_heating.setVisibility(View.VISIBLE);
 		radio_needBean.setVisibility(View.VISIBLE);
 		radio_noBean.setVisibility(View.VISIBLE);
 		t_version.setVisibility(View.VISIBLE);
@@ -229,6 +237,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		radio_needBean.setVisibility(View.GONE);
 		radio_noBean.setVisibility(View.GONE);
 		btn_debug.setVisibility(View.GONE);
+		btn_heating.setVisibility(View.GONE);
 		btn_update.setVisibility(View.GONE);
 		t_version.setVisibility(View.GONE);
 		t_id.setVisibility(View.GONE);
@@ -258,8 +267,11 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	context=getActivity();
     	layout_mask=(LinearLayout)view.findViewById(R.id.layout_mask);
     	btn_debug=(CheckBox)view.findViewById(R.id.btn_debug);
+    	btn_heating=(CheckBox)view.findViewById(R.id.btn_heating);
     	btn_debug.setOnCheckedChangeListener(this);
     	btn_debug.setChecked(Settings.getIsDebug(context));
+    	btn_heating.setOnCheckedChangeListener(this);
+    	btn_heating.setChecked(Settings.getIsHeating(context));
     	
     	
     	t_maintain=(TextView)view.findViewById(R.id.t_maintain);
@@ -411,6 +423,13 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 					setDevMode(true);
 				}else{
 					setDevMode(false);
+				}
+				break;
+			case R.id.btn_heating:
+				if(isChecked){
+					setEnableHeating(true);
+				}else{
+					setEnableHeating(false);
 				}
 				break;
 //			case R.id.radio_cup2:

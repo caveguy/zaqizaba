@@ -187,7 +187,8 @@
     <string name="nextTime">下次再说</string>
     <string name="newest">已经是最新版本</string>
     <string name="unknowError">更新出错</string>
-    <string name="version">v3.2.2-160618-1</string>
+    <string name="heating">使能加热</string>
+    <string name="version">v3.2.3-160618-2</string>
     
 
 </resources>

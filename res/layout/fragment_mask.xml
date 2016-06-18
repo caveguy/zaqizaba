@@ -170,15 +170,29 @@
    	             />   
    	           
    	     </RadioGroup>
-   	     	<CheckBox
-   	        android:id="@+id/btn_debug"
-	    	android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/debug"
-	        android:textSize="@dimen/devState_text_size"
-	        android:textColor="@color/brown_title"
-	        /> 	
-   	     
+   	     <LinearLayout 	    
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:gravity="center"
+		    android:orientation="horizontal"
+			     >
+	   	     	<CheckBox
+	   	        android:id="@+id/btn_debug"
+		    	android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/debug"
+		        android:textSize="@dimen/devState_text_size"
+		        android:textColor="@color/brown_title"
+		        /> 	
+	   	       <CheckBox
+	   	        android:id="@+id/btn_heating"
+		    	android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/heating"
+		        android:textSize="@dimen/devState_text_size"
+		        android:textColor="@color/brown_title"
+		        /> 
+		   </LinearLayout>
    	       <LinearLayout 	    
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"

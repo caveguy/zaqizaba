@@ -4,6 +4,7 @@ import android.content.Context;
 
 public  class Settings{
 private final static String  IsDebugName="isDebug";
+private final static String  IsHeatingName="isHeating";
 private final static String DropcupMode="dropcupMode";
 private final static String NeedBean="needBean";
 //private static 	boolean isDebug=false;
@@ -19,12 +20,29 @@ static public boolean getIsDebug(Context context){
 		return myPreferenceUtil.getBoolValue(IsDebugName);
 
 	}
+
 static	public void setIsDebug(Context context,boolean is){
 		if(myPreferenceUtil==null){
 			myPreferenceUtil=new SharePreferenceUtil(context, "coffee");
 		}
 		myPreferenceUtil.setBoolValue(IsDebugName, is);
 	}
+
+static public boolean getIsHeating(Context context){
+	if(myPreferenceUtil==null){
+		myPreferenceUtil=new SharePreferenceUtil(context, "coffee");
+	}
+	return myPreferenceUtil.getBoolValue(IsHeatingName);	
+}
+static	public void setIsHeating(Context context,boolean is){
+	if(myPreferenceUtil==null){
+		myPreferenceUtil=new SharePreferenceUtil(context, "coffee");
+	}
+	myPreferenceUtil.setBoolValue(IsHeatingName, is);
+}
+
+
+
 static	public boolean getDropcupMode(Context context){
 		if(myPreferenceUtil==null){
 			myPreferenceUtil=new SharePreferenceUtil(context, "coffee");

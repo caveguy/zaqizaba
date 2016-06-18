@@ -322,10 +322,17 @@ public class MainFragment extends Fragment {
         initSever();
 		setMcEnable(false,context.getString(R.string.comErr));
 		setNetWorkEnable(false,context.getString(R.string.connectFailed));
-		simulateGoodId(Settings.getIsDebug(context));
+		restoreDevState();
 		
 		super.onStart();
 	}
+    
+    void restoreDevState(){
+    	simulateGoodId(Settings.getIsDebug(context));
+    	coffeeMachine.cmd_openBoiler(Settings.getIsHeating(context));
+    }
+    
+    
     
     Integer getCurType(){
     	Iterator it = goodId.entrySet().iterator(); 
@@ -379,7 +386,7 @@ public class MainFragment extends Fragment {
 			if(temp!=null){	
 				coffeeMachine.cmd_setTemper(temp.getTemper_goal(), temp.getTemper_backLash(), temp.getTemper_min());
 			}
-			coffeeMachine.cmd_openBoiler(true);
+			//coffeeMachine.cmd_openBoiler(true);
 			setMcEnable(true,context.getString(R.string.cmd1_ready));
 			
 		}
@@ -678,12 +685,6 @@ void existMask(){
 	public void setDevCallBack(){
 		MaintainFragment.back=new MaintainFragment.DevCallBack() {
 		
-//		@Override
-//		public void ondropcupModeChanged(boolean drop) {
-//			Settings.setDropcupMode(context, drop);
-//
-//		}
-//		
 		@Override
 		public void onDevModeChanged(boolean is) {
 			simulateGoodId(is);
@@ -705,6 +706,11 @@ void existMask(){
 		public void clean() {
 		//	myMachine.sendCleanCmd();
 			coffeeMachine.cmd_cleaning();
+		}
+
+		@Override
+		public void onEnableHeating(boolean is) {
+			coffeeMachine.cmd_openBoiler(is);	
 		}
 	}; 
 	}
