@@ -19,7 +19,11 @@ public class CoffeeFormula {
 //	public static String xml_path=Environment.getExternalStorageDirectory().toString()+"/coffeeV3.xml";
 	public static String xml_path="/storage/udisk/coffeeConfig.xml";
 	private final static String Tag="CoffeeFormula";
-	private  final static String objiect="coffee";
+	private  final static String Coffee="coffee";
+	private  final static String Coffees="coffees";
+	private  final static String Cleans="cleans";
+	private  final static String Clean_cnt="cnt";
+	private  final static String Clean_time="time";
 	private  final static String objiect_temper="temperature";
 	private  final static String id="id";
 	private  final static String name="name";
@@ -43,9 +47,19 @@ public class CoffeeFormula {
 	private  final static String ch3_water="ch3_water";
 	private  final static String ch4_water="ch4_water";
 
-	static MachineTemper coffeeTemper=null;
+	 MachineTemper coffeeTemper=null;
+	List<Coffee> coffees = null;
+	List<CleanTime> times = null;
+	int clean_duration=0;
 	
-
+	public CoffeeFormula(Context c) throws Exception{
+		context=c;
+		 parse();
+	}
+	
+	
+	
+	
 	public static boolean setName(List<Coffee> list,Integer id,String name){
 		for(Coffee coffee:list){
 			if(coffee.getId()==id){
@@ -71,23 +85,28 @@ public class CoffeeFormula {
 	 * @return
 	 * @throws Exception
 	 */
-	public static List<Coffee> getPersons(InputStream xml) throws Exception{
-		List<Coffee> coffees = null;
+	public void getConfigs(InputStream xml) throws Exception{
+		
 		Coffee coffee = null;
+		CleanTime time = null;
 		XmlPullParser pullParser = Xml.newPullParser();
 		pullParser.setInput(xml, "UTF-8");//ΪPull����������Ҫ������XML����
 		int event = pullParser.getEventType();
 		while(event != XmlPullParser.END_DOCUMENT){
 			switch (event) {
-			case XmlPullParser.START_DOCUMENT:
-				coffees = new ArrayList<Coffee>();
-				break;
+			
+			
+//			case XmlPullParser.START_DOCUMENT:
+//				coffees = new ArrayList<Coffee>();
+//				break;
 				
 			case XmlPullParser.START_TAG:
-				if(objiect.equals(pullParser.getName())){
-					int id = new Integer(pullParser.getAttributeValue(0));
-					coffee = new Coffee();
-					coffee.setId(id);
+				if(Coffees.equals(pullParser.getName())){
+					coffees = new ArrayList<Coffee>();
+				}
+				else if(Cleans.equals(pullParser.getName())){
+					times = new ArrayList<CleanTime>();
+					clean_duration=new Integer(pullParser.getAttributeValue(0));
 				}
 				else if(objiect_temper.equals(pullParser.getName())){
 					int goal = new Integer(pullParser.getAttributeValue(0));
@@ -98,6 +117,18 @@ public class CoffeeFormula {
 					}
 					
 				}
+				else if(Clean_time.equals(pullParser.getName())){
+					String value = pullParser.nextText();
+					//int id = new Integer(pullParser.getAttributeValue(0));
+					time = new CleanTime(value);
+				}
+				
+				else if(Coffee.equals(pullParser.getName())){
+					int id = new Integer(pullParser.getAttributeValue(0));
+					coffee = new Coffee();
+					coffee.setId(id);
+				}
+
 				else if(name.equals(pullParser.getName())){
 					String name = pullParser.nextText();
 					coffee.setName(name);
@@ -175,15 +206,19 @@ public class CoffeeFormula {
 				break;
 				
 			case XmlPullParser.END_TAG:
-				if(objiect.equals(pullParser.getName())){
+				if(Coffee.equals(pullParser.getName())){
 					coffees.add(coffee);
 					coffee = null;
+				}
+				else if(Clean_time.equals(pullParser.getName())){
+					times.add(time);
+					time = null;
 				}
 				break;
 			}
 			event = pullParser.next();
 		}
-		return coffees;
+	//	return coffees;
 	}
 	/**
 	 * ��������
@@ -191,13 +226,13 @@ public class CoffeeFormula {
 	 * @param out �������
 	 * @throws Exception
 	 */
-	public static void save(List<Coffee> persons, OutputStream out) throws Exception{
+	public  void save(List<Coffee> persons, OutputStream out) throws Exception{
 		XmlSerializer serializer = Xml.newSerializer();
 		serializer.setOutput(out, "UTF-8");
 		serializer.startDocument("UTF-8", true);
 		serializer.startTag(null, "coffees");
 		for(Coffee person : persons){
-			serializer.startTag(null, objiect);
+			serializer.startTag(null, Coffee);
 			serializer.attribute(null, "id", person.getId().toString());
 			
 			serializer.startTag(null, name);
@@ -245,36 +280,41 @@ public class CoffeeFormula {
 			serializer.text(person.getCh4Water().toString());
 			serializer.endTag(null, ch4_water);
 	
-			serializer.endTag(null, objiect);
+			serializer.endTag(null, Coffee);
 		}
 		serializer.endTag(null, "coffees");
 		serializer.endDocument();
 		out.flush();
 		out.close();
 	}
-	
-	
-	public static List<Coffee>  getCoffeeFormula(Context contex) throws Exception{
+	Context context;
+	void parse() throws Exception{
 		InputStream xml=null;
 		Log.e("Coffee",xml_path);
 		try{
+		//	 xml = context.getClass().getClassLoader().getResourceAsStream("coffeeConfig.xml");
 			xml=new FileInputStream(xml_path);
 		}
 		catch(Exception e){
 			Log.e(Tag,"getCoffeeFormula error="+e.getMessage());
-			 xml = contex.getClass().getClassLoader().getResourceAsStream("coffee.xml");
+			 xml = context.getClass().getClassLoader().getResourceAsStream("coffeeConfig.xml");
 		}
-		// xml = contex.getClass().getClassLoader().getResourceAsStream(xml_path);
-		 
-			
-		 
-		return CoffeeFormula.getPersons(xml);
-//		for(Coffee person : persons){
-//			Log.i(TAG, person.toString());
-//		}
+		
+		getConfigs(xml);
+
 	}
 	
-	public static MachineTemper getTemper(){
+	
+	
+	public  List<Coffee>  getCoffeeFormula() {
+		return coffees;
+	}
+	public  List<CleanTime>  getCleanTimes() {
+		return times;
+		
+	}
+	
+	public  MachineTemper getTemper(){
 		return coffeeTemper;
 	}
 	

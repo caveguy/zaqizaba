@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<root>
+      <serial>989910</serail>
+    
+    	<!--锅炉温度设置  -->
+	<temperature 	goal="90" backlash="2"  min="70"/>
+	<!--设置定时清洗时间，及固定清洗频率  -->
+	<cleans cnt="50" >
+	   <time>0:00</time> 
+	   <time>12:00</time> 
+	</cleans>    
+	<!--  
+ <version>3</version>
+ -->
 <coffees>
 	<coffee id="1">
 		<name>Espresso</name>
@@ -140,10 +153,12 @@
 		<ch3_water>40</ch3_water>
 		<ch4_water>0</ch4_water>
 	</coffee>
-	<!--锅炉温度设置  -->
-	<temperature 	goal="90" backlash="2"  min="70"/>
-	<clean_time   time="22:00"  />   
-	<clean_cnt    time="50"  />   
-
- 
+	 
 </coffees>
+
+
+
+</root>	
+
+
+  

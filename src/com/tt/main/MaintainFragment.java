@@ -3,6 +3,7 @@ package com.tt.main;
 import java.io.File;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -42,8 +44,9 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 //	boolean dropcupMode=false ;   //杯子模式，false:检查到有杯子就打咖啡，true：落杯后打咖啡
 	boolean needBean=true ;   	  //
 	public static DevCallBack back=null;
-	LinearLayout layout_mask,layout_volume;
-	Button btn_clean,btn_mskCancel,btn_update;
+	RelativeLayout layout_mask;
+	LinearLayout layout_volume;
+	Button btn_clean,btn_mskCancel,btn_update,btn_stock;
 	private ProgressBar proBar;
 	Handler myHandler=null;
 	private final int Handler_net=1001;
@@ -221,6 +224,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		btn_mskCancel.setVisibility(View.VISIBLE);
 		btn_clean.setVisibility(View.VISIBLE);
 		btn_update.setVisibility(View.VISIBLE);
+		btn_stock.setVisibility(View.VISIBLE);
 		radioCup1.setVisibility(View.VISIBLE);
 		radioCup2.setVisibility(View.VISIBLE);
 		btn_debug.setVisibility(View.VISIBLE);
@@ -247,6 +251,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		btn_debug.setVisibility(View.GONE);
 		btn_heating.setVisibility(View.GONE);
 		btn_update.setVisibility(View.GONE);
+		btn_stock.setVisibility(View.GONE);
 		t_version.setVisibility(View.GONE);
 		t_id.setVisibility(View.GONE);
 		proBar.setVisibility(View.GONE);
@@ -277,7 +282,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	context=getActivity();
     	layout_volume=(LinearLayout)view.findViewById(R.id.layout_volume);
     	audioManager=(AudioManager)context.getSystemService(Service.AUDIO_SERVICE);
-    	layout_mask=(LinearLayout)view.findViewById(R.id.layout_mask);
+    	layout_mask=(RelativeLayout)view.findViewById(R.id.layout_mask);
     	btn_debug=(CheckBox)view.findViewById(R.id.btn_debug);
     	btn_heating=(CheckBox)view.findViewById(R.id.btn_heating);
     	btn_debug.setOnCheckedChangeListener(this);
@@ -320,6 +325,8 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 //    	
 		btn_update = (Button) view.findViewById(R.id.btn_update);
 		btn_update.setOnClickListener(this);
+		btn_stock = (Button) view.findViewById(R.id.btn_stock);
+		btn_stock.setOnClickListener(this);
 		proBar=(ProgressBar)view.findViewById(R.id.progressBar);
 
 		
@@ -497,9 +504,24 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			case R.id.btn_update:
 				manager.compareVersion();
 				break;
+			case R.id.btn_stock:
+				StockFragment stockFragment=StockFragment.newInstance();
+				showSet(stockFragment);
+				break;
 		}
 	}
 	
+	void showSet(Fragment fragment) {
 
+		
+//        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+//        transaction.add(R.id.layout_mask, fragment).commit();
+		getFragmentManager().beginTransaction()
+				.setCustomAnimations(R.anim.alphain, R.anim.alphaout)
+			//	.add(android.R.id.content, fragment)
+				.add(R.id.layout_mask, fragment)
+				.addToBackStack(null).commit();
+
+	}
 	
 }

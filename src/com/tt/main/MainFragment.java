@@ -51,6 +51,7 @@ import com.tt.util.TTLog;
 import com.tt.util.ToastShow;
 import com.tt.view.GuideFragmentAdapter;
 import com.tt.view.MainViewPager;
+import com.tt.xml.CleanTime;
 import com.tt.xml.Coffee;
 import com.tt.xml.CoffeeFormula;
 import com.tt.xml.MachineTemper;
@@ -111,7 +112,7 @@ public class MainFragment extends Fragment {
 	PayDialog payDialog;
 	MakingStateDialog stateDialog;
 	 TTLog mylog=null;
-	 
+	 CoffeeFormula xmlConfig=null;
 	
 	byte makingStep=0;  //出粉跟出咖啡完成标志
 	int tradeStep=0;    //整个交易步骤
@@ -139,6 +140,8 @@ public class MainFragment extends Fragment {
 	
 	byte mcWindowLast=0; //为了知道咖啡有没有制作完成
 	private List<Coffee> coffeeFormula =null;
+	private List<CleanTime> cleanTimes=null;
+	private int makeCnt=0;
 	HashMap<Integer,Integer> goodId=new HashMap<Integer,Integer>();
 //	HashMap<Long,String>	goodName=new HashMap<Long,String>();
 //	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
@@ -208,7 +211,10 @@ public class MainFragment extends Fragment {
 	
 	void getCoffeeFormula(){
 		try {
-			coffeeFormula=CoffeeFormula.getCoffeeFormula(context);
+			xmlConfig=new CoffeeFormula(context);
+			coffeeFormula=xmlConfig.getCoffeeFormula();
+			cleanTimes=xmlConfig.getCleanTimes();
+			makeCnt=Settings.getCoffees(context);
 			AssistState.getXml=true;
 		} catch (Exception e) {
 			Log.e(Tag, e.toString());
@@ -218,8 +224,10 @@ public class MainFragment extends Fragment {
 			updateAssitMcEnable();
 		}
 	}
-	
-	
+	//在这里面设置定时清洗功能
+	void setCleanAlarm(){
+		
+	}
 	/**********跟开发选项及维护菜单打交道的接口**************
 	 * 
 	 * @return
@@ -383,13 +391,14 @@ public class MainFragment extends Fragment {
 		
 		@Override
 		public void onGetConnect() {
-			MachineTemper temp=CoffeeFormula.getTemper();
-			if(temp!=null){	
-				coffeeMachine.cmd_setTemper(temp.getTemper_goal(), temp.getTemper_backLash(), temp.getTemper_min());
+			if(xmlConfig!=null){
+				MachineTemper temp=xmlConfig.getTemper();
+				if(temp!=null){	
+					coffeeMachine.cmd_setTemper(temp.getTemper_goal(), temp.getTemper_backLash(), temp.getTemper_min());
+				}
+				//coffeeMachine.cmd_openBoiler(true);
+				setMcEnable(true,context.getString(R.string.cmd1_ready));
 			}
-			//coffeeMachine.cmd_openBoiler(true);
-			setMcEnable(true,context.getString(R.string.cmd1_ready));
-			
 		}
 		
 		@Override
@@ -877,7 +886,9 @@ void existMask(){
 	        new QueryDeviceGoodsAsyncTask(){
 	            @Override
 	            protected void onPostExecute(QueryDeviceGoodsRsp rsp) {
-	            	
+	            	if(rsp==null){
+	            		return ;
+	            	}
 	            	//try{
 	                    if(rsp.getErrcode()==0){
 	                    	
@@ -890,24 +901,12 @@ void existMask(){
 	                    	   }
 	                    	   CoffeeFormula.setName(coffeeFormula, id, goods.getGoodsName());
 	                    	   CoffeeFormula.setPrice(coffeeFormula, id, goods.getGoodsPrice().toString());
-	       
 	                    	   goodId.put(i++, id);
-//	                    	   goodName.put(id,goods.getGoodsName());
-//	                    	   goodPrice.put(id, goods.getGoodsPrice());
-	                    	   //配方列表
-//	                    	   String formula=goods.getConfig();
-//	                    	   String[] formulas=formula.split(";");
-	 //                   	   int int_formula[];
-//	                    	   goodFormula.put(id, formulas);
-	                    	   
-	                    	   
+ 
 	                       }
 	                       //myToast.toastShow("rsp.getErrcode() i="+i);
 	                       setGoodMsg();
 	                    }
-//	                }catch(Exception e){
-//	                	Log.e(Tag, e.toString());
-//	                }
 	            }
 	        }.execute(deviceInterfaceAdapter.getDevice().getFeedId());
 	    }
@@ -1192,6 +1191,8 @@ void existMask(){
 		    					if(preWater!=0){
 		    						coffeeMachine.cmd_setInfiltrateWater(preWater);
 		    					}
+		    					makeCnt++;
+		    					Settings.setCoffees(context, makeCnt);
 		    					coffeeMachine.cmd_making();
 		    					//myMachine.dropCoffee();
 		    				}

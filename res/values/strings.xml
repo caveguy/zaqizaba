@@ -189,7 +189,21 @@
     <string name="unknowError">更新出错</string>
     <string name="heating">使能加热</string>
     <string name="setVolume">音量设置</string>
-    <string name="version">v3.2.4-160618-3</string>
+    <string name="minValue">最小值</string>
+    <string name="maxValue">最大值</string>
+    <string name="curValue">当前值</string>
+    <string name="stock_beans">咖啡豆量</string>
+    <string name="stock_water">水量</string>
+      <string name="stock_cups">杯子数</string>
+    <string name="stock_powder1">粉量1</string>
+    <string name="stock_powder2">粉量2</string>
+    <string name="stock_powder3">粉量3</string>
+    <string name="manage_stock">库存管理</string>
+    <string name="rest">恢复</string>
+    <string name="hasEmpty">数据不能为空，请填写完整！</string>
+    <string name="set_stock">设置库存</string>
+
+    <string name="version">v3.2.4-160624-1</string>
     
 
 </resources>
