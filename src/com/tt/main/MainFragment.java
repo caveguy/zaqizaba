@@ -10,20 +10,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-
-
-
-import tp.ass.device.web.response.TPResponse;
-import tp.device.DeviceInterface.MyHandler;
-import tp.device.coffee.adapter.CoffeeDeviceInterfaceAdapter;
-import tp.device.coffee.event.CoffeeDeviceEvent;
-import tp.device.coffee.task.MakeOrderAsyncTask;
-import tp.device.coffee.task.QueryDeviceGoodsAsyncTask;
-import tp.device.coffee.task.RefundApplyAsyncTask;
-import tp.lib.TPConstants;
 import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.PendingIntent;
@@ -32,6 +21,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
@@ -43,11 +33,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android_serialport_api.AssistProtocol;
 import android_serialport_api.CoffeeMcProtocol;
-import coffee.shop.po.DeviceGoods;
-import coffee.shop.po.request.ApplyRefundReq;
-import coffee.shop.po.request.MakeOrderReq;
-import coffee.shop.po.response.MakeOrderRsp;
-import coffee.shop.po.response.QueryDeviceGoodsRsp;
 
 import com.example.coffemachinev3.R;
 import com.tt.main.PayDialog.PayListener;
@@ -156,9 +141,9 @@ public class MainFragment extends Fragment {
 //	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
 //	HashMap<Long,String[]>	goodFormula=new HashMap<Long,String[]>();//配方
 	  //存放商品信息
-	 private MyHandler myHandler =null;
-    private CoffeeDeviceInterfaceAdapter deviceInterfaceAdapter=null;
-    private CoffeeDeviceEvent coffeeDeviceEvent=null;
+	 private Handler myHandler =null;
+//    private CoffeeDeviceInterfaceAdapter deviceInterfaceAdapter=null;
+//    private CoffeeDeviceEvent coffeeDeviceEvent=null;
 	long cur_goodId=-1;
 	String tExtStateDisp=null;
     Timer closeTimer=null;
@@ -426,7 +411,7 @@ public class MainFragment extends Fragment {
 			if(tradeStep==StepMaking){//在制作过程中出现错误，这个时候应该退款
 				if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
 					appealed=true;
-					appeal();
+					//appeal();
 					myHandler.postDelayed(new Runnable() {
 						
 						@Override
@@ -515,7 +500,7 @@ void initAssistMachine(){
 			if(tradeStep==StepMaking){//在制作过程中出现错误，这个时候应该退款
 					if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
 						appealed=true;
-						appeal();
+					//	appeal();
 						myHandler.postDelayed(new Runnable() {
 							
 							@Override
@@ -602,9 +587,10 @@ void existMask(){
         
         
 
-	     myHandler = new MyHandler(context){
-		        @Override
-		        public void myHandleMessage(Message msg) {
+	     myHandler = new Handler(){
+				@Override
+				public void handleMessage(Message msg) {
+					super.handleMessage(msg);
 		        	
 		    		switch (msg.what) {
 					case Handler_qr_weixin:
@@ -646,7 +632,9 @@ void existMask(){
 						reStartApp();
 						break;
 		        }
-		        };
+		        }
+
+
 		    };
        
 		    
@@ -897,32 +885,32 @@ void existMask(){
 	    
 	    void updatePrice(){
 	    	
-	        new QueryDeviceGoodsAsyncTask(){
-	            @Override
-	            protected void onPostExecute(QueryDeviceGoodsRsp rsp) {
-	            	if(rsp==null){
-	            		return ;
-	            	}
-	            	//try{
-	                    if(rsp.getErrcode()==0){
-	                    	
-	                    	int i=0;
-	                       for(DeviceGoods goods:rsp.getGoods()){
-	                    	   
-	                    	   int id=goods.getGoodsId().intValue();
-	                    	   if(coffeeFormula==null){
-	                    		   return;
-	                    	   }
-	                    	   CoffeeFormula.setName(coffeeFormula, id, goods.getGoodsName());
-	                    	   CoffeeFormula.setPrice(coffeeFormula, id, goods.getGoodsPrice().toString());
-	                    	   goodId.put(i++, id);
- 
-	                       }
-	                       //myToast.toastShow("rsp.getErrcode() i="+i);
-	                       setGoodMsg();
-	                    }
-	            }
-	        }.execute(deviceInterfaceAdapter.getDevice().getFeedId());
+//	        new QueryDeviceGoodsAsyncTask(){
+//	            @Override
+//	            protected void onPostExecute(QueryDeviceGoodsRsp rsp) {
+//	            	if(rsp==null){
+//	            		return ;
+//	            	}
+//	            	//try{
+//	                    if(rsp.getErrcode()==0){
+//	                    	
+//	                    	int i=0;
+//	                       for(DeviceGoods goods:rsp.getGoods()){
+//	                    	   
+//	                    	   int id=goods.getGoodsId().intValue();
+//	                    	   if(coffeeFormula==null){
+//	                    		   return;
+//	                    	   }
+//	                    	   CoffeeFormula.setName(coffeeFormula, id, goods.getGoodsName());
+//	                    	   CoffeeFormula.setPrice(coffeeFormula, id, goods.getGoodsPrice().toString());
+//	                    	   goodId.put(i++, id);
+// 
+//	                       }
+//	                       //myToast.toastShow("rsp.getErrcode() i="+i);
+//	                       setGoodMsg();
+//	                    }
+//	            }
+//	        }.execute(deviceInterfaceAdapter.getDevice().getFeedId());
 	    }
 	    
 	    
@@ -1057,69 +1045,69 @@ void existMask(){
 	    }
 	    
 	    
-	    void initPayServer2(){
-	    	if(coffeeDeviceEvent==null){
-	    		startTimeOutTimer(SeverTimeOutDuaration,TimerOutTask.Event_serverInit_timeOut);
-	        coffeeDeviceEvent = new CoffeeDeviceEvent() {
-
-	        	@Override
-	            public void onLoad() {
-	                super.onLoad();
-	                cancelTimeOutTask();//取消超时定时器
-	                /*获得设备商品列表*/
-	              String feedid=deviceInterfaceAdapter.getDevice().getFeedId();
-		 	    	updateIdCallBack(feedid);
-	                setNetWorkEnable(true,context.getString(R.string.connectServer));
-	                
-	                updatePrice();
-
-	            }
-				@Override
-				public void onPayFail(Long arg0) {				
-					myHandler.post(new Runnable() {	
-						@Override
-						public void run() {
-							
-							 myToast.toastShow("支付失败");	
-					
-						}
-					});	
-				}
-
-				@Override
-				public void onPaySuccess(Long arg0) {
-					mylog.log_i("onPaySuccess!!!");
-					myHandler.post(new Runnable() {
-						@Override
-						public void run() {
-							myToast.toastShow(R.string.paySuccess);
-
-							
-						}
-					});
-					startMaking();
-					
-				}
-				@Override
-				public void onReceiveTranspTransfer(String arg0) {
-				//	mylog.log_i("onReceiveTranspTransfer ="+arg0);	
-					String updatePrice=context.getString(R.string.update_Price);
-					if(arg0.equals(updatePrice)){
-						//更新价格
-						 updatePrice();
-					}else{
-						updateMsgCallBack(arg0);
-					}
-				}
-
-	        	
-	        };
-	       
-	    	}
-	    	if(deviceInterfaceAdapter==null){
-	    		deviceInterfaceAdapter = new CoffeeDeviceInterfaceAdapter(context,myHandler,coffeeDeviceEvent);	    		
-	    	}
-	    }
+//	    void initPayServer2(){
+//	    	if(coffeeDeviceEvent==null){
+//	    		startTimeOutTimer(SeverTimeOutDuaration,TimerOutTask.Event_serverInit_timeOut);
+//	        coffeeDeviceEvent = new CoffeeDeviceEvent() {
+//
+//	        	@Override
+//	            public void onLoad() {
+//	                super.onLoad();
+//	                cancelTimeOutTask();//取消超时定时器
+//	                /*获得设备商品列表*/
+//	              String feedid=deviceInterfaceAdapter.getDevice().getFeedId();
+//		 	    	updateIdCallBack(feedid);
+//	                setNetWorkEnable(true,context.getString(R.string.connectServer));
+//	                
+//	                updatePrice();
+//
+//	            }
+//				@Override
+//				public void onPayFail(Long arg0) {				
+//					myHandler.post(new Runnable() {	
+//						@Override
+//						public void run() {
+//							
+//							 myToast.toastShow("支付失败");	
+//					
+//						}
+//					});	
+//				}
+//
+//				@Override
+//				public void onPaySuccess(Long arg0) {
+//					mylog.log_i("onPaySuccess!!!");
+//					myHandler.post(new Runnable() {
+//						@Override
+//						public void run() {
+//							myToast.toastShow(R.string.paySuccess);
+//
+//							
+//						}
+//					});
+//					startMaking();
+//					
+//				}
+//				@Override
+//				public void onReceiveTranspTransfer(String arg0) {
+//				//	mylog.log_i("onReceiveTranspTransfer ="+arg0);	
+//					String updatePrice=context.getString(R.string.update_Price);
+//					if(arg0.equals(updatePrice)){
+//						//更新价格
+//						 updatePrice();
+//					}else{
+//						updateMsgCallBack(arg0);
+//					}
+//				}
+//
+//	        	
+//	        };
+//	       
+//	    	}
+//	    	if(deviceInterfaceAdapter==null){
+//	    		deviceInterfaceAdapter = new CoffeeDeviceInterfaceAdapter(context,myHandler,coffeeDeviceEvent);	    		
+//	    	}
+//	    }
 		private void sendMsgToHandler(int what,String dsp){
 			Message msg=new Message();
 			msg.what=what;
@@ -1150,71 +1138,71 @@ void existMask(){
 	    
 	    void askWeixinQrPay(long goodId){
 	        /*下单*/
-	        MakeOrderReq req = new MakeOrderReq();
-	        String feedId=deviceInterfaceAdapter.getDevice().getFeedId();
-	        req.setFeedId(feedId);
-	        List<Long> goodsIds = new ArrayList<Long>();
-	        goodsIds.add(goodId);
-	        //goodsIds.add(2l);
-	        req.setGoodsIds(goodsIds);
-	        req.setPayType(WeixinPay);//1支付宝 2//微信
-	        new MakeOrderAsyncTask(){
-	            @Override
-	            protected void onPostExecute(MakeOrderRsp rsp) {
-	                if(rsp!=null && rsp.getErrcode()==0){
-	                  String url= rsp.getQrCodeUrl();
-	                   getQtImage( url,WeixinPay);
-	                }
-	            }
-	           
-	        }.execute(req);
+//	        MakeOrderReq req = new MakeOrderReq();
+//	        String feedId=deviceInterfaceAdapter.getDevice().getFeedId();
+//	        req.setFeedId(feedId);
+//	        List<Long> goodsIds = new ArrayList<Long>();
+//	        goodsIds.add(goodId);
+//	        //goodsIds.add(2l);
+//	        req.setGoodsIds(goodsIds);
+//	        req.setPayType(WeixinPay);//1支付宝 2//微信
+//	        new MakeOrderAsyncTask(){
+//	            @Override
+//	            protected void onPostExecute(MakeOrderRsp rsp) {
+//	                if(rsp!=null && rsp.getErrcode()==0){
+//	                  String url= rsp.getQrCodeUrl();
+//	                   getQtImage( url,WeixinPay);
+//	                }
+//	            }
+//	           
+//	        }.execute(req);
 	    }
 	    void askZfbQrPay(long goodId){
-	    	/*下单*/
-	    	MakeOrderReq req = new MakeOrderReq();
-	    	String feedId=deviceInterfaceAdapter.getDevice().getFeedId();
-	    	mylog.log_i( "*****************feedId="+feedId+"******************");
-	        req.setFeedId(feedId);
-	    	List<Long> goodsIds = new ArrayList<Long>();
-	    	goodsIds.add(goodId);
-	    	//goodsIds.add(2l);
-	    	req.setGoodsIds(goodsIds);
-	    	req.setPayType(AliPay);//1支付宝 2//微信
-	    	new MakeOrderAsyncTask(){
-	    		@Override
-	    		protected void onPostExecute(MakeOrderRsp rsp) {
-	    			if(rsp!=null && rsp.getErrcode()==0){
-	    				String url= rsp.getQrCodeUrl();
-	    				getQtImage( url,AliPay);
-	    			}
-	    		}
-	    		
-	    	}.execute(req);
+//	    	/*下单*/
+//	    	MakeOrderReq req = new MakeOrderReq();
+//	    	String feedId=deviceInterfaceAdapter.getDevice().getFeedId();
+//	    	mylog.log_i( "*****************feedId="+feedId+"******************");
+//	        req.setFeedId(feedId);
+//	    	List<Long> goodsIds = new ArrayList<Long>();
+//	    	goodsIds.add(goodId);
+//	    	//goodsIds.add(2l);
+//	    	req.setGoodsIds(goodsIds);
+//	    	req.setPayType(AliPay);//1支付宝 2//微信
+//	    	new MakeOrderAsyncTask(){
+//	    		@Override
+//	    		protected void onPostExecute(MakeOrderRsp rsp) {
+//	    			if(rsp!=null && rsp.getErrcode()==0){
+//	    				String url= rsp.getQrCodeUrl();
+//	    				getQtImage( url,AliPay);
+//	    			}
+//	    		}
+//	    		
+//	    	}.execute(req);
 	    }
 	    void askQrPay(long goodId){
 	    	askZfbQrPay(goodId);
 	    	askWeixinQrPay(goodId);
 	    }
 	    
-	    void appeal(){
-	        /*退款申请*/
-	        if(deviceInterfaceAdapter==null){
-	        	return;
-	        }
-	        ApplyRefundReq refundReq = new ApplyRefundReq();
-
-	        refundReq.setFeedId(deviceInterfaceAdapter.getDevice().getFeedId());
-	        refundReq.setOrderId(System.currentTimeMillis());
-	        refundReq.setPhone("15824135596");
-	        new RefundApplyAsyncTask(){
-	            @Override
-	            protected void onPostExecute(TPResponse rsp) {
-	                if(rsp.getErrcode()==TPConstants.Errcode.SUCCESS){
-	                  //  Toast.makeText(getActivity(),"申请退款成功",Toast.LENGTH_LONG).show();
-	                }
-	            }
-	        }.execute(refundReq);
-	    }
+//	    void appeal(){
+//	        /*退款申请*/
+//	        if(deviceInterfaceAdapter==null){
+//	        	return;
+//	        }
+//	        ApplyRefundReq refundReq = new ApplyRefundReq();
+//
+//	        refundReq.setFeedId(deviceInterfaceAdapter.getDevice().getFeedId());
+//	        refundReq.setOrderId(System.currentTimeMillis());
+//	        refundReq.setPhone("15824135596");
+//	        new RefundApplyAsyncTask(){
+//	            @Override
+//	            protected void onPostExecute(TPResponse rsp) {
+//	                if(rsp.getErrcode()==TPConstants.Errcode.SUCCESS){
+//	                  //  Toast.makeText(getActivity(),"申请退款成功",Toast.LENGTH_LONG).show();
+//	                }
+//	            }
+//	        }.execute(refundReq);
+//	    }
 		void addNetworkChangedCallback(){
 			
 			
