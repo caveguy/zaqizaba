@@ -9,6 +9,13 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONException;
+
+
+
+
 import tp.ass.device.web.response.TPResponse;
 import tp.device.DeviceInterface.MyHandler;
 import tp.device.coffee.adapter.CoffeeDeviceInterfaceAdapter;
@@ -45,6 +52,8 @@ import coffee.shop.po.response.QueryDeviceGoodsRsp;
 import com.example.coffemachinev3.R;
 import com.tt.main.PayDialog.PayListener;
 import com.tt.main.SugarDialog.ConfirmListener;
+import com.tt.pays.PayServer;
+import com.tt.pays.ServerCallback;
 import com.tt.util.Encode;
 import com.tt.util.Settings;
 import com.tt.util.TTLog;
@@ -127,7 +136,7 @@ public class MainFragment extends Fragment {
 	private final int Msk_maintain=0x02;
 	private final int Msk_dev_leaving=0x04;//准备退出开发菜单
 	private int dispMskLayout=Msk_none;
-
+    private PayServer payServer=null;
 	
 	boolean isConnectToServer=false;
 	boolean isMachineWork=false;
@@ -163,6 +172,8 @@ public class MainFragment extends Fragment {
 //	private PageIndicator mIndicator;
 	public static RelativeLayout mainbg;
 	static SetDevCallBack myCallback=null;
+	
+	
 	 String oldAssisStr="";
 	 String oldMcStr="";
 	 String oldNetStr="";
@@ -325,12 +336,14 @@ public class MainFragment extends Fragment {
 	
     @Override
 	public void onStart() {
+		setMcEnable(false,context.getString(R.string.comErr));
+		setNetWorkEnable(false,context.getString(R.string.connectFailed));
     	 initSever();
+    	//initPayServer();
     	initCoffeeMachine();
         initAssistMachine();
        
-		setMcEnable(false,context.getString(R.string.comErr));
-		setNetWorkEnable(false,context.getString(R.string.connectFailed));
+
 		restoreDevState();
 		
 		super.onStart();
@@ -535,9 +548,10 @@ void initSever(){
     if(hasNetWork()){
     	initPayServer();
     }
-
     addNetworkChangedCallback();	
 }
+
+
 
 
 void existMask(){
@@ -941,7 +955,109 @@ void existMask(){
 		    	page2.setIconNames(name2);
 	    	}
 	    }
+	    
 	    void initPayServer(){
+	    	if(payServer==null){
+	    		payServer=new PayServer(context, "123456uklopu9087");
+	    		payServer.setEventCallBack(new ServerCallback() {
+					
+					@Override
+					public void onTextUpdate(String text) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onPaySuccess(int type, String buyerId) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onPayFailed() {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onLoginSuccess() {
+						setNetWorkEnable(true,context.getString(R.string.connectServer));
+						myToast.toastShow("register success!");
+						JSONObject json=new JSONObject();
+						try {
+							json.put("water", 30);
+						
+						json.put("beans", 30);
+						json.put("powder1", 30);
+						json.put("powder2", 50);
+						json.put("powder3", 30);
+						json.put("cups", 30);
+						Log.i(Tag, "stock="+json.toString());
+						JSONObject error=new JSONObject();	
+						JSONObject error2=new JSONObject();	
+						JSONArray  errors=new JSONArray();	
+						error.put("error", "mc_error1");
+					//	errors.put(0, error);
+						errors.put(error);
+						error2.put("error", "mc_error3");
+						errors.put(error2);
+						Log.i(Tag, "errors="+errors.toString());
+		
+						payServer.heatBeat(json.toString(), errors.toString());
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					
+					@Override
+					public void onLoginFailed(String msg) {
+						myToast.toastShow("register failed!  msg="+msg);
+						
+					}
+					
+					@Override
+					public void onHaveNewText(String serial) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onHaveNewTech(String serial) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onGetZfbQrCode(String qr) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onGetWeixinQrCode(String qr) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onGetNewVersion(String ver, String path) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onFormulaUpdate(String xml) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+	    		payServer.login(context.getString(R.string.version), "v1.1", "8", "0", "0");
+	    	}
+	    }
+	    
+	    
+	    void initPayServer2(){
 	    	if(coffeeDeviceEvent==null){
 	    		startTimeOutTimer(SeverTimeOutDuaration,TimerOutTask.Event_serverInit_timeOut);
 	        coffeeDeviceEvent = new CoffeeDeviceEvent() {
@@ -1109,11 +1225,12 @@ void existMask(){
 					myToast.toastShow("netWorkChanged "+connected);
 					if(connected){
 						setNetWorkEnable(false,context.getString(R.string.hasnet));
-						if(coffeeDeviceEvent==null){
-							initPayServer();
-						}else{//重启app
-							reStartApp();
-						}
+						initPayServer();
+//						if(coffeeDeviceEvent==null){
+//							initPayServer();
+//						}else{//重启app
+//							reStartApp();
+//						}
 					}else{
 						setNetWorkEnable(false,context.getString(R.string.nonet));
 					}

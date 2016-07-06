@@ -14,9 +14,7 @@ public class ParseJasonWeather {
 			throws Exception {
 		//List<Map<String, Object>> all = new ArrayList<Map<String, Object>>();
 		Map<String, String> map = new HashMap<String, String>();
-
-		
-		
+	
 		JSONObject jsonObject = JSONObject.fromObject(jonString);		
 		JSONArray getJsonArray=JSONArray.fromObject(jsonObject.optString("weather"));
 		JSONObject weather =getJsonArray.getJSONObject(0);//获取json数组中的第一项  
