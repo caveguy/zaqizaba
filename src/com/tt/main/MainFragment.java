@@ -40,7 +40,9 @@ import com.tt.main.SugarDialog.ConfirmListener;
 import com.tt.pays.PayServer;
 import com.tt.pays.ServerCallback;
 import com.tt.util.Encode;
+import com.tt.util.Errors;
 import com.tt.util.Settings;
+import com.tt.util.Stocks;
 import com.tt.util.TTLog;
 import com.tt.util.ToastShow;
 import com.tt.view.GuideFragmentAdapter;
@@ -144,7 +146,7 @@ public class MainFragment extends Fragment {
 	 private Handler myHandler =null;
 //    private CoffeeDeviceInterfaceAdapter deviceInterfaceAdapter=null;
 //    private CoffeeDeviceEvent coffeeDeviceEvent=null;
-	long cur_goodId=-1;
+	int cur_goodId=-1;
 	String tExtStateDisp=null;
     Timer closeTimer=null;
 	CloseTimeTask closeTask=null;
@@ -311,7 +313,7 @@ public class MainFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_coffee_cantainer, container, false);
 		 mylog=new TTLog(Tag,true);
-		context=getActivity();
+		context=getActivity().getApplicationContext();
 		initView(view);
 		getCoffeeFormula();
 	
@@ -363,7 +365,20 @@ public class MainFragment extends Fragment {
     	}
     	return "";
     }
-    
+    String getGoodPrice(int id){
+    	for(Coffee coffee:coffeeFormula){
+    		if(coffee.getId()==id);
+    		return coffee.getPrice();
+    	}
+    	return "";
+    }
+    String getCurGoodPrice(){
+    	for(Coffee coffee:coffeeFormula){
+    		if(coffee.getId()==cur_goodId);
+    		return coffee.getPrice();
+    	}
+    	return "";
+    }  
 	void initCoffeeMachine(){
 	coffeeMachine=new CoffeeMcProtocol(context);
 	coffeeMachine.setCallBack(new CoffeeMcProtocol.CallBack() {
@@ -884,33 +899,7 @@ void existMask(){
 	    }
 	    
 	    void updatePrice(){
-	    	
-//	        new QueryDeviceGoodsAsyncTask(){
-//	            @Override
-//	            protected void onPostExecute(QueryDeviceGoodsRsp rsp) {
-//	            	if(rsp==null){
-//	            		return ;
-//	            	}
-//	            	//try{
-//	                    if(rsp.getErrcode()==0){
-//	                    	
-//	                    	int i=0;
-//	                       for(DeviceGoods goods:rsp.getGoods()){
-//	                    	   
-//	                    	   int id=goods.getGoodsId().intValue();
-//	                    	   if(coffeeFormula==null){
-//	                    		   return;
-//	                    	   }
-//	                    	   CoffeeFormula.setName(coffeeFormula, id, goods.getGoodsName());
-//	                    	   CoffeeFormula.setPrice(coffeeFormula, id, goods.getGoodsPrice().toString());
-//	                    	   goodId.put(i++, id);
-// 
-//	                       }
-//	                       //myToast.toastShow("rsp.getErrcode() i="+i);
-//	                       setGoodMsg();
-//	                    }
-//	            }
-//	        }.execute(deviceInterfaceAdapter.getDevice().getFeedId());
+
 	    }
 	    
 	    
@@ -926,14 +915,7 @@ void existMask(){
 	    	for(Coffee coffee:coffeeFormula){
 	    		name[i++]=coffee.getName()+"|￥"+coffee.getPrice();
 	    	}
-//	    	String[] name = new String[goodId.size()];
-//	    	for(int i=0;i<goodId.size();i++){
-//	    		if(goodId.containsKey(i)){
-//	    			id=goodId.get(i);
-//	    			name[i]=goodName.get(id)+"|￥"+goodPrice.get(id).toString();
-//	    			
-//	    		}
-//	    	}
+
 	    	page1.setIconNames(name);
 	    	if(name.length>4){
 		    	String[] name2=new String[name.length-4];
@@ -944,6 +926,34 @@ void existMask(){
 	    	}
 	    }
 	    
+
+	    void heatBeat(){
+	    	JSONObject json=new JSONObject();
+	    
+			try {
+			json.put("water", Stocks.getCurWater(context));
+			json.put("beans", Stocks.getCurBean(context));
+			json.put("powder1",Stocks.getCurPowder1(context));
+			json.put("powder2", Stocks.getCurPowder2(context));
+			json.put("powder3", Stocks.getCurPowder3(context));
+			json.put("cups", Stocks.getCurCup(context));
+			Log.i(Tag, "stock="+json.toString());
+			
+			JSONArray  errors=new JSONArray();	
+		//	JSONObject error=new JSONObject();	
+			List<String> errStrs=Errors.getErrors();
+			for(String e:errStrs){
+				JSONObject error=new JSONObject();
+				error.put("error", e);
+				errors.put(error);
+			}	
+			Log.i(Tag, "errors="+errors.toString());
+			payServer.heatBeat(json.toString(), errors.toString());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }
 	    void initPayServer(){
 	    	if(payServer==null){
 	    		payServer=new PayServer(context, "123456uklopu9087");
@@ -951,80 +961,63 @@ void existMask(){
 					
 					@Override
 					public void onTextUpdate(String text) {
-						// TODO Auto-generated method stub
+						updateMsgCallBack(text);
 						
 					}
 					
 					@Override
 					public void onPaySuccess(int type, String buyerId) {
-						// TODO Auto-generated method stub
+						mylog.log_i("onPaySuccess!!!");
+						myHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								myToast.toastShow(R.string.paySuccess);
+							}
+						});
+						startMaking();
 						
 					}
 					
 					@Override
 					public void onPayFailed() {
-						// TODO Auto-generated method stub
-						
+		
 					}
 					
 					@Override
 					public void onLoginSuccess() {
 						setNetWorkEnable(true,context.getString(R.string.connectServer));
 						myToast.toastShow("register success!");
-						JSONObject json=new JSONObject();
-						try {
-							json.put("water", 30);
-						
-						json.put("beans", 30);
-						json.put("powder1", 30);
-						json.put("powder2", 50);
-						json.put("powder3", 30);
-						json.put("cups", 30);
-						Log.i(Tag, "stock="+json.toString());
-						JSONObject error=new JSONObject();	
-						JSONObject error2=new JSONObject();	
-						JSONArray  errors=new JSONArray();	
-						error.put("error", "mc_error1");
-					//	errors.put(0, error);
-						errors.put(error);
-						error2.put("error", "mc_error3");
-						errors.put(error2);
-						Log.i(Tag, "errors="+errors.toString());
-		
-						payServer.heatBeat(json.toString(), errors.toString());
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						heatBeat();
 					}
 					
 					@Override
 					public void onLoginFailed(String msg) {
+						setNetWorkEnable(false,context.getString(R.string.loginFailed));
 						myToast.toastShow("register failed!  msg="+msg);
 						
 					}
 					
 					@Override
 					public void onHaveNewText(String serial) {
-						// TODO Auto-generated method stub
+						payServer.askText(serial);
 						
 					}
 					
 					@Override
 					public void onHaveNewTech(String serial) {
-						// TODO Auto-generated method stub
+						payServer.askTechXml(serial);
 						
 					}
 					
 					@Override
 					public void onGetZfbQrCode(String qr) {
-						// TODO Auto-generated method stub
+						getQtImage( qr,AliPay);
 						
 					}
 					
 					@Override
 					public void onGetWeixinQrCode(String qr) {
-						// TODO Auto-generated method stub
+						getQtImage( qr,WeixinPay);
 						
 					}
 					
@@ -1136,73 +1129,19 @@ void existMask(){
 			}
 		}
 	    
-	    void askWeixinQrPay(long goodId){
-	        /*下单*/
-//	        MakeOrderReq req = new MakeOrderReq();
-//	        String feedId=deviceInterfaceAdapter.getDevice().getFeedId();
-//	        req.setFeedId(feedId);
-//	        List<Long> goodsIds = new ArrayList<Long>();
-//	        goodsIds.add(goodId);
-//	        //goodsIds.add(2l);
-//	        req.setGoodsIds(goodsIds);
-//	        req.setPayType(WeixinPay);//1支付宝 2//微信
-//	        new MakeOrderAsyncTask(){
-//	            @Override
-//	            protected void onPostExecute(MakeOrderRsp rsp) {
-//	                if(rsp!=null && rsp.getErrcode()==0){
-//	                  String url= rsp.getQrCodeUrl();
-//	                   getQtImage( url,WeixinPay);
-//	                }
-//	            }
-//	           
-//	        }.execute(req);
+	    void askWeixinQrPay(int goodId){
+	    	String price=getGoodPrice(goodId);
+	    	payServer.getZfbQr(goodId+"", price);
 	    }
-	    void askZfbQrPay(long goodId){
-//	    	/*下单*/
-//	    	MakeOrderReq req = new MakeOrderReq();
-//	    	String feedId=deviceInterfaceAdapter.getDevice().getFeedId();
-//	    	mylog.log_i( "*****************feedId="+feedId+"******************");
-//	        req.setFeedId(feedId);
-//	    	List<Long> goodsIds = new ArrayList<Long>();
-//	    	goodsIds.add(goodId);
-//	    	//goodsIds.add(2l);
-//	    	req.setGoodsIds(goodsIds);
-//	    	req.setPayType(AliPay);//1支付宝 2//微信
-//	    	new MakeOrderAsyncTask(){
-//	    		@Override
-//	    		protected void onPostExecute(MakeOrderRsp rsp) {
-//	    			if(rsp!=null && rsp.getErrcode()==0){
-//	    				String url= rsp.getQrCodeUrl();
-//	    				getQtImage( url,AliPay);
-//	    			}
-//	    		}
-//	    		
-//	    	}.execute(req);
+	    void askZfbQrPay(int goodId){
+	    	String price=getGoodPrice(goodId);
+	    	payServer.getZfbQr(goodId+"", price);
 	    }
-	    void askQrPay(long goodId){
+	    void askQrPay(int goodId){
 	    	askZfbQrPay(goodId);
 	    	askWeixinQrPay(goodId);
 	    }
 	    
-//	    void appeal(){
-//	        /*退款申请*/
-//	        if(deviceInterfaceAdapter==null){
-//	        	return;
-//	        }
-//	        ApplyRefundReq refundReq = new ApplyRefundReq();
-//
-//	        refundReq.setFeedId(deviceInterfaceAdapter.getDevice().getFeedId());
-//	        refundReq.setOrderId(System.currentTimeMillis());
-//	        refundReq.setPhone("15824135596");
-//	        new RefundApplyAsyncTask(){
-//	            @Override
-//	            protected void onPostExecute(TPResponse rsp) {
-//	                if(rsp.getErrcode()==TPConstants.Errcode.SUCCESS){
-//	                  //  Toast.makeText(getActivity(),"申请退款成功",Toast.LENGTH_LONG).show();
-//	                }
-//	            }
-//	        }.execute(refundReq);
-//	    }
 		void addNetworkChangedCallback(){
 			
 			
