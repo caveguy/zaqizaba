@@ -14,10 +14,10 @@ import android.os.Environment;
 import android.util.Log;
 import android.util.Xml;
 
-
 public class CoffeeFormula {
-//	public static String xml_path=Environment.getExternalStorageDirectory().toString()+"/coffeeV3.xml";
-	public static String xml_path="/storage/udisk/coffeeConfig.xml";
+	public static String xml_path=Environment.getExternalStorageDirectory().toString()+"/coffeeConfig.xml";
+	//public static String xml_path="/storage/udisk/coffeeConfig.xml";
+	
 	private final static String Tag="CoffeeFormula";
 	private  final static String Coffee="coffee";
 	private  final static String Coffees="coffees";

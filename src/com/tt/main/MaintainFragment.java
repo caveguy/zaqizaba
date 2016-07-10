@@ -159,15 +159,6 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 
 		}
 
-		@Override
-		public void enterMaintainMode(boolean refund) {
-			Log.e("maintain", "enterMaintainMode!!");
-			Message message=new Message();
-			message.what=Handler_enterMaintain;
-			message.obj=refund;
-			myHandler.sendMessage(message);
-			
-		}
 
 		@Override
 		public void hide() {
@@ -183,6 +174,22 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			message.what=Handler_id;
 			message.obj=id;
 			myHandler.sendMessage(message);
+		}
+
+		@Override
+		public void enterMaintainMode(boolean refund, String state) {
+			Log.e("maintain", "enterMaintainMode!!");
+			Message message=new Message();
+			Bundle bundle=new Bundle();
+			bundle.putBoolean("refund", refund);
+			bundle.putString("state", state);
+			
+			message.what=Handler_enterMaintain;
+			message.obj=bundle;
+			//message.obj=refund;
+			myHandler.sendMessage(message);
+			
+			
 		}
 
 
@@ -409,7 +416,16 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 							enterDev();
 							break;
 						case Handler_enterMaintain:
-							enterMaintain((Boolean)msg.obj);
+							Bundle bundle=(Bundle) msg.obj;
+							boolean refund=false;
+							String state=null;
+							if(bundle.containsKey("refund"))
+							  refund=bundle.getBoolean("refund");
+							enterMaintain(refund);
+							if(bundle.containsKey("state")){
+								state=bundle.getString("state");
+							    setMcState(state);
+							}
 							break;
 						case Handler_hide:
 							hide(); 

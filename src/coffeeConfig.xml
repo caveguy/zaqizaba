@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-      <serial>989910</serail>
+      <serial>989910</serial>
     
     	<!--锅炉温度设置  -->
 	<temperature 	goal="90" backlash="2"  min="70"/>
@@ -9,9 +9,7 @@
 	   <time>0:00</time> 
 	   <time>12:00</time> 
 	</cleans>    
-	<!--  
- <version>3</version>
- -->
+
 <coffees>
 	<coffee id="1">
 		<name>Espresso</name>

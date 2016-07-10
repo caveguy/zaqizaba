@@ -47,17 +47,30 @@ public class PayServer {
 	
 	private final int PayType_zfb=1;
 	private final int PayType_weixin=2;
+	/*
+	 * 
+	 2.1 注册                register
+	 2.2 心跳                heart
+	 2.3 取得工艺参数         （未完成）
+	 2.4 取得支付宝二维码字符串   alipayready
+	 2.5 支付宝支付是否成功      alipaystatus
+	 2.6 取得微信支付二维码字符串 weixinpayready
+	 2.7 微信支付是否成功       weixinpaystatus
+	 2.8 上传销售数据          saledata
+	 2.9 获取文本信息         （未完成）
+	 2.10 查看新版本           lastversion
+	 */
 	private final String url_comm="http://114.55.128.131/blservice/";
 	private final String url_extra_login="register";
 	private final String url_extra_heartbeat="heart";
-	private final String url_extra_zfb="";
-	private final String url_extra_weixin="";
-	private final String url_extra_zfb_state="";
-	private final String url_extra_weixin_state="";
-	private final String url_extra_finish="";
+	private final String url_extra_zfb="alipayready";
+	private final String url_extra_weixin="weixinpayready";
+	private final String url_extra_zfb_state="alipaystatus";
+	private final String url_extra_weixin_state="weixinpaystatus";
+	private final String url_extra_finish="saledata";
 	private final String url_extra_tech="";
 	private final String url_extra_text="";
-	private final String url_extra_ver="";
+	private final String url_extra_ver="lastversion";
 	
 	private final String Index_deviceid="deviceid";
 	private final String Index_time="time";

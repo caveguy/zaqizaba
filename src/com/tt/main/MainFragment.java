@@ -41,6 +41,7 @@ import com.tt.pays.PayServer;
 import com.tt.pays.ServerCallback;
 import com.tt.util.Encode;
 import com.tt.util.Errors;
+import com.tt.util.Errors.McError;
 import com.tt.util.Settings;
 import com.tt.util.Stocks;
 import com.tt.util.TTLog;
@@ -167,16 +168,16 @@ public class MainFragment extends Fragment {
 
 	UpdateMsgCallBack msgCallBack=null;
 	
-	static class AssistState{
-		//目前辅助板的几种不能工作的状态：
-		public static boolean hasCup=true;
-		public static boolean hasWater=true;
-		public static boolean isConnect=false;	
-		public static boolean getXml=false;
-		public static boolean getEnable(){
-			return hasCup&hasWater&isConnect&getXml;
-		}
-	}
+//	static class AssistState{
+//		//目前辅助板的几种不能工作的状态：
+//		public static boolean hasCup=true;
+//		public static boolean hasWater=true;
+//		public static boolean isConnect=false;	
+//		public static boolean getXml=false;
+//		public static boolean getEnable(){
+//			return hasCup&hasWater&isConnect&getXml;
+//		}
+//	}
 	
 	public  void setMsgCallBack(UpdateMsgCallBack call) {
 		// TODO Auto-generated method stub
@@ -202,25 +203,30 @@ public class MainFragment extends Fragment {
 		void onNetStateChanged(String state);
 		void onAssisStateChanged(String state);
 		void enterDevMode();
-		void enterMaintainMode(boolean refund);
+		void enterMaintainMode(boolean refund,String errors);
 		void hide();
 		void updateId(String id);
 	}
 	
-	void getCoffeeFormula(){
+	boolean  getCoffeeFormula(){
+		boolean enable=false;
 		try {
 			xmlConfig=new CoffeeFormula(context);
 			coffeeFormula=xmlConfig.getCoffeeFormula();
 			cleanTimes=xmlConfig.getCleanTimes();
 			makeCnt=Settings.getCoffees(context);
-			AssistState.getXml=true;
+			enable=true;
+		
+			//AssistState.getXml=true;
 		} catch (Exception e) {
 			Log.e(Tag, e.toString());
-			AssistState.getXml=false;		
+			//AssistState.getXml=false;		
+			enable=false;
 			e.printStackTrace();
 		}finally{
-			updateAssitMcEnable();
+			setEnable(enable, Errors.McError.Mc_error10);
 		}
+		return enable;
 	}
 	//在这里面设置定时清洗功能
 	void setCleanAlarm(){
@@ -266,14 +272,14 @@ public class MainFragment extends Fragment {
 		}
 	}
 	
-	void  enterMaintainMode(boolean refund){
+	void  enterMaintainMode(boolean refund,String errors){
 		mylog.log_i( "enterMaintainMode");
 		if((dispMskLayout&(Msk_maintain|Msk_dev))==0){
 			dispMskLayout=Msk_maintain;
 			mylog.log_i( "enterMaintainMode1");
 			if(myCallback!=null){
 				mylog.log_i( "enterMaintainMode2");
-				myCallback.enterMaintainMode(refund);
+				myCallback.enterMaintainMode(refund,errors);
 			}
 		}
 	}
@@ -313,18 +319,30 @@ public class MainFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_coffee_cantainer, container, false);
 		 mylog=new TTLog(Tag,true);
-		context=getActivity().getApplicationContext();
+		context=getActivity();
 		initView(view);
-		getCoffeeFormula();
+
 	
 		return view;
+	}
+	void firstInitErrors(){
+		List<Errors.McError> errors=new ArrayList<>();
+		errors.add(Errors.McError.Mc_error1);
+		errors.add(Errors.McError.Mc_error2);
+		errors.add(Errors.McError.Mc_error27);
+		setEnable(false,errors);
 	}
 	
 	
     @Override
 	public void onStart() {
-		setMcEnable(false,context.getString(R.string.comErr));
-		setNetWorkEnable(false,context.getString(R.string.connectFailed));
+		//setMcEnable(false,context.getString(R.string.comErr));
+		//setNetWorkEnable(false,context.getString(R.string.connectFailed));
+		if(getCoffeeFormula()){
+			//setGoodMsg();
+		}
+    	
+    	firstInitErrors();
     	 initSever();
     	//initPayServer();
     	initCoffeeMachine();
@@ -385,20 +403,22 @@ public class MainFragment extends Fragment {
 		
 		@Override
 		public void sendTimeOut() {
-			setMcEnable(false,context.getString(R.string.comErr));	
-			
+			//setMcEnable(false,context.getString(R.string.comErr));	
+		
+			setEnable(false,Errors.McError.Mc_error1,context.getString(R.string.comErr));
 		}
 		
 		@Override
 		public void onReady() {
-			setMcEnable(true,context.getString(R.string.cmd1_ready));
+			setEnable(true,Errors.McError.Mc_error1,context.getString(R.string.cmd1_ready));
+		//	setMcEnable(true,context.getString(R.string.cmd1_ready));
 			
 		}
 		
 		@Override
 		public void onMaking() {
-			setMcEnable(true,context.getString(R.string.dropPowder));
-			//sendMsgToHandler(Handler_mcDisp, context.getString(R.string.dropPowder));
+			setEnable(true,Errors.McError.Mc_error1,context.getString(R.string.dropPowder));
+			//setMcEnable(true,context.getString(R.string.dropPowder));
 			
 		}
 		
@@ -410,8 +430,9 @@ public class MainFragment extends Fragment {
 					coffeeMachine.cmd_setTemper(temp.getTemper_goal(), temp.getTemper_backLash(), temp.getTemper_min());
 				}
 				//coffeeMachine.cmd_openBoiler(true);
-				setMcEnable(true,context.getString(R.string.cmd1_ready));
+				//setMcEnable(true,context.getString(R.string.cmd1_ready));
 			}
+			setEnable(true,Errors.McError.Mc_error1,context.getString(R.string.cmd1_ready));
 		}
 		
 		@Override
@@ -437,7 +458,9 @@ public class MainFragment extends Fragment {
 					
 				}
 			}
-			setMcEnable(false,fault);	
+			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!注意这里的错误暂时只给了一个固定的error4，后面需根据最新协议修改
+			setEnable(false,Errors.McError.Mc_error4,fault);
+			
 		}
 	});
 	}
@@ -478,7 +501,7 @@ void initAssistMachine(){
 
 			@Override
 			public void sendTimeOut() {
-				mc_toAssistControllerTimeOut();
+				setEnable(false, Errors.McError.Mc_error2);
 				
 			}
 			@Override
@@ -504,9 +527,9 @@ void initAssistMachine(){
 		
 			@Override
 			public void onGetConnect() {
-				AssistState.isConnect=true;
-				updateAssitMcEnable();
-				//setAssitMcEnable(true,context.getString(R.string.cmd1_ready));				
+			//	AssistState.isConnect=true;
+				setEnable(true,Errors.McError.Mc_error2);
+			//	updateAssitMcEnable();			
 			}
 
 
@@ -941,10 +964,10 @@ void existMask(){
 			
 			JSONArray  errors=new JSONArray();	
 		//	JSONObject error=new JSONObject();	
-			List<String> errStrs=Errors.getErrors();
-			for(String e:errStrs){
+			List<Errors.McError> errStrs=Errors.getErrorsToServer();
+			for(Errors.McError e:errStrs){
 				JSONObject error=new JSONObject();
-				error.put("error", e);
+				error.put("error", e.getValue());
 				errors.put(error);
 			}	
 			Log.i(Tag, "errors="+errors.toString());
@@ -985,14 +1008,25 @@ void existMask(){
 					
 					@Override
 					public void onLoginSuccess() {
-						setNetWorkEnable(true,context.getString(R.string.connectServer));
+						setEnable(true, Errors.McError.Mc_error27);
+						//setNetWorkEnable(true,context.getString(R.string.connectServer));
 						myToast.toastShow("register success!");
+						myHandler.post(new  Runnable() {
+							
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								setGoodMsg();
+							}
+						});
+						
 						heatBeat();
 					}
 					
 					@Override
 					public void onLoginFailed(String msg) {
-						setNetWorkEnable(false,context.getString(R.string.loginFailed));
+						setEnable(false, Errors.McError.Mc_error27);
+						//setNetWorkEnable(false,context.getString(R.string.loginFailed));
 						myToast.toastShow("register failed!  msg="+msg);
 						
 					}
@@ -1151,15 +1185,11 @@ void existMask(){
 					mylog.log_i( "!!!!!!!!!!!!!!netWorkChanged "+connected);
 					myToast.toastShow("netWorkChanged "+connected);
 					if(connected){
-						setNetWorkEnable(false,context.getString(R.string.hasnet));
+						//setNetWorkEnable(false,context.getString(R.string.hasnet));
 						initPayServer();
-//						if(coffeeDeviceEvent==null){
-//							initPayServer();
-//						}else{//重启app
-//							reStartApp();
-//						}
 					}else{
-						setNetWorkEnable(false,context.getString(R.string.nonet));
+						setEnable(false, Errors.McError.Mc_error27);
+					//	setNetWorkEnable(false,context.getString(R.string.nonet));
 					}
 				}
 			});
@@ -1286,21 +1316,15 @@ void existMask(){
 
 		    void mc_assistFault(byte fault){
 		    	
-		    	AssistState.hasWater=(fault&AssistProtocol.Fault_noWater)==0?true:false;
-		    	AssistState.hasCup=(fault&AssistProtocol.Fault_noCup)==0?true:false;  
-		    	mylog.log_e("mc_assistFault hasWater="+AssistState.hasWater+" hasCup="+AssistState.hasCup+"fault="+fault);
+		    	boolean hasWater=(fault&AssistProtocol.Fault_noWater)==0?true:false;
+		    	boolean hasCup=(fault&AssistProtocol.Fault_noCup)==0?true:false;  
+		    	//mylog.log_e("mc_assistFault hasWater="+AssistState.hasWater+" hasCup="+AssistState.hasCup+"fault="+fault);
 		    	//setAssitMcEnable(false,"");
-		    	updateAssitMcEnable();
-//		    	myHandler.postDelayed(new Runnable() {		
-//		    		@Override
-//		    		public void run() {
-//		    			//t_payType.setText(R.string.noWater);
-//		    			//hasWater=false;
-//		    			setAssitMcEnable(false,"");
-////						sendMsgToHandler(Handler_mcDisp, ParseReceiveCommand.getDispStringId(context));
-////						setEnable(false);
-//		    		}
-//		    	},1000);
+		    	//updateAssitMcEnable();
+		    
+		    	setEnable(hasWater, Errors.McError.Mc_error26);
+		    	setEnable(hasCup, Errors.McError.Mc_error25);
+		    	
 		    	
 		    }
 
@@ -1364,17 +1388,7 @@ void existMask(){
 		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.cupStuck));
 		    	assistProtocol.cmd_isCupReady();
 		    }
-		    /**
-		     * 跟辅助板通信超时
-		     * 
-		     * 
-		     */
-		    void mc_toAssistControllerTimeOut(){
-		    	AssistState.isConnect=false;
-		    	updateAssitMcEnable();
-		    	//setAssitMcEnable(false,context.getString(R.string.toAssisTimeOut));
-		    	
-		    }
+
 
 		    
 		    class CloseTimeTask extends TimerTask{
@@ -1504,7 +1518,7 @@ void existMask(){
 			} 
 
 			 
-			 void setMcEnable(boolean  enable,String msg){
+			 void setMcEnable2(boolean  enable,String msg){
 				 mylog.log_i("setMcEnable ="+enable+" msg="+msg);
 				 if(isMachineWork!=enable||(!oldMcStr.equals(msg))){
 					 oldMcStr=msg;
@@ -1513,47 +1527,115 @@ void existMask(){
 					 sendMsgToHandler(Handler_mcDisp, msg);
 				 }
 			 }
-
-			 
-			 void updateAssitMcEnable(){
-				 String msg=null;
-				 boolean enable=AssistState.getEnable();
-				// if(isAssistMcWork!=enable||(!oldAssisStr.equals(msg))){
-					 isAssistMcWork=enable;
-					 if(!isAssistMcWork){
-					 msg=(AssistState.hasCup?"":context.getString(R.string.noCup))+
-						(AssistState.hasWater?"":(" "+context.getString(R.string.noWater)))+
-						(AssistState.getXml?"":(" "+context.getString(R.string.errgetXml)))+
-						(AssistState.isConnect?"":(" "+context.getString(R.string.toAssisTimeOut)));
-						 
-					 }else{
-					// oldAssisStr=msg;
-						 msg=context.getString(R.string.cmd1_ready); 
-					 }
-					 updateEnable();
-					 sendMsgToHandler(Handler_assiMcDisp, msg);
-				// }
-			 }
-			 void setNetWorkEnable(boolean  enable,String msg){
-				 if(isConnectToServer!=enable||(!oldNetStr.equals(msg))){
-					 oldNetStr=msg;
-					 isConnectToServer=enable;
-					 updateEnable();
-					 sendMsgToHandler(Handler_netDisp, msg);
+			 void setEnable(boolean  enable,Errors.McError error){
+				 mylog.log_i("setMcEnable ="+enable+" msg="+error.getValue());
+				 boolean changed=false;
+				 if(!enable){
+					 changed=Errors.addError(error); 
+				 }else{
+					 changed=Errors.removeError(error);
 				 }
+				 if(changed)
+					 updateEnable();
+			 }
+			 void setEnable(boolean  enable,Errors.McError error,String state){
+				 mylog.log_i("setMcEnable ="+enable+" msg="+error.getValue());
+				 boolean changed=false;
+				 if(!enable){
+					 changed=Errors.addError(error); 
+				 }else{
+					 changed=Errors.removeError(error);
+				 }
+				 changed|= setMcStateText(state); 
+				 if(changed)
+					 updateEnable();
+				 
+				 
 			 }
 			 
-			 void setEnable(boolean enable){
-				// Log.e(Tag, "setEnable!!!!!!!!!!="+enable);
-				if(enable){
-					leaveDevOrMaintainMode();
-				}else{
-					enterMaintainMode(appealed);
-				}
+			 
+			 void setEnable(boolean  enable,List<Errors.McError> errors){
+
+				 boolean changed=false;
+				 if(!enable){
+					 for(Errors.McError e:errors)
+						 changed|=Errors.addError(e); 
+				 }else{
+					 for(Errors.McError e:errors)
+					 	changed|=Errors.removeError(e);
+				 }
+				 if(changed)
+					 updateEnable();
 			 }
+
+			 boolean  setMcStateText(String msg){
+				 mylog.log_i("setStateText msg="+msg);
+				 if(msg==null)
+					 return false;
+				 if((!oldMcStr.equals(msg))){
+					 oldMcStr=msg;
+					 sendMsgToHandler(Handler_mcDisp, msg);
+					 return true;
+				 }
+				 return false;
+			 }
+//			 void updateAssitMcEnable(){
+//				 String msg=null;
+//				 boolean enable=AssistState.getEnable();
+//				// if(isAssistMcWork!=enable||(!oldAssisStr.equals(msg))){
+//					 isAssistMcWork=enable;
+//					 if(!isAssistMcWork){
+//					 msg=(AssistState.hasCup?"":context.getString(R.string.noCup))+
+//						(AssistState.hasWater?"":(" "+context.getString(R.string.noWater)))+
+//						(AssistState.getXml?"":(" "+context.getString(R.string.errgetXml)))+
+//						(AssistState.isConnect?"":(" "+context.getString(R.string.toAssisTimeOut)));
+//						 
+//					 }else{
+//					// oldAssisStr=msg;
+//						 msg=context.getString(R.string.cmd1_ready); 
+//					 }
+//					 updateEnable();
+//					 sendMsgToHandler(Handler_assiMcDisp, msg);
+//				// }
+//			 }
+//			 void setNetWorkEnable(boolean  enable,String msg){
+//				 if(isConnectToServer!=enable||(!oldNetStr.equals(msg))){
+//					 oldNetStr=msg;
+//					 isConnectToServer=enable;
+//					 updateEnable();
+//					 sendMsgToHandler(Handler_netDisp, msg);
+//				 }
+//			 }
+			 
+//			 void setEnable(boolean enable){
+//				// Log.e(Tag, "setEnable!!!!!!!!!!="+enable);
+//				if(enable){
+//					leaveDevOrMaintainMode();
+//				}else{
+//					enterMaintainMode(appealed);
+//				}
+//			 }
+//			 void setEnable(boolean enable,String errors){
+//				 // Log.e(Tag, "setEnable!!!!!!!!!!="+enable);
+//				 if(enable){
+//					 leaveDevOrMaintainMode();
+//				 }else{
+//					 enterMaintainMode(appealed);
+//				 }
+//			 }
 			 void updateEnable(){
-				 mylog.log_i( "updateEnable!!!!!!!!!!isMachineWork="+isMachineWork+" isConnectToServer="+isConnectToServer+" isAssistMcWork="+isAssistMcWork);
-				 setEnable(isMachineWork&&isConnectToServer&&isAssistMcWork);
+				 String errors=null;
+				// if(Errors.hasError()){
+					 if(false){
+					 errors=Errors.getErrorsString();
+					 leaveDevOrMaintainMode();
+					 enterMaintainMode(appealed,errors);
+				 }else{
+					 leaveDevOrMaintainMode();
+				 }
+				 
+//				 mylog.log_i( "updateEnable!!!!!!!!!!isMachineWork="+isMachineWork+" isConnectToServer="+isConnectToServer+" isAssistMcWork="+isAssistMcWork);
+//				 setEnable(isMachineWork&&isConnectToServer&&isAssistMcWork);
 			 }
 				void closeOder(){
 					tradeStep=StepNone;		

@@ -5,8 +5,7 @@ public class CleanTime{
 
 	public CleanTime(String t){
 		super();
-		time=t;
-			
+		time=t;	
 		}
 		public String getTime(){
 			return time;
