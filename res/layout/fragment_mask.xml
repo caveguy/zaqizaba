@@ -79,17 +79,18 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="@dimen/devState_text_size"
 	        android:textColor="@color/brown_title"
-	        android:text="@string/assistStateLable"
+	        android:text="@string/errorState"
 	        /> 
    	         <TextView
-   	        android:id="@+id/t_assistDetail"
+   	        android:id="@+id/t_error"
 	    	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textColor="@color/brown_title"
 	        android:textSize="@dimen/devState_text_size"
-	        android:text="@string/AssiscomErr"
+	        android:text=""
 	        /> 
 	       </LinearLayout>
+	       <!-- 
        	 <LinearLayout 	    
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
@@ -112,6 +113,8 @@
 	        android:textColor="@color/brown_title"
 	        /> 
 	       </LinearLayout>
+	       
+	        -->
 	        <TextView
    	        android:id="@+id/t_refund"
 	    	android:layout_width="wrap_content"

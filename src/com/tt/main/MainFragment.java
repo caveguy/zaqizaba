@@ -59,8 +59,8 @@ import com.viewpagerindicator.PageIndicator;
  * ������Fragment
  */
 public class MainFragment extends Fragment {
-	private final int Handler_assiMcDisp=1001;
-	private final int Handler_netDisp=1002;
+//	private final int Handler_assiMcDisp=1001;
+//	private final int Handler_netDisp=1002;
 	private final int Handler_tPay=1003;
 	private final int Handler_mcDisp=1004;
 	private final int Handler_TradeTimeOut=1005;
@@ -139,7 +139,7 @@ public class MainFragment extends Fragment {
 	private List<Coffee> coffeeFormula =null;
 	private List<CleanTime> cleanTimes=null;
 	private int makeCnt=0;
-	HashMap<Integer,Integer> goodId=new HashMap<Integer,Integer>();
+//	HashMap<Integer,Integer> goodId=new HashMap<Integer,Integer>();
 //	HashMap<Long,String>	goodName=new HashMap<Long,String>();
 //	HashMap<Long,BigDecimal>	goodPrice=new HashMap<Long,BigDecimal>();
 //	HashMap<Long,String[]>	goodFormula=new HashMap<Long,String[]>();//配方
@@ -200,12 +200,12 @@ public class MainFragment extends Fragment {
 	
 	public interface SetDevCallBack{
 		void onMcStateChanged(String state);
-		void onNetStateChanged(String state);
-		void onAssisStateChanged(String state);
+//		void onNetStateChanged(String state);
+//		void onAssisStateChanged(String state);
 		void enterDevMode();
 		void enterMaintainMode(boolean refund,String errors);
 		void hide();
-		void updateId(String id);
+	//	void updateId(String id);
 	}
 	
 	boolean  getCoffeeFormula(){
@@ -236,27 +236,27 @@ public class MainFragment extends Fragment {
 	 * 
 	 * @return
 	 */
-	private void updateIdCallBack(String msg){
-		//Log.e(Tag, "feedid="+msg);
-		if(myCallback!=null){
-			myCallback.updateId(msg);
-		}
-	}
+//	private void updateIdCallBack(String msg){
+//		//Log.e(Tag, "feedid="+msg);
+//		if(myCallback!=null){
+//			myCallback.updateId(msg);
+//		}
+//	}
 	void setDevMcState(String state){
 		if(myCallback!=null){
 			myCallback.onMcStateChanged(state);
 		}
 	}
-	void setDevNetState(String state){
-		if(myCallback!=null){
-			myCallback.onNetStateChanged(state);
-		}
-	}
-	void setDevAssisState(String state){
-		if(myCallback!=null){
-			myCallback.onAssisStateChanged(state);
-		}
-	}
+//	void setDevNetState(String state){
+//		if(myCallback!=null){
+//			myCallback.onNetStateChanged(state);
+//		}
+//	}
+//	void setDevAssisState(String state){
+//		if(myCallback!=null){
+//			myCallback.onAssisStateChanged(state);
+//		}
+//	}
 	/*
 	 * dev模式是强制进入的，在maintain模式也可以进去
 	 * 
@@ -344,7 +344,6 @@ public class MainFragment extends Fragment {
     	
     	firstInitErrors();
     	 initSever();
-    	//initPayServer();
     	initCoffeeMachine();
         initAssistMachine();
        
@@ -355,22 +354,29 @@ public class MainFragment extends Fragment {
 	}
     
     void restoreDevState(){
-    	simulateGoodId(Settings.getIsDebug(context));
+    //	simulateGoodId(Settings.getIsDebug(context));
     	coffeeMachine.cmd_openBoiler(Settings.getIsHeating(context));
     }
     
     
     
     Integer getCurType(){
-    	Iterator it = goodId.entrySet().iterator(); 
-    	while (it.hasNext()) {  	  
-    		 Map.Entry entry=(HashMap.Entry) it.next();  
-    		    Integer key = (Integer)entry.getKey();  	    
-    		    Integer value = (Integer)entry.getValue();  
-    	    if( value==cur_goodId){
-    	    	return key;
-    	    }  
+    	
+    	for(Coffee coffee:coffeeFormula){
+    		if(coffee.getId()==cur_goodId){
+    			return coffee.getOrder();
+    		}
     	}
+ 
+//    	Iterator it = goodId.entrySet().iterator(); 
+//    	while (it.hasNext()) {  	  
+//    		 Map.Entry entry=(HashMap.Entry) it.next();  
+//    		    Integer key = (Integer)entry.getKey();  	    
+//    		    Integer value = (Integer)entry.getValue();  
+//    	    if( value==cur_goodId){
+//    	    	return key;
+//    	    }  
+//    	}
     	return 0;
     }
 //    Integer getCurType(){
@@ -637,14 +643,14 @@ void existMask(){
 					case Handler_qr_zhifubao:
 						updateQRPic(msg.obj.toString(),AliPay);
 						break;
-					case Handler_netDisp:	
-						myToast.toastShow(msg.obj.toString());
-						setDevNetState(msg.obj.toString());
-						break;
-					case Handler_assiMcDisp:	
-						myToast.toastShow(msg.obj.toString());
-						setDevAssisState(msg.obj.toString());
-						break;
+//					case Handler_netDisp:	
+//						myToast.toastShow(msg.obj.toString());
+//						setDevNetState(msg.obj.toString());
+//						break;
+//					case Handler_assiMcDisp:	
+//						myToast.toastShow(msg.obj.toString());
+//						setDevAssisState(msg.obj.toString());
+//						break;
 					case Handler_tPay:
 						setStateDialogString(msg.obj.toString(),1);
 						break;
@@ -682,7 +688,7 @@ void existMask(){
 		
 		@Override
 		public void onDevModeChanged(boolean is) {
-			simulateGoodId(is);
+			//simulateGoodId(is);
 		}
 		
 		@Override
@@ -782,7 +788,7 @@ void existMask(){
 			@Override
 			public void onCallback(int id) {
 				
-				if(setCoffeeType(id)){
+				if(setCurCoffeeId(id)){
 					showSugarDialog(id);
 				}
 				//coffeeType=id;
@@ -793,7 +799,7 @@ void existMask(){
 			 @Override
 			 public void onCallback(int id) {
 				 
-				 if(setCoffeeType(id+4)){
+				 if(setCurCoffeeId(id+4)){
 					 showSugarDialog(id);
 				 }
 				 //coffeeType=id;
@@ -908,18 +914,18 @@ void existMask(){
 	    		mc_readCup();
 	    	}
 	    }
-	    /*
-	     * 为了不能注册的机子debug
-	     */
-	   void simulateGoodId(boolean is){
-		   if(is){
-			   if(goodId.isEmpty()){
-				   for(int i=0;i<7;i++){
-					   goodId.put(i, i+1);
-				   }
-			   }
-		   }
-	    }
+//	    /*
+//	     * 为了不能注册的机子debug
+//	     */
+//	   void simulateGoodId(boolean is){
+//		   if(is){
+//			   if(goodId.isEmpty()){
+//				   for(int i=0;i<7;i++){
+//					   goodId.put(i, i+1);
+//				   }
+//			   }
+//		   }
+//	    }
 	    
 	    void updatePrice(){
 
@@ -1625,9 +1631,9 @@ void existMask(){
 //			 }
 			 void updateEnable(){
 				 String errors=null;
-				// if(Errors.hasError()){
-					 if(false){
-					 errors=Errors.getErrorsString();
+				 if(Errors.hasError()){
+//					 if(false){
+					 errors=Errors.getErrorsDetails(context);
 					 leaveDevOrMaintainMode();
 					 enterMaintainMode(appealed,errors);
 				 }else{
@@ -1652,7 +1658,7 @@ void existMask(){
 						stateDialog.setState(state);
 					}
 				}
-				boolean  setCoffeeType(int type){
+				boolean  setCurCoffeeId(int type){
 					
 					if(type==-1){
 						cur_goodId=-1;
@@ -1661,11 +1667,18 @@ void existMask(){
 						return false;
 					}
 					coffeeType=type;
-	
-					if(goodId.containsKey(type)){
-						cur_goodId=goodId.get(type);
-						return true;
+					
+					for(Coffee c:coffeeFormula){
+						if(c.getOrder()==type){
+							cur_goodId=c.getId();
+							return true;
+						}
 					}
+//					
+//					if(goodId.containsKey(type)){
+//						cur_goodId=goodId.get(type);
+//						return true;
+//					}
 					return false;
 				}
 				

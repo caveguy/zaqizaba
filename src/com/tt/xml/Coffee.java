@@ -2,6 +2,7 @@ package com.tt.xml;
 
 public class Coffee {
 	private Integer id=null;
+	private Integer order=null;
 	private String name=null;
 	private String price=null;
 
@@ -45,8 +46,14 @@ public class Coffee {
 	public Integer getId() {
 		return id;
 	}
+	public Integer getOrder() {
+		return order;
+	}
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	public void setorder(Integer o) {
+		this.order = o;
 	}
 	public String getName() {
 		return name;
@@ -161,7 +168,7 @@ public class Coffee {
 	@Override
 	public String toString() { 
 	
-		return "Coffee [id="+id + ", name=" + name+"" +" needCoffee="+needCoffee+
+		return "Coffee [order="+order+" id="+id + ", name=" + name+"" +" needCoffee="+needCoffee+
 				",\n coffeePowder="+coffeePowder+" coffeeWater="+coffeeWater+" coffeePreWater="+coffeePreWater+
 				",\n ch1l_sugar_level="+ch1l_sugar_level+" ch1r_powder_lever="+ch1r_powder_lever+
 				",\n ch2l_powder_lever="+ch2l_powder_lever+" ch2r_powder_lever="+ch2r_powder_lever+

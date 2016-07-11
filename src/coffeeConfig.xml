@@ -1,25 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <root>
-      <serial>989910</serial>
-    
-    	<!--锅炉温度设置  -->
-	<temperature 	goal="90" backlash="2"  min="70"/>
-	<!--设置定时清洗时间，及固定清洗频率  -->
-	<cleans cnt="50" >
-	   <time>0:00</time> 
-	   <time>12:00</time> 
-	</cleans>    
-
 <coffees>
 	<coffee id="1">
 		<name>Espresso</name>
 		<price>0.1</price>
 		<need_coffee>1</need_coffee>
 		<coffee_powder>10</coffee_powder>
-		<coffee_water>100</coffee_water>
+		<coffee_water>80</coffee_water>
 		<coffee_preWater>5</coffee_preWater>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1l_powder_level>0</ch1l_powder_level>
 		<ch1r_powder_level>0</ch1r_powder_level>
 		<ch2l_powder_level>0</ch2l_powder_level>
 		<ch2r_powder_level>0</ch2r_powder_level>
@@ -37,11 +26,10 @@
 		<name>Americano</name>
 		<price>0.2</price>
 		<need_coffee>1</need_coffee>
-		<coffee_powder>7</coffee_powder>
-		<coffee_water>50</coffee_water>
+		<coffee_powder>9</coffee_powder>
+		<coffee_water>80</coffee_water>
 		<coffee_preWater>5</coffee_preWater>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1l_powder_level>5</ch1l_powder_level>
 		<ch1r_powder_level>0</ch1r_powder_level>
 		<ch2l_powder_level>0</ch2l_powder_level>
 		<ch2r_powder_level>0</ch2r_powder_level>
@@ -49,7 +37,7 @@
 		<ch3r_powder_level>0</ch3r_powder_level>
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
-		<ch1_water>30</ch1_water>
+		<ch1_water>25</ch1_water>
 		<ch2_water>0</ch2_water>
 		<ch3_water>0</ch3_water>
 		<ch4_water>0</ch4_water>
@@ -58,20 +46,19 @@
 		<name>Cappuccino</name>
 		<price>0.3</price>
 		<need_coffee>1</need_coffee>
-		<coffee_powder>7</coffee_powder>
-		<coffee_water>50</coffee_water>
+		<coffee_powder>9</coffee_powder>
+		<coffee_water>80</coffee_water>
 		<coffee_preWater>5</coffee_preWater>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1l_powder_level>5</ch1l_powder_level>
-		<ch1r_powder_level>5</ch1r_powder_level>
-		<ch2l_powder_level>7</ch2l_powder_level>
-		<ch2r_powder_level>7</ch2r_powder_level>
+		<ch1r_powder_level>9</ch1r_powder_level>
+		<ch2l_powder_level>0</ch2l_powder_level>
+		<ch2r_powder_level>0</ch2r_powder_level>
 		<ch3l_powder_level>0</ch3l_powder_level>
 		<ch3r_powder_level>0</ch3r_powder_level>
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
-		<ch1_water>20</ch1_water>
-		<ch2_water>16</ch2_water>
+		<ch1_water>25</ch1_water>
+		<ch2_water>0</ch2_water>
 		<ch3_water>0</ch3_water>
 		<ch4_water>0</ch4_water>
 		
@@ -80,29 +67,10 @@
 		<name>Latte</name>
 		<price>0.4</price>
 		<need_coffee>1</need_coffee>
-		<coffee_powder>7</coffee_powder>
-		<coffee_water>50</coffee_water>
+		<coffee_powder>9</coffee_powder>
+		<coffee_water>80</coffee_water>
 		<coffee_preWater>5</coffee_preWater>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1l_powder_level>5</ch1l_powder_level>
-		<ch1r_powder_level>5</ch1r_powder_level>
-		<ch2l_powder_level>7</ch2l_powder_level>
-		<ch2r_powder_level>7</ch2r_powder_level>
-		<ch3l_powder_level>0</ch3l_powder_level>
-		<ch3r_powder_level>0</ch3r_powder_level>
-		<ch4l_powder_level>0</ch4l_powder_level>
-		<ch4r_powder_level>0</ch4r_powder_level>
-		<ch1_water>20</ch1_water>
-		<ch2_water>16</ch2_water>
-		<ch3_water>0</ch3_water>
-		<ch4_water>0</ch4_water>
-	</coffee>
-	<coffee id="5">
-		<name>Water</name>
-		<price>0.5</price>
-		<need_coffee>0</need_coffee>
-		<sugar_level>0;3;5;7</sugar_level>
-		<ch1l_powder_level>5</ch1l_powder_level>
 		<ch1r_powder_level>5</ch1r_powder_level>
 		<ch2l_powder_level>0</ch2l_powder_level>
 		<ch2r_powder_level>0</ch2r_powder_level>
@@ -110,8 +78,28 @@
 		<ch3r_powder_level>0</ch3r_powder_level>
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
-		<ch1_water>30</ch1_water>
+		<ch1_water>25</ch1_water>
 		<ch2_water>0</ch2_water>
+		<ch3_water>0</ch3_water>
+		<ch4_water>0</ch4_water>
+	</coffee>
+	<coffee id="5">
+		<name>Mocha</name>
+		<price>0.5</price>
+		<need_coffee>1</need_coffee>
+		<coffee_powder>9</coffee_powder>
+		<coffee_water>80</coffee_water>
+		<coffee_preWater>5</coffee_preWater>
+		<sugar_level>0;3;5;7</sugar_level>
+		<ch1r_powder_level>0</ch1r_powder_level>
+		<ch2l_powder_level>8</ch2l_powder_level>
+		<ch2r_powder_level>0</ch2r_powder_level>
+		<ch3l_powder_level>0</ch3l_powder_level>
+		<ch3r_powder_level>0</ch3r_powder_level>
+		<ch4l_powder_level>0</ch4l_powder_level>
+		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1_water>8</ch1_water>
+		<ch2_water>17</ch2_water>
 		<ch3_water>0</ch3_water>
 		<ch4_water>0</ch4_water>
 	</coffee>
@@ -120,16 +108,15 @@
 		<price>0.6</price>
 		<need_coffee>0</need_coffee>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1l_powder_level>5</ch1l_powder_level>
-		<ch1r_powder_level>0</ch1r_powder_level>
-		<ch2l_powder_level>5</ch2l_powder_level>
+		<ch1r_powder_level>9</ch1r_powder_level>
+		<ch2l_powder_level>0</ch2l_powder_level>
 		<ch2r_powder_level>0</ch2r_powder_level>
 		<ch3l_powder_level>0</ch3l_powder_level>
 		<ch3r_powder_level>0</ch3r_powder_level>
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
-		<ch1_water>0</ch1_water>
-		<ch2_water>40</ch2_water>
+		<ch1_water>40</ch1_water>
+		<ch2_water>0</ch2_water>
 		<ch3_water>0</ch3_water>
 		<ch4_water>0</ch4_water>
 	</coffee>
@@ -138,25 +125,29 @@
 		<price>0.7</price>
 		<need_coffee>0</need_coffee>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1l_powder_level>0</ch1l_powder_level>
 		<ch1r_powder_level>0</ch1r_powder_level>
-		<ch2l_powder_level>0</ch2l_powder_level>
+		<ch2l_powder_level>9</ch2l_powder_level>
 		<ch2r_powder_level>0</ch2r_powder_level>
-		<ch3l_powder_level>5</ch3l_powder_level>
+		<ch3l_powder_level>0</ch3l_powder_level>
 		<ch3r_powder_level>0</ch3r_powder_level>
 		<ch4l_powder_level>0</ch4l_powder_level>
 		<ch4r_powder_level>0</ch4r_powder_level>
-		<ch1_water>0</ch1_water>
-		<ch2_water>0</ch2_water>
-		<ch3_water>40</ch3_water>
+		<ch1_water>10</ch1_water>
+		<ch2_water>30</ch2_water>
+		<ch3_water>0</ch3_water>
 		<ch4_water>0</ch4_water>
 	</coffee>
-	 
+
+	    
+ 
 </coffees>
+	<!--锅炉温度设置  -->
+	<temperature 	goal="90" backlash="2"  min="70"/>
+	<!--设置定时清洗时间，及固定清洗频率  -->
+	<cleans cnt="50" >
+	   <time>0:00</time> 
+	   <time>12:00</time> 
+	</cleans>  
+	 <serial>989910</serial>
+</root>
 
-
-
-</root>	
-
-
-  

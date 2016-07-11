@@ -36,19 +36,24 @@ public  class Errors{
 	
 	
 	public static  enum  McError{
-		Mc_error1("mc_error1"),Mc_error2("mc_error2"),Mc_error3("mc_error3"),Mc_error4("mc_error4"),Mc_error5("mc_error5"),
-		Mc_error6("mc_error6"),Mc_error7("mc_error7"),Mc_error8("mc_error8"),Mc_error9("mc_error9"),Mc_error10("mc_error10"),
-		Mc_error21("mc_error21"),Mc_error22("mc_error22"),Mc_error23("mc_error23"),Mc_error24("mc_error24"),Mc_error25("mc_error25"),
-		Mc_error26("mc_error26"),Mc_error27("mc_error27");
+		Mc_error1("mc_error1",R.string.mc_error1),Mc_error2("mc_error2",R.string.mc_error2),Mc_error3("mc_error3",R.string.mc_error3),Mc_error4("mc_error4",R.string.mc_error4),Mc_error5("mc_error5",R.string.mc_error5),
+		Mc_error6("mc_error6",R.string.mc_error6),Mc_error7("mc_error7",R.string.mc_error7),Mc_error8("mc_error8",R.string.mc_error8),Mc_error9("mc_error9",R.string.mc_error9),Mc_error10("mc_error10",R.string.mc_error10),
+		Mc_error21("mc_error21",R.string.mc_error21),Mc_error22("mc_error22",R.string.mc_error22),Mc_error23("mc_error23",R.string.mc_error23),Mc_error24("mc_error24",R.string.mc_error24),Mc_error25("mc_error25",R.string.mc_error25),
+		Mc_error26("mc_error26",R.string.mc_error26),Mc_error27("mc_error27",R.string.mc_error27);
 		 private final String value;
+		 private final int  stringId;
 		
         //构造器默认也只能是private, 从而保证构造函数只能在内部使用
-		McError(String value) {
+		McError(String value,int id) {
             this.value = value;
+            this.stringId=id;
         }
         
         public String getValue() {
             return value;
+        }
+        public String getDetail(Context c) {
+        	return c.getString(stringId);
         }
 //		public final static String  Mc_error1="mc_error1";
 //		public final static String  Mc_error2="mc_error2";
@@ -110,14 +115,14 @@ public  class Errors{
 	public static boolean hasError(){
 		return errors.isEmpty()?false:true;
 	}
-	public static String  getErrorsString(){
+	public static String  getErrorsDetails(Context c){
 		StringBuilder all = new StringBuilder();
 		int i=0;
 		for(McError one:errors){
 			if(i>0){
 				all.append(";");
 			}
-			all.append(one.getValue());
+			all.append(one.getDetail(c));
 			i++;
 		}
 		if(all.length()!=0){
@@ -125,57 +130,5 @@ public  class Errors{
 		}
 		return all.toString();
 	}
-//	public String getErrorDetail(Context context,String error){
-//		String detail=null;
-//		switch(error){
-//		case Mc_error1:
-//			detail=context.getString(R.string.mc_error1);
-//			break;
-//		case Mc_error2:
-//			detail=context.getString(R.string.mc_error2);
-//			break;
-//		case Mc_error3:
-//			detail=context.getString(R.string.mc_error3);
-//			break;
-//		case Mc_error4:
-//			detail=context.getString(R.string.mc_error4);
-//			break;
-//		case Mc_error5:
-//			detail=context.getString(R.string.mc_error5);
-//			break;
-//		case Mc_error6:
-//			detail=context.getString(R.string.mc_error6);
-//			break;
-//		case Mc_error7:
-//			detail=context.getString(R.string.mc_error7);
-//			break;
-//		case Mc_error8:
-//			detail=context.getString(R.string.mc_error8);
-//			break;
-//		case Mc_error9:
-//			detail=context.getString(R.string.mc_error9);
-//			break;
-//		case Mc_error10:
-//			detail=context.getString(R.string.mc_error10);
-//			break;
-//		case Mc_error11:
-//			detail=context.getString(R.string.mc_error11);
-//			break;
-//		case Mc_error12:
-//			detail=context.getString(R.string.mc_error12);
-//			break;
-//		case Mc_error13:
-//			detail=context.getString(R.string.mc_error13);
-//			break;
-//		case Mc_error14:
-//			detail=context.getString(R.string.mc_error14);
-//			break;
-//		case Mc_error15:
-//			detail=context.getString(R.string.mc_error15);
-//			break;
-//			default:
-//				detail=context.getString(R.string.unknowError);	
-//		}
-//		return detail;
-//	}
+
 }

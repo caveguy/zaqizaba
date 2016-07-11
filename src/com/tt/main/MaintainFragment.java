@@ -31,12 +31,13 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.example.coffemachinev3.R;
+import com.tt.util.GetMacAddress;
 import com.tt.util.Settings;
 import com.tt.util.UpdateManager;
 
 public class MaintainFragment extends Fragment implements OnClickListener,android.widget.CompoundButton.OnCheckedChangeListener{
 
-	TextView t_maintain,t_mcDetail,t_netDetail,t_version,t_refund,t_assistDetail,t_id;
+	TextView t_maintain,t_mcDetail,t_version,t_refund,t_id,t_error;//t_netDetail,t_assistDetail;
 	RadioButton radioCup1,radioCup2;
 //	RadioButton radio_needBean,radio_noBean;
 	CheckBox btn_debug,btn_heating;
@@ -51,7 +52,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	Handler myHandler=null;
 	private final int Handler_net=1001;
 	private final int Handler_mc=1002;
-	private final int Handler_assis=1003;
+//	private final int Handler_error=1003;
 	private final int Handler_leave=1004;
 	private final int Handler_enterDev=1005;
 	private final int Handler_enterMaintain=1006;
@@ -131,23 +132,23 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			
 		}
 
-		@Override
-		public void onNetStateChanged(String state) {
-			Message message=new Message();
-			message.what=Handler_net;
-			message.obj=state;
-			myHandler.sendMessage(message);
-			
-			
-		}
-		@Override
-		public void onAssisStateChanged(String state) {
-			Message message=new Message();
-			message.what=Handler_assis;
-			message.obj=state;
-			myHandler.sendMessage(message);
-			
-		}
+//		@Override
+//		public void onNetStateChanged(String state) {
+//			Message message=new Message();
+//			message.what=Handler_net;
+//			message.obj=state;
+//			myHandler.sendMessage(message);
+//			
+//			
+//		}
+//		@Override
+//		public void onAssisStateChanged(String state) {
+//			Message message=new Message();
+//			message.what=Handler_assis;
+//			message.obj=state;
+//			myHandler.sendMessage(message);
+//			
+//		}
 		@Override
 		public void enterDevMode() {
 			
@@ -168,21 +169,21 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			
 		}
 
-		@Override
-		public void updateId(String id) {
-			Message message=new Message();
-			message.what=Handler_id;
-			message.obj=id;
-			myHandler.sendMessage(message);
-		}
+//		@Override
+//		public void updateId(String id) {
+//			Message message=new Message();
+//			message.what=Handler_id;
+//			message.obj=id;
+//			myHandler.sendMessage(message);
+//		}
 
 		@Override
-		public void enterMaintainMode(boolean refund, String state) {
+		public void enterMaintainMode(boolean refund, String errors) {
 			Log.e("maintain", "enterMaintainMode!!");
 			Message message=new Message();
 			Bundle bundle=new Bundle();
 			bundle.putBoolean("refund", refund);
-			bundle.putString("state", state);
+			bundle.putString("errors", errors);
 			
 			message.what=Handler_enterMaintain;
 			message.obj=bundle;
@@ -279,12 +280,15 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	public void setMcState(String state){
 		t_mcDetail.setText(state);
 	}
-	public void setNetState(String state){
-		t_netDetail.setText(state);
+	public void setErrors(String error){
+		t_error.setText(error);
 	}
-	public void setAssistState(String state){
-		t_assistDetail.setText(state);
-	}
+//	public void setNetState(String state){
+//		t_netDetail.setText(state);
+//	}
+//	public void setAssistState(String state){
+//		t_assistDetail.setText(state);
+//	}
     void initView(View view){
     	context=getActivity();
     	layout_volume=(LinearLayout)view.findViewById(R.id.layout_volume);
@@ -300,11 +304,11 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	
     	t_maintain=(TextView)view.findViewById(R.id.t_maintain);
     	t_mcDetail=(TextView)view.findViewById(R.id.t_mcDetail);
-    	t_assistDetail=(TextView)view.findViewById(R.id.t_assistDetail);
+    	t_error=(TextView)view.findViewById(R.id.t_error);
     	t_version=(TextView)view.findViewById(R.id.t_version);
     	t_id=(TextView)view.findViewById(R.id.t_id);
     	t_refund=(TextView)view.findViewById(R.id.t_refund);
-    	t_netDetail=(TextView)view.findViewById(R.id.t_netDetail);
+    	//t_netDetail=(TextView)view.findViewById(R.id.t_netDetail);
     	radioCup1=(RadioButton)view.findViewById(R.id.radio_cup1);
     	radioCup2=(RadioButton)view.findViewById(R.id.radio_cup2);
     //	radio_needBean=(RadioButton)view.findViewById(R.id.radio_needBean);
@@ -313,6 +317,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	btn_clean=(Button)view.findViewById(R.id.btn_clean);
     	btn_clean.setOnClickListener(this);
     	btn_mskCancel.setOnClickListener(this);
+    	t_id.setText(GetMacAddress.getMacAddress());
     	if(Settings.getDropcupMode(context)){
     		radioCup1.setChecked(true);	
     	}else{
@@ -406,25 +411,22 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 						case Handler_mc:
 							setMcState(msg.obj.toString());
 							break;
-						case Handler_net:
-							setNetState(msg.obj.toString());
-							break;
-						case Handler_assis:
-							setAssistState(msg.obj.toString());
-							break;
+//						case Handler_assis:
+//							setAssistState(msg.obj.toString());
+//							break;
 						case Handler_enterDev:
 							enterDev();
 							break;
 						case Handler_enterMaintain:
 							Bundle bundle=(Bundle) msg.obj;
 							boolean refund=false;
-							String state=null;
+							String errors=null;
 							if(bundle.containsKey("refund"))
 							  refund=bundle.getBoolean("refund");
 							enterMaintain(refund);
-							if(bundle.containsKey("state")){
-								state=bundle.getString("state");
-							    setMcState(state);
+							if(bundle.containsKey("errors")){
+								errors=bundle.getString("errors");
+							    setErrors(errors);
 							}
 							break;
 						case Handler_hide:

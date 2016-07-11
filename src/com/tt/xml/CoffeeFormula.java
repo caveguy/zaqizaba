@@ -86,7 +86,7 @@ public class CoffeeFormula {
 	 * @throws Exception
 	 */
 	public void getConfigs(InputStream xml) throws Exception{
-		
+		int order=0;
 		Coffee coffee = null;
 		CleanTime time = null;
 		XmlPullParser pullParser = Xml.newPullParser();
@@ -127,6 +127,8 @@ public class CoffeeFormula {
 					int id = new Integer(pullParser.getAttributeValue(0));
 					coffee = new Coffee();
 					coffee.setId(id);
+					coffee.setorder(order++);
+					
 				}
 
 				else if(name.equals(pullParser.getName())){

@@ -205,26 +205,28 @@
     <string name="hasEmpty">数据不能为空，请填写完整！</string>
     <string name="set_stock">设置库存</string>
     <string name="loginFailed">服务器注册失败</string>
+    <string name="errorState">错误状态：</string>
     
-    <string name="mc_error1">与咖啡机通信超时</string>
+    
+    	
+	<string name="mc_error1">与咖啡机通信超时</string>
     <string name="mc_error2">与辅助机超时</string>
     <string name="mc_error3">卡杯</string>
-    <string name="mc_error4">机器加热器或ntc错误</string>
-    <string name="mc_error5">锅炉温度过高</string>
-    <string name="mc_error6">水泵或流量计故障</string>
-    <string name="mc_error7">压粉电机过流</string>
-    <string name="mc_error8">压粉电机编码器或压粉电机走不到基准位</string>
-    <string name="mc_error9">豆槽管道堵塞</string>
-    <string name="mc_error10">缺水</string>
-    <string name="mc_error11">缺豆</string>
-    <string name="mc_error12">粉槽1缺粉</string>
-    <string name="mc_error13">粉槽2缺粉</string>
-    <string name="mc_error14">粉槽3缺粉</string>
-    <string name="mc_error15">缺纸杯</string>
-
- 
     
-    
+    <string name="mc_error4">故障1</string>
+    <string name="mc_error5">故障2</string>
+    <string name="mc_error6">故障3</string>
+    <string name="mc_error7">故障4</string>
+    <string name="mc_error8">故障5</string>
+    <string name="mc_error9">故障6</string>
+    <string name="mc_error10">获取工艺表失败</string> 
+    <string name="mc_error21">缺豆</string>
+    <string name="mc_error22">粉槽1缺粉</string>
+    <string name="mc_error23">粉槽2缺粉</string>
+    <string name="mc_error24">粉槽3缺粉</string>
+    <string name="mc_error25">缺纸杯</string>
+	<string name="mc_error26">缺水</string>
+    <string name="mc_error27">未连接服务器</string>
 
     <string name="version">v3.2.4-160624-1</string>
     
