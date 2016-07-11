@@ -416,7 +416,7 @@ public class MainFragment extends Fragment {
 		
 		@Override
 		public void onReady() {
-			setEnable(true,Errors.McError.Mc_error1,context.getString(R.string.cmd1_ready));
+			setEnable(true,Errors.McError.Mc_error4,context.getString(R.string.cmd1_ready));
 		//	setMcEnable(true,context.getString(R.string.cmd1_ready));
 			
 		}
@@ -516,6 +516,7 @@ void initAssistMachine(){
 				myHandler.post(new Runnable() {
 					@Override
 					public void run() {
+						payServer.updateSale();
 						closeOder();
 					}
 				});	
@@ -819,6 +820,7 @@ void existMask(){
 	}
 	
 	void resetChoice(){
+		payServer.cancelPay();
 		page1.setCoffeeIconRadio(0);
 		page2.setCoffeeIconRadio(0);
 		closeSugarDialog();
@@ -1034,7 +1036,7 @@ void existMask(){
 						setEnable(false, Errors.McError.Mc_error27);
 						//setNetWorkEnable(false,context.getString(R.string.loginFailed));
 						myToast.toastShow("register failed!  msg="+msg);
-						
+						payServer.tryLogin();
 					}
 					
 					@Override
@@ -1175,7 +1177,7 @@ void existMask(){
 	    }
 	    void askZfbQrPay(int goodId){
 	    	String price=getGoodPrice(goodId);
-	    	payServer.getZfbQr(goodId+"", price);
+	    	payServer.getWeixinQr(goodId+"", price);
 	    }
 	    void askQrPay(int goodId){
 	    	askZfbQrPay(goodId);
@@ -1524,15 +1526,15 @@ void existMask(){
 			} 
 
 			 
-			 void setMcEnable2(boolean  enable,String msg){
-				 mylog.log_i("setMcEnable ="+enable+" msg="+msg);
-				 if(isMachineWork!=enable||(!oldMcStr.equals(msg))){
-					 oldMcStr=msg;
-					 isMachineWork=enable;
-					 updateEnable();
-					 sendMsgToHandler(Handler_mcDisp, msg);
-				 }
-			 }
+//			 void setMcEnable2(boolean  enable,String msg){
+//				 mylog.log_i("setMcEnable ="+enable+" msg="+msg);
+//				 if(isMachineWork!=enable||(!oldMcStr.equals(msg))){
+//					 oldMcStr=msg;
+//					 isMachineWork=enable;
+//					 updateEnable();
+//					 sendMsgToHandler(Handler_mcDisp, msg);
+//				 }
+//			 }
 			 void setEnable(boolean  enable,Errors.McError error){
 				 mylog.log_i("setMcEnable ="+enable+" msg="+error.getValue());
 				 boolean changed=false;
@@ -1647,6 +1649,7 @@ void existMask(){
 					tradeStep=StepNone;		
 					cancelCloseTimerTask();
 					cancelTimeOutTask();
+					
 //					deliveryController.cancelQueryTimerTask();
 //					deliveryController.cmd_readError();//交易完成之后读取水位
 					assistProtocol.cmd_handShake();

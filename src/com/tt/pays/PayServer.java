@@ -1,10 +1,6 @@
 package com.tt.pays;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.security.MessageDigest;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -14,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 
 import com.loopj.android.http.RequestParams;
@@ -45,9 +42,11 @@ public class PayServer {
 	private String cur_price=null;
 	private String buyerid=null;
 	private int payType=1;
-	
+	private boolean isLogin=false;
 	private final int PayType_zfb=1;
 	private final int PayType_weixin=2;
+	boolean inPayQuery=false;
+//	boolean paySuccess=false;
 	/*
 	 * 
 	 2.1 注册                register
@@ -94,7 +93,7 @@ public class PayServer {
 	private final String Index_tradeState="tradestatus";
 	private final String Index_saleTime="saletime";
 	private final String Index_payType="paytype";
-	private final String Index_qrCode="twostr";
+	private final String Index_qrCode="msg";
 	private final String Index_buyerid="buyerid";
 	private final String Index_oneyuan="oneyuan";
 	private final String Index_fivejiao="fivejiao";
@@ -103,27 +102,75 @@ public class PayServer {
 
 	private final int Duration_beat=1000*60*3;
 	private final String Tag="BLService===";
+//	private final byte Query_zfb=0x01;
+//	private final byte Query_weixin=0x02;
+//
+//	
+//	private byte query_what=0;
 	
 	private Timer serverTimer=null;
 	private BeatTask beatTask=null;
-	private PayStateTask payStateTask=null;
-	
+	private ZfbPayStateTask zfbPayStateTask=null;
+	private WeixinPayStateTask weixinPayStateTask=null;
+	Handler myHandler=new Handler();
 	
 	class BeatTask extends TimerTask{
 		
 		@Override
 		public void run() {
-         		
+			myHandler.post(heatBeatRunable);	
 		}
 		
 	};
-	class PayStateTask extends TimerTask{
+	
+	Runnable heatBeatRunable=new Runnable(){
+
+		@Override
+		public void run() {
+			if(isLogin)
+				heatBeat();
+			else{
+				login();
+			}
+		}
+		
+	};
+	Runnable queryZfbRunable=new Runnable(){
+		
+		@Override
+		public void run() {
+			queryZfbState(); 
+			
+		}
+		
+	};
+	Runnable queryWeixinRunable=new Runnable(){
+		
+		@Override
+		public void run() {
+			queryWeixinState();
+			
+		}
+		
+	};
+	
+	
+	class ZfbPayStateTask extends TimerTask{
 		boolean isRun=false;
 		@Override
 		public void run() {
          		if(isRun){
-         			
+         			myHandler.post(queryZfbRunable);	    	
          		}
+		}
+	};
+	class WeixinPayStateTask extends TimerTask{
+		boolean isRun=false;
+		@Override
+		public void run() {
+			if(isRun){
+				myHandler.post(queryWeixinRunable);	
+			}
 		}
 		
 	};
@@ -131,27 +178,42 @@ public class PayServer {
 		if(serverTimer==null){
 			serverTimer=new Timer();
 		}
-//		if(beatTask!=null){
-//			if(beatTask.cancel())
-//				beatTask=null;
-//		}
+
 		if(beatTask==null){
 			beatTask=new BeatTask();
 			serverTimer.schedule(beatTask, 500, Duration_beat);	
 		}
 	}
-	void startPayStateTask(){
+	void startZfbPayStateTask(){
+		if(!inPayQuery)
+			return;
 		if(serverTimer==null){
 			serverTimer=new Timer();
 		}
-		if(payStateTask!=null){
-			payStateTask.isRun=false;
-			if(payStateTask.cancel())
-				beatTask=null;
+		if(zfbPayStateTask!=null){
+			zfbPayStateTask.isRun=false;
+			if(zfbPayStateTask.cancel())
+				zfbPayStateTask=null;
 		}
-		payStateTask=new PayStateTask();
-		payStateTask.isRun=true;
-		serverTimer.schedule(beatTask, 1000);	
+		zfbPayStateTask=new ZfbPayStateTask();
+		zfbPayStateTask.isRun=true;
+		serverTimer.schedule(zfbPayStateTask, 1000);	
+		
+	}
+	void startWeixinPayStateTask(){
+		if(!inPayQuery)
+			return;
+		if(serverTimer==null){
+			serverTimer=new Timer();
+		}
+		if(weixinPayStateTask!=null){
+			weixinPayStateTask.isRun=false;
+			if(weixinPayStateTask.cancel())
+				weixinPayStateTask=null;
+		}
+		weixinPayStateTask=new WeixinPayStateTask();
+		weixinPayStateTask.isRun=true;
+		serverTimer.schedule(weixinPayStateTask, 1000);	
 	}
 	void cancelBeatTask(){
 		if(beatTask!=null){
@@ -244,40 +306,48 @@ public class PayServer {
 			weixinTradeno =(String) map.get(Index_outTradeno);
 		}
 	}
-	void onzfbPayState(Map map ){
+	boolean onzfbPayState(Map map ){
 		if(map.containsKey(Index_tradeState)){
 			String temp=(String) map.get(Index_tradeState);
 			
 			if(temp.equals("success")){
+				payType=PayType_zfb;
 				if(map.containsKey(Index_buyerid)){
 					buyerid=(String) map.get(Index_buyerid);
 				}
 				if(callback!=null){
 					callback.onPaySuccess(PayType_zfb,buyerid);
 				}
-			}	
+				return true;
+			}
 		}
+		return false;
 	}
-	void onWeixinPayState(Map map ){
+	boolean onWeixinPayState(Map map ){
 		if(map.containsKey(Index_tradeState)){
 			String temp=(String) map.get(Index_tradeState);
 			
 			if(temp.equals("success")){
+				payType=PayType_weixin;
 				if(map.containsKey(Index_buyerid)){
 					buyerid=(String) map.get(Index_buyerid);
 				}
 				if(callback!=null){
 					callback.onPaySuccess(PayType_weixin,buyerid);
 				}
+				return true;
 			}	
 		}
+		return false;
 	}
 	
 	private void onLoginFailed(String msg){
+		isLogin=false;
 		if(callback!=null)
 			callback.onLoginFailed(msg);
 	}
 	private void onLoginSuccess(){
+		isLogin=true;
 		if(callback!=null)
 			callback.onLoginSuccess();
 	}
@@ -348,7 +418,10 @@ public class PayServer {
 			StringBuffer  msg=new StringBuffer();
 			map=dealCommBack(code,response, msg);
 			if(map!=null){
+				
 				onGetZfbQrSuccess(map);
+				inPayQuery=true;
+				startZfbPayStateTask();
 			}else{
 				onGetZfbQrFailed(msg.toString());
 			}
@@ -366,7 +439,9 @@ public class PayServer {
 			StringBuffer  msg=new StringBuffer();
 			map=dealCommBack(code,response, msg);
 			if(map!=null){
+				inPayQuery=true;
 				onGetWeixinQrSuccess(map);
+				startWeixinPayStateTask();
 			}else{
 				onGetWeixinQrFailed(msg.toString());
 			}
@@ -381,13 +456,20 @@ public class PayServer {
 		@Override
 		public void onHttpResult(int code, JSONObject response) {
 			Map map=null;
+			
 			StringBuffer  msg=new StringBuffer();
 			map=dealCommBack(code,response, msg);
 			if(map!=null){
-				onzfbPayState(map);
+				
+				if(onzfbPayState(map)){
+					inPayQuery=false;
+				}
 			}else{
 				onGetZfbPayStateFailed(msg.toString());
 			}
+		
+			startZfbPayStateTask();
+			
 		}
 		
 		@Override
@@ -402,10 +484,15 @@ public class PayServer {
 			StringBuffer  msg=new StringBuffer();
 			map=dealCommBack(code,response, msg);
 			if(map!=null){
-				onWeixinPayState(map);
+				if(onWeixinPayState(map)){
+					inPayQuery=false;
+				}
 			}else{
 				onGetWeixinPayStateFailed(msg.toString());
 			}
+
+			startWeixinPayStateTask();
+		
 		}
 		
 		@Override
@@ -530,7 +617,9 @@ public class PayServer {
 		heatBeat();
 		startBeatTask();
 	}
-	
+	public void tryLogin(){
+		startBeatTask();
+	}
 	
 	public void getZfbQr(String id,String price){	
 		RequestParams params = new RequestParams();
@@ -540,12 +629,15 @@ public class PayServer {
 		params.add(Index_goodsId,id);
 		params.add(Index_price,price);
 		postParams(url_extra_zfb,params,zfbQrCallback);
+		
 	}
 	public void getWeixinQr(String id,String price){	
+		Log.i(Tag, "getWeixinQr id="+id+"price="+price);
 		RequestParams params = new RequestParams();
 		addedCommParas(params);
 		params.add(Index_goodsId,id);
 		params.add(Index_price,price);
+		
 		postParams(url_extra_weixin,params,weixinQrCallback);
 	}
 	private void queryZfbState(){	
@@ -662,6 +754,13 @@ public class PayServer {
 	 */
 	public void tradeFinished(){
 		
+	}
+	
+	 public void cancelPay(){
+		inPayQuery=false;
+	 }
+	public boolean isLogin(){
+		return isLogin;
 	}
 	@Override
 	protected void finalize() throws Throwable {
