@@ -46,7 +46,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	boolean needBean=true ;   	  //
 	public static DevCallBack back=null;
 	RelativeLayout layout_mask;
-	LinearLayout layout_volume;
+	LinearLayout layout_volume,layout_temper;
 	Button btn_clean,btn_mskCancel,btn_update,btn_stock;
 	private ProgressBar proBar;
 	Handler myHandler=null;
@@ -252,7 +252,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		layout_volume.setVisibility(View.VISIBLE);
 		proBar.setVisibility(View.GONE);
 		t_id.setVisibility(View.VISIBLE);
-		t_temper.setVisibility(View.VISIBLE);
+		layout_temper.setVisibility(View.VISIBLE);
 		t_refund.setVisibility(View.GONE);
 		
 	}
@@ -272,7 +272,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		btn_stock.setVisibility(View.GONE);
 		t_version.setVisibility(View.GONE);
 		t_id.setVisibility(View.GONE);
-		t_temper.setVisibility(View.GONE);
+		layout_temper.setVisibility(View.GONE);
 		proBar.setVisibility(View.GONE);
 		if(refund){//已经付款状态,应该提示退款
 			t_refund.setVisibility(View.VISIBLE);
@@ -303,6 +303,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     void initView(View view){
     	context=getActivity();
     	layout_volume=(LinearLayout)view.findViewById(R.id.layout_volume);
+    	layout_temper=(LinearLayout)view.findViewById(R.id.layout_temper);
     	audioManager=(AudioManager)context.getSystemService(Service.AUDIO_SERVICE);
     	layout_mask=(RelativeLayout)view.findViewById(R.id.layout_mask);
     	btn_debug=(CheckBox)view.findViewById(R.id.btn_debug);

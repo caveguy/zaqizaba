@@ -393,22 +393,25 @@ public class MainFragment extends Fragment {
 //}
     String getCurGoodName(){
     	for(Coffee coffee:coffeeFormula){
-    		if(coffee.getId()==cur_goodId);
-    		return coffee.getName();
+    		if(coffee.getId()==cur_goodId){
+    			return coffee.getName();
+    		}
     	}
     	return "";
     }
     String getGoodPrice(int id){
     	for(Coffee coffee:coffeeFormula){
-    		if(coffee.getId()==id);
-    		return coffee.getPrice();
+    		if(coffee.getId()==id){
+    			return coffee.getPrice();
+    		}
     	}
     	return "";
     }
     String getCurGoodPrice(){
     	for(Coffee coffee:coffeeFormula){
-    		if(coffee.getId()==cur_goodId);
-    		return coffee.getPrice();
+    		if(coffee.getId()==cur_goodId){
+    			return coffee.getPrice();
+    		}
     	}
     	return "";
     }  
@@ -858,7 +861,7 @@ void existMask(){
 	}
 	void showPayDialog(int id,int sweet){
 		startCloseTimer(PayCloseCnt);
-		
+		//Log.e(Tag, "showPayDialog order="+id+"curgoodid="+cur_goodId+"getCurGoodName="+getCurGoodName());
 		payDialog=new PayDialog(context,id%4,sweet,getCurGoodName());
 		payDialog.setListener(payListener);
 		payDialog.show();

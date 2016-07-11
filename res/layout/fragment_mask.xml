@@ -91,7 +91,8 @@
 	        /> 
 	       </LinearLayout>
 	        
-       	 <LinearLayout 	    
+       	 <LinearLayout 
+       	     android:id="@+id/layout_temper"	    
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:gravity="center"
