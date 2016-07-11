@@ -21,7 +21,7 @@ public interface  ServerCallback {
 	public void onGetZfbQrCode(String qr);
 	public void onGetWeixinQrCode(String qr);
 	//支付成功
-	public void onPaySuccess(int type,String buyerId);
+	public void onPaySuccess(String type,String buyerId);
 	//支付失败
 	public void onPayFailed();
 	//有新app版本更新

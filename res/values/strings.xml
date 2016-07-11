@@ -206,6 +206,7 @@
     <string name="set_stock">设置库存</string>
     <string name="loginFailed">服务器注册失败</string>
     <string name="errorState">错误状态：</string>
+    <string name="mc_temper">咖啡机当前温度：</string>
     
     
     	
@@ -228,7 +229,7 @@
 	<string name="mc_error26">缺水</string>
     <string name="mc_error27">未连接服务器</string>
 
-    <string name="version">v3.2.4-160624-1</string>
+    <string name="version">v3.3.0-160711-3</string>
     
 
 </resources>

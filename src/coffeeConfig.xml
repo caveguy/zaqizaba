@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <root>
 <coffees>
+<!--
 	<coffee id="1">
 		<name>Espresso</name>
 		<price>0.1</price>
@@ -9,133 +10,101 @@
 		<coffee_water>80</coffee_water>
 		<coffee_preWater>5</coffee_preWater>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1r_powder_level>0</ch1r_powder_level>
-		<ch2l_powder_level>0</ch2l_powder_level>
-		<ch2r_powder_level>0</ch2r_powder_level>
-		<ch3l_powder_level>0</ch3l_powder_level>
-		<ch3r_powder_level>0</ch3r_powder_level>
-		<ch4l_powder_level>0</ch4l_powder_level>
-		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1R_powder_level>0</ch1R_powder_level>
+		<ch2L_powder_level>0</ch2L_powder_level>
+		<ch2R_powder_level>0</ch2R_powder_level>
+		<ch3L_powder_level>0</ch3L_powder_level>
+		<ch3R_powder_level>0</ch3R_powder_level>
+		<ch4L_powder_level>0</ch4L_powder_level>
+		<ch4R_powder_level>0</ch4R_powder_level>
 		<ch1_water>5</ch1_water>
 		<ch2_water>0</ch2_water>
 		<ch3_water>0</ch3_water>
 		<ch4_water>0</ch4_water>
 
 	</coffee>
+	-->
 	<coffee id="2">
-		<name>Americano</name>
-		<price>0.2</price>
+		<name>美式咖啡</name>
+		<price>0.02</price>
 		<need_coffee>1</need_coffee>
 		<coffee_powder>9</coffee_powder>
 		<coffee_water>80</coffee_water>
 		<coffee_preWater>5</coffee_preWater>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1r_powder_level>0</ch1r_powder_level>
-		<ch2l_powder_level>0</ch2l_powder_level>
-		<ch2r_powder_level>0</ch2r_powder_level>
-		<ch3l_powder_level>0</ch3l_powder_level>
-		<ch3r_powder_level>0</ch3r_powder_level>
-		<ch4l_powder_level>0</ch4l_powder_level>
-		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1R_powder_level>0</ch1R_powder_level>
+		<ch2L_powder_level>0</ch2L_powder_level>
+		<ch2R_powder_level>0</ch2R_powder_level>
 		<ch1_water>25</ch1_water>
 		<ch2_water>0</ch2_water>
-		<ch3_water>0</ch3_water>
-		<ch4_water>0</ch4_water>
 	</coffee>
 	<coffee id="3">
-		<name>Cappuccino</name>
-		<price>0.3</price>
+		<name>卡布奇诺</name>
+		<price>0.01</price>
 		<need_coffee>1</need_coffee>
 		<coffee_powder>9</coffee_powder>
 		<coffee_water>80</coffee_water>
 		<coffee_preWater>5</coffee_preWater>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1r_powder_level>9</ch1r_powder_level>
-		<ch2l_powder_level>0</ch2l_powder_level>
-		<ch2r_powder_level>0</ch2r_powder_level>
-		<ch3l_powder_level>0</ch3l_powder_level>
-		<ch3r_powder_level>0</ch3r_powder_level>
-		<ch4l_powder_level>0</ch4l_powder_level>
-		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1R_powder_level>9</ch1R_powder_level>
+		<ch2L_powder_level>0</ch2L_powder_level>
+		<ch2R_powder_level>0</ch2R_powder_level>
 		<ch1_water>25</ch1_water>
 		<ch2_water>0</ch2_water>
-		<ch3_water>0</ch3_water>
-		<ch4_water>0</ch4_water>
+
 		
 	</coffee>
 	<coffee id="4">
-		<name>Latte</name>
-		<price>0.4</price>
+		<name>拿铁</name>
+		<price>0.04</price>
 		<need_coffee>1</need_coffee>
 		<coffee_powder>9</coffee_powder>
 		<coffee_water>80</coffee_water>
 		<coffee_preWater>5</coffee_preWater>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1r_powder_level>5</ch1r_powder_level>
-		<ch2l_powder_level>0</ch2l_powder_level>
-		<ch2r_powder_level>0</ch2r_powder_level>
-		<ch3l_powder_level>0</ch3l_powder_level>
-		<ch3r_powder_level>0</ch3r_powder_level>
-		<ch4l_powder_level>0</ch4l_powder_level>
-		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1R_powder_level>5</ch1R_powder_level>
+		<ch2L_powder_level>0</ch2L_powder_level>
+		<ch2R_powder_level>0</ch2R_powder_level>
 		<ch1_water>25</ch1_water>
 		<ch2_water>0</ch2_water>
-		<ch3_water>0</ch3_water>
-		<ch4_water>0</ch4_water>
+
 	</coffee>
 	<coffee id="5">
-		<name>Mocha</name>
-		<price>0.5</price>
+		<name>摩卡</name>
+		<price>0.02</price>
 		<need_coffee>1</need_coffee>
 		<coffee_powder>9</coffee_powder>
 		<coffee_water>80</coffee_water>
 		<coffee_preWater>5</coffee_preWater>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1r_powder_level>0</ch1r_powder_level>
-		<ch2l_powder_level>8</ch2l_powder_level>
-		<ch2r_powder_level>0</ch2r_powder_level>
-		<ch3l_powder_level>0</ch3l_powder_level>
-		<ch3r_powder_level>0</ch3r_powder_level>
-		<ch4l_powder_level>0</ch4l_powder_level>
-		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1R_powder_level>0</ch1R_powder_level>
+		<ch2L_powder_level>8</ch2L_powder_level>
+		<ch2R_powder_level>0</ch2R_powder_level>
 		<ch1_water>8</ch1_water>
 		<ch2_water>17</ch2_water>
-		<ch3_water>0</ch3_water>
-		<ch4_water>0</ch4_water>
+
 	</coffee>
 	<coffee id="6">
-		<name>Milk</name>
-		<price>0.6</price>
+		<name>热牛奶</name>
+		<price>0.03</price>
 		<need_coffee>0</need_coffee>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1r_powder_level>9</ch1r_powder_level>
-		<ch2l_powder_level>0</ch2l_powder_level>
-		<ch2r_powder_level>0</ch2r_powder_level>
-		<ch3l_powder_level>0</ch3l_powder_level>
-		<ch3r_powder_level>0</ch3r_powder_level>
-		<ch4l_powder_level>0</ch4l_powder_level>
-		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1R_powder_level>9</ch1R_powder_level>
+		<ch2L_powder_level>0</ch2L_powder_level>
+		<ch2R_powder_level>0</ch2R_powder_level>
 		<ch1_water>40</ch1_water>
 		<ch2_water>0</ch2_water>
-		<ch3_water>0</ch3_water>
-		<ch4_water>0</ch4_water>
 	</coffee>
 	<coffee id="7">
-		<name>Chocolate</name>
-		<price>0.7</price>
+		<name>热巧克力</name>
+		<price>0.01</price>
 		<need_coffee>0</need_coffee>
 		<sugar_level>0;3;5;7</sugar_level>
-		<ch1r_powder_level>0</ch1r_powder_level>
-		<ch2l_powder_level>9</ch2l_powder_level>
-		<ch2r_powder_level>0</ch2r_powder_level>
-		<ch3l_powder_level>0</ch3l_powder_level>
-		<ch3r_powder_level>0</ch3r_powder_level>
-		<ch4l_powder_level>0</ch4l_powder_level>
-		<ch4r_powder_level>0</ch4r_powder_level>
+		<ch1R_powder_level>0</ch1R_powder_level>
+		<ch2L_powder_level>9</ch2L_powder_level>
+		<ch2R_powder_level>0</ch2R_powder_level>
 		<ch1_water>10</ch1_water>
 		<ch2_water>30</ch2_water>
-		<ch3_water>0</ch3_water>
-		<ch4_water>0</ch4_water>
 	</coffee>
 
 	    
@@ -148,6 +117,6 @@
 	   <time>0:00</time> 
 	   <time>12:00</time> 
 	</cleans>  
-	 <serial>989910</serial>
+	<serial>3</serial>
 </root>
 

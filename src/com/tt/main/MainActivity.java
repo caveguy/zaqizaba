@@ -29,17 +29,10 @@ public class MainActivity extends Activity {
             coffeeFrag=new MainFragment();
             getFragmentManager().beginTransaction()
             .add(R.id.frag_work, coffeeFrag) .commitAllowingStateLoss();
-
-
-        	VideoFragment videoFragment=new VideoFragment();
-
-            	
+        	VideoFragment videoFragment=new VideoFragment();   	
             getFragmentManager().beginTransaction()
             .add(R.id.frag_video, videoFragment).commit();
 
-            
-            
-            
             coffeecallback=new MainFragment.UpdateMsgCallBack(){
 
 				@Override
@@ -51,7 +44,7 @@ public class MainActivity extends Activity {
 				
 				@Override
 				public void logoClicked() {
-					coffeeFrag.enterDevMode();
+				//	coffeeFrag.enterDevMode();
 				}
 			};
             coffeeFrag.setMsgCallBack(coffeecallback);

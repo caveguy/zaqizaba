@@ -37,7 +37,7 @@ import com.tt.util.UpdateManager;
 
 public class MaintainFragment extends Fragment implements OnClickListener,android.widget.CompoundButton.OnCheckedChangeListener{
 
-	TextView t_maintain,t_mcDetail,t_version,t_refund,t_id,t_error;//t_netDetail,t_assistDetail;
+	TextView t_maintain,t_mcDetail,t_version,t_refund,t_id,t_error,t_temper;//t_netDetail,t_assistDetail;
 	RadioButton radioCup1,radioCup2;
 //	RadioButton radio_needBean,radio_noBean;
 	CheckBox btn_debug,btn_heating;
@@ -50,7 +50,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	Button btn_clean,btn_mskCancel,btn_update,btn_stock;
 	private ProgressBar proBar;
 	Handler myHandler=null;
-	private final int Handler_net=1001;
+	private final int Handler_temper=1001;
 	private final int Handler_mc=1002;
 //	private final int Handler_error=1003;
 	private final int Handler_leave=1004;
@@ -193,6 +193,15 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			
 		}
 
+		@Override
+		public void onTemperChanged(String t) {
+			Message message=new Message();
+			message.what=Handler_temper;
+			message.obj=t;
+			myHandler.sendMessage(message);
+			
+		}
+
 
 		
 
@@ -243,6 +252,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		layout_volume.setVisibility(View.VISIBLE);
 		proBar.setVisibility(View.GONE);
 		t_id.setVisibility(View.VISIBLE);
+		t_temper.setVisibility(View.VISIBLE);
 		t_refund.setVisibility(View.GONE);
 		
 	}
@@ -262,6 +272,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		btn_stock.setVisibility(View.GONE);
 		t_version.setVisibility(View.GONE);
 		t_id.setVisibility(View.GONE);
+		t_temper.setVisibility(View.GONE);
 		proBar.setVisibility(View.GONE);
 		if(refund){//已经付款状态,应该提示退款
 			t_refund.setVisibility(View.VISIBLE);
@@ -308,7 +319,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	t_version=(TextView)view.findViewById(R.id.t_version);
     	t_id=(TextView)view.findViewById(R.id.t_id);
     	t_refund=(TextView)view.findViewById(R.id.t_refund);
-    	//t_netDetail=(TextView)view.findViewById(R.id.t_netDetail);
+    	t_temper=(TextView)view.findViewById(R.id.t_temper);
     	radioCup1=(RadioButton)view.findViewById(R.id.radio_cup1);
     	radioCup2=(RadioButton)view.findViewById(R.id.radio_cup2);
     //	radio_needBean=(RadioButton)view.findViewById(R.id.radio_needBean);
@@ -411,9 +422,10 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 						case Handler_mc:
 							setMcState(msg.obj.toString());
 							break;
-//						case Handler_assis:
-//							setAssistState(msg.obj.toString());
-//							break;
+						case Handler_temper:
+							t_temper.setText(msg.obj.toString());
+							//setAssistState(msg.obj.toString());
+							break;
 						case Handler_enterDev:
 							enterDev();
 							break;

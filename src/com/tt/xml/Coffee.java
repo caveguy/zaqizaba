@@ -15,14 +15,14 @@ public class Coffee {
 	/*
 	 * 糖比较特殊，用户需要选择，用string splite四份
 	 */
-	private String ch1l_sugar_level=null;//用string是为了一个中分出4个
-	private Integer ch1r_powder_lever=0;
-	private Integer ch2l_powder_lever=0;
-	private Integer ch2r_powder_lever=0;
-	private Integer ch3l_powder_lever=0;
-	private Integer ch3r_powder_lever=0;
-	private Integer ch4l_powder_lever=0;
-	private Integer ch4r_powder_lever=0;
+	private String ch1L_sugar_level=null;//用string是为了一个中分出4个
+	private Integer ch1R_powder_level=0;
+	private Integer ch2L_powder_level=0;
+	private Integer ch2R_powder_level=0;
+	private Integer ch3L_powder_level=0;
+	private Integer ch3R_powder_level=0;
+	private Integer ch4L_powder_level=0;
+	private Integer ch4R_powder_level=0;
 	private Integer ch1_water=0;
 	private Integer ch2_water=0;
 	private Integer ch3_water=0;
@@ -92,52 +92,52 @@ public class Coffee {
 		this.coffeePreWater = value;
 	}
 	public String getSugarLever() {
-		return ch1l_sugar_level;
+		return ch1L_sugar_level;
 	}
 	public void setSugarLever(String l) {
-		this.ch1l_sugar_level = l;
+		this.ch1L_sugar_level = l;
 	}
-	public void setCh1r_powder_lever(Integer l) {
-		this.ch1r_powder_lever=l;
+	public void setCh1R_powder_level(Integer l) {
+		this.ch1R_powder_level=l;
 	}
-	public void setCh2l_powder_lever(Integer l) {
-		this.ch2l_powder_lever=l;
+	public void setCh2L_powder_level(Integer l) {
+		this.ch2L_powder_level=l;
 	}
-	public void setCh2r_powder_lever(Integer l) {
-		this.ch2r_powder_lever=l;
+	public void setCh2R_powder_level(Integer l) {
+		this.ch2R_powder_level=l;
 	}
-	public void setCh3l_powder_lever(Integer l) {
-		this.ch3l_powder_lever=l;
+	public void setCh3L_powder_level(Integer l) {
+		this.ch3L_powder_level=l;
 	}
-	public void setCh3r_powder_lever(Integer l) {
-		this.ch3r_powder_lever=l;
+	public void setCh3R_powder_level(Integer l) {
+		this.ch3R_powder_level=l;
 	}
-	public void setCh4l_powder_lever(Integer l) {
-		this.ch4l_powder_lever=l;
+	public void setCh4L_powder_level(Integer l) {
+		this.ch4L_powder_level=l;
 	}
-	public void setCh4r_powder_lever(Integer l) {
-		this.ch4r_powder_lever=l;
+	public void setCh4R_powder_level(Integer l) {
+		this.ch4R_powder_level=l;
 	}
-	public Integer getCh1r_powder_lever() {
-		return ch1r_powder_lever;
+	public Integer getCh1R_powder_level() {
+		return ch1R_powder_level;
 	}
-	public Integer getCh2l_powder_lever() {
-		return ch2l_powder_lever;
+	public Integer getCh2L_powder_level() {
+		return ch2L_powder_level;
 	}
-	public Integer getCh2r_powder_lever() {
-		return ch2r_powder_lever;
+	public Integer getCh2R_powder_level() {
+		return ch2R_powder_level;
 	}
-	public Integer getCh3l_powder_lever() {
-		return ch3l_powder_lever;
+	public Integer getCh3L_powder_level() {
+		return ch3L_powder_level;
 	}
-	public Integer getCh3r_powder_lever() {
-		return ch3r_powder_lever;
+	public Integer getCh3R_powder_level() {
+		return ch3R_powder_level;
 	}
-	public Integer getCh4l_powder_lever() {
-		return ch4l_powder_lever;
+	public Integer getCh4L_powder_level() {
+		return ch4L_powder_level;
 	}
-	public Integer getCh4r_powder_lever() {
-		return ch4r_powder_lever;
+	public Integer getCh4R_powder_level() {
+		return ch4R_powder_level;
 	}
 	
 	public Integer getCh1Water() {
@@ -170,10 +170,10 @@ public class Coffee {
 	
 		return "Coffee [order="+order+" id="+id + ", name=" + name+"" +" needCoffee="+needCoffee+
 				",\n coffeePowder="+coffeePowder+" coffeeWater="+coffeeWater+" coffeePreWater="+coffeePreWater+
-				",\n ch1l_sugar_level="+ch1l_sugar_level+" ch1r_powder_lever="+ch1r_powder_lever+
-				",\n ch2l_powder_lever="+ch2l_powder_lever+" ch2r_powder_lever="+ch2r_powder_lever+
-				",\n ch3l_powder_lever="+ch3l_powder_lever+" ch3r_powder_lever="+ch3r_powder_lever+
-				",\n ch4l_powder_lever="+ch4l_powder_lever+" ch4r_powder_lever="+ch4r_powder_lever+
+				",\n ch1L_sugar_level="+ch1L_sugar_level+" ch1R_powder_level="+ch1R_powder_level+
+				",\n ch2L_powder_level="+ch2L_powder_level+" ch2R_powder_level="+ch2R_powder_level+
+				",\n ch3L_powder_level="+ch3L_powder_level+" ch3R_powder_level="+ch3R_powder_level+
+				",\n ch4L_powder_level="+ch4L_powder_level+" ch4R_powder_level="+ch4R_powder_level+
 				",\n ch1_water="+ch1_water+" ch2_water="+ch2_water+
 				",\n ch3_water="+ch3_water+" ch4_water="+ch4_water+
 				

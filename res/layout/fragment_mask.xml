@@ -90,7 +90,7 @@
 	        android:text=""
 	        /> 
 	       </LinearLayout>
-	       <!-- 
+	        
        	 <LinearLayout 	    
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
@@ -101,20 +101,20 @@
 	    	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="@dimen/devState_text_size"
-	        android:text="@string/netStateLable"
+	        android:text="@string/mc_temper"
 	        android:textColor="@color/brown_title"
 	        /> 
    	         <TextView
-   	        android:id="@+id/t_netDetail"
+   	        android:id="@+id/t_temper"
 	    	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="@dimen/devState_text_size"
-	        android:text="@string/nonet"
+	        android:text="0"
 	        android:textColor="@color/brown_title"
 	        /> 
 	       </LinearLayout>
 	       
-	        -->
+	        
 	        <TextView
    	        android:id="@+id/t_refund"
 	    	android:layout_width="wrap_content"

@@ -55,28 +55,7 @@ public  class Errors{
         public String getDetail(Context c) {
         	return c.getString(stringId);
         }
-//		public final static String  Mc_error1="mc_error1";
-//		public final static String  Mc_error2="mc_error2";
-//		public final static String  Mc_error3="mc_error3";
-//		public final static String  Mc_error4="mc_error4";
-//		public final static String  Mc_error5="mc_error5";
-//		public final static String  Mc_error6="mc_error6";
-//		public final static String  Mc_error7="mc_error7";
-//		public final static String  Mc_error8="mc_error8";
-//		public final static String  Mc_error9="mc_error9";
-//		public final static String  Mc_error10="mc_error10";
-//		public final static String  Mc_error11="mc_error11";
-//		public final static String  Mc_error12="mc_error12";
-//		public final static String  Mc_error13="mc_error13";
-//		public final static String  Mc_error14="mc_error14";
-//		public final static String  Mc_error15="mc_error15";
-//	
-//		public final static String[] Mc_errors={
-//			Mc_error1,Mc_error2,Mc_error3,Mc_error4,Mc_error5,
-//			Mc_error6,Mc_error7,Mc_error8,Mc_error9,Mc_error10
-//			,Mc_error11,Mc_error12,Mc_error13,Mc_error14,Mc_error15
-//			
-//		};
+
 	}
 	private static List<McError> errors=new ArrayList();
 	
@@ -111,6 +90,53 @@ public  class Errors{
 		}
 		return es;
 	}
+	//针对咖啡主机的批量设置错误
+	public static boolean setCoffeeMcErrors(List<McError> es){
+		boolean changed=false;
+		if(es==null){
+			removeError(McError.Mc_error4);
+			removeError(McError.Mc_error5);
+			removeError(McError.Mc_error6);
+			removeError(McError.Mc_error7);
+			removeError(McError.Mc_error8);
+			removeError(McError.Mc_error9);
+				return true;
+		}
+		
+		if(es.contains(McError.Mc_error4)){
+			changed=addError(McError.Mc_error4);
+		}else{
+			changed|=removeError(McError.Mc_error4);
+		}
+		if(es.contains(McError.Mc_error5)){
+			changed|=addError(McError.Mc_error5);
+		}else{
+			changed|=removeError(McError.Mc_error5);
+		}
+		if(es.contains(McError.Mc_error6)){
+			changed|=addError(McError.Mc_error6);
+		}else{
+			changed|=removeError(McError.Mc_error6);
+		}
+		if(es.contains(McError.Mc_error7)){
+			changed|=addError(McError.Mc_error7);
+		}else{
+			changed|=removeError(McError.Mc_error7);
+		}
+		if(es.contains(McError.Mc_error8)){
+			changed|=addError(McError.Mc_error8);
+		}else{
+			changed|=removeError(McError.Mc_error8);
+		}
+		if(es.contains(McError.Mc_error9)){
+			changed|=addError(McError.Mc_error9);
+		}else{
+			changed|=removeError(McError.Mc_error9);
+		}
+
+		return changed;	
+	}
+	
 	
 	public static boolean hasError(){
 		return errors.isEmpty()?false:true;

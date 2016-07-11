@@ -1,6 +1,9 @@
 package com.tt.main;
 
 import java.io.File;
+import java.sql.Array;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -69,6 +72,7 @@ public class MainFragment extends Fragment {
 	private final int Handler_qr_zhifubao=1008;
 	private final int Handler_ServerInitTimeOut=1009;
 	private final int Handler_CloseTimer=1010;
+	private final int Handler_temper=1011;
 	private final String Tag="CoffeeFrag";
 //	private final int CoffeeType1=0;
 //	private final int CoffeeType2=1;
@@ -131,7 +135,6 @@ public class MainFragment extends Fragment {
 	boolean isAssistMcWork=false;
 	
 	boolean appealed=false;//是否已经申述
-	
 
 	
 	
@@ -205,6 +208,7 @@ public class MainFragment extends Fragment {
 		void enterDevMode();
 		void enterMaintainMode(boolean refund,String errors);
 		void hide();
+		void onTemperChanged(String t);
 	//	void updateId(String id);
 	}
 	
@@ -245,6 +249,11 @@ public class MainFragment extends Fragment {
 	void setDevMcState(String state){
 		if(myCallback!=null){
 			myCallback.onMcStateChanged(state);
+		}
+	}
+	void setDevTemper(String state){
+		if(myCallback!=null){
+			myCallback.onTemperChanged(state);
 		}
 	}
 //	void setDevNetState(String state){
@@ -359,14 +368,14 @@ public class MainFragment extends Fragment {
     }
     
     
-    
-    Integer getCurType(){
-    	
-    	for(Coffee coffee:coffeeFormula){
-    		if(coffee.getId()==cur_goodId){
-    			return coffee.getOrder();
-    		}
-    	}
+//    
+//    Integer getCurType(){
+//    	
+//    	for(Coffee coffee:coffeeFormula){
+//    		if(coffee.getId()==cur_goodId){
+//    			return coffee.getOrder();
+//    		}
+//    	}
  
 //    	Iterator it = goodId.entrySet().iterator(); 
 //    	while (it.hasNext()) {  	  
@@ -377,8 +386,8 @@ public class MainFragment extends Fragment {
 //    	    	return key;
 //    	    }  
 //    	}
-    	return 0;
-    }
+//    	return 0;
+//    }
 //    Integer getCurType(){
 //		return (int) cur_goodId;
 //}
@@ -445,11 +454,17 @@ public class MainFragment extends Fragment {
 		public void onFinish() {
 			mc_coffeeDroped();
 		}
-		
+
 		@Override
-		public void onFault(String fault) {
-			//isMachineWork=false;
-			//先申述后进维护界面
+		public void onWaiting(String fault) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onFault(List<McError> errors) {
+			
+			
 			if(tradeStep==StepMaking){//在制作过程中出现错误，这个时候应该退款
 				if(appealed==false){//一个订单只能申述一次，后面可能改为根据申述结果看
 					appealed=true;
@@ -464,9 +479,14 @@ public class MainFragment extends Fragment {
 					
 				}
 			}
-			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!注意这里的错误暂时只给了一个固定的error4，后面需根据最新协议修改
-			setEnable(false,Errors.McError.Mc_error4,fault);
-			
+			setCoffeeMcEnable(false,errors);	
+			//setEnable(false,errors);		
+		}
+
+		@Override
+		public void onTemperChanged(byte temper) {
+		
+			sendMsgToHandler(Handler_temper,temper+"");
 		}
 	});
 	}
@@ -479,7 +499,7 @@ void initAssistMachine(){
 			@Override
 			public void cupDroped() {
 				//杯子已经掉下，可以打咖啡了
-				mc_makeCoffee(getCurType());
+				mc_makeCoffee(cur_goodId);
 			}
 			@Override
 			public void cupStuck() {
@@ -516,7 +536,7 @@ void initAssistMachine(){
 				myHandler.post(new Runnable() {
 					@Override
 					public void run() {
-						payServer.updateSale();
+					//	payServer.updateSale();
 						closeOder();
 					}
 				});	
@@ -529,7 +549,7 @@ void initAssistMachine(){
 			@Override
 			public void cupReady() {
 				resumeTimeOutTime();
-				mc_makeCoffee(getCurType());
+				mc_makeCoffee(cur_goodId);
 			}
 		
 			@Override
@@ -644,14 +664,6 @@ void existMask(){
 					case Handler_qr_zhifubao:
 						updateQRPic(msg.obj.toString(),AliPay);
 						break;
-//					case Handler_netDisp:	
-//						myToast.toastShow(msg.obj.toString());
-//						setDevNetState(msg.obj.toString());
-//						break;
-//					case Handler_assiMcDisp:	
-//						myToast.toastShow(msg.obj.toString());
-//						setDevAssisState(msg.obj.toString());
-//						break;
 					case Handler_tPay:
 						setStateDialogString(msg.obj.toString(),1);
 						break;
@@ -663,7 +675,12 @@ void existMask(){
 						String dsp= msg.obj.toString();
 						myToast.toastShow(dsp)	;
 						setDevMcState(dsp);
-						myToast.toastShow(dsp);
+						break;
+					case Handler_temper://
+						//String dsp= msg.obj.toString();
+						//myToast.toastShow(dsp)	;
+						setDevTemper(msg.obj.toString());
+						//myToast.toastShow(dsp);
 						break;
 					case Handler_TradeTimeOut:
 							closeOder();
@@ -726,6 +743,7 @@ void existMask(){
 	
 	
     void updateQRPic(String path,int type){
+    	Log.i(Tag,"updateQRPic type= "+type);
     	if(payDialog!=null&&payDialog.isAlive()){
     		if(type==WeixinPay)
     			payDialog.setWeixinQr(path);
@@ -997,7 +1015,7 @@ void existMask(){
 					}
 					
 					@Override
-					public void onPaySuccess(int type, String buyerId) {
+					public void onPaySuccess(String type, String buyerId) {
 						mylog.log_i("onPaySuccess!!!");
 						myHandler.post(new Runnable() {
 							@Override
@@ -1053,12 +1071,14 @@ void existMask(){
 					
 					@Override
 					public void onGetZfbQrCode(String qr) {
+						Log.i(Tag,"onGetZfbQrCode===");
 						getQtImage( qr,AliPay);
 						
 					}
 					
 					@Override
 					public void onGetWeixinQrCode(String qr) {
+						Log.i(Tag,"onGetWeixinQrCode===");
 						getQtImage( qr,WeixinPay);
 						
 					}
@@ -1151,7 +1171,7 @@ void existMask(){
 		}
 		public void getQtImage(String url,int type) {
 
-			final String filePath = context.getCacheDir() + File.pathSeparator + "qtImage"
+			final String filePath = context.getCacheDir() + File.pathSeparator + "qtImage"+type
 					+ ".jpg";
 			int widthPix = 300;
 			int heightPix = 300;
@@ -1173,15 +1193,16 @@ void existMask(){
 	    
 	    void askWeixinQrPay(int goodId){
 	    	String price=getGoodPrice(goodId);
-	    	payServer.getZfbQr(goodId+"", price);
+	    	payServer.getWeixinQr(goodId+"", price);
 	    }
 	    void askZfbQrPay(int goodId){
 	    	String price=getGoodPrice(goodId);
-	    	payServer.getWeixinQr(goodId+"", price);
+	    	
+	    	payServer.getZfbQr(goodId+"", price);
 	    }
 	    void askQrPay(int goodId){
-	    	askZfbQrPay(goodId);
-	    	askWeixinQrPay(goodId);
+	     askZfbQrPay(goodId);
+	   	askWeixinQrPay(goodId);
 	    }
 	    
 		void addNetworkChangedCallback(){
@@ -1243,11 +1264,11 @@ void existMask(){
 		     * 制作咖啡接口
 		     *此函数触发出粉/出咖啡 
 		     */
-		    void mc_makeCoffee(int type){
+		    void mc_makeCoffee(int id){
 		    	makingStep=0;
 		    	//test
 		    	sendMsgToHandler(Handler_tCoffee, context.getString(R.string.dropPowder));
-		    	makeCoffee(type+1,sweetness);
+		    	makeCoffee(id,sweetness);
 		    }
 		    
 		    void makeCoffee(int id,int level){
@@ -1260,6 +1281,7 @@ void existMask(){
 	    			//if(coffee.getName().equals(context.getString(R.string.name_americano))){
 	    			
 	    			if(coffee.getId()==id){
+	    				Log.i(Tag,"cur_goodId="+cur_goodId+ " choice coffee="+coffee.toString());
 	    				if(coffee.getNeedCoffee()!=null){//需要打咖啡
 		    				int needCoffee=new Integer(coffee.getNeedCoffee());
 		    				if(needCoffee==1){ //出咖啡
@@ -1293,13 +1315,13 @@ void existMask(){
 //		    						sugar=new Integer(sugar_levels[level]);
 //		    					}
 		    					makingStep&=~PowderFinish;
-		    					int ch1r=coffee.getCh1r_powder_lever();
-		    					int ch2l=coffee.getCh2l_powder_lever();
-		    					int ch2r=coffee.getCh2r_powder_lever();
-		    					int ch3l=coffee.getCh3l_powder_lever();
-		    					int ch3r=coffee.getCh3r_powder_lever();
-		    					int ch4l=coffee.getCh4l_powder_lever();
-		    					int ch4r=coffee.getCh4r_powder_lever();
+		    					int ch1r=coffee.getCh1R_powder_level();
+		    					int ch2l=coffee.getCh2L_powder_level();
+		    					int ch2r=coffee.getCh2R_powder_level();
+		    					int ch3l=coffee.getCh3L_powder_level();
+		    					int ch3r=coffee.getCh3R_powder_level();
+		    					int ch4l=coffee.getCh4L_powder_level();
+		    					int ch4r=coffee.getCh4R_powder_level();
 		    					assistProtocol.cmd_setPowder(sugar,ch1r,ch2l,ch2r ,ch3l,ch3r,ch4l,ch4r);
 		    					assistProtocol.cmd_setWater(coffee.getCh1Water(), coffee.getCh2Water(), coffee.getCh3Water(),coffee.getCh4Water());
 		    					assistProtocol.cmd_startDropPowder(coffee.getCh1Water()==0?false:true, coffee.getCh1Water()==0?false:true, coffee.getCh2Water()==0?false:true, coffee.getCh2Water()==0?false:true, coffee.getCh3Water()==0?false:true, coffee.getCh3Water()==0?false:true, coffee.getCh4Water()==0?false:true, coffee.getCh4Water()==0?false:true);
@@ -1359,6 +1381,12 @@ void existMask(){
 	 */
 
 		   void stepTakingCup(){
+				myHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						payServer.updateSale();
+					}
+				});	
 		   		tradeStep=StepTakingCup;
 		   		tExtStateDisp=context.getString(R.string.takeCup);
 				if(timeOutTask!=null){
@@ -1536,7 +1564,7 @@ void existMask(){
 //				 }
 //			 }
 			 void setEnable(boolean  enable,Errors.McError error){
-				 mylog.log_i("setMcEnable ="+enable+" msg="+error.getValue());
+				 mylog.log_i("setEnable ="+enable+" msg="+error.getValue());
 				 boolean changed=false;
 				 if(!enable){
 					 changed=Errors.addError(error); 
@@ -1547,7 +1575,7 @@ void existMask(){
 					 updateEnable();
 			 }
 			 void setEnable(boolean  enable,Errors.McError error,String state){
-				 mylog.log_i("setMcEnable ="+enable+" msg="+error.getValue());
+				 mylog.log_i("setEnable ="+enable+" msg="+error.getValue());
 				 boolean changed=false;
 				 if(!enable){
 					 changed=Errors.addError(error); 
@@ -1563,7 +1591,7 @@ void existMask(){
 			 
 			 
 			 void setEnable(boolean  enable,List<Errors.McError> errors){
-
+				 mylog.log_i("setEnable ="+enable+" errors="+errors.toString());
 				 boolean changed=false;
 				 if(!enable){
 					 for(Errors.McError e:errors)
@@ -1572,6 +1600,15 @@ void existMask(){
 					 for(Errors.McError e:errors)
 					 	changed|=Errors.removeError(e);
 				 }
+				 if(changed)
+					 updateEnable();
+			 }
+			 void setCoffeeMcEnable(boolean  enable,List<Errors.McError> errors){
+				 mylog.log_i("setCoffeeMcEnable ="+enable+" errors="+errors.toString());
+				 boolean changed=false;
+
+				 changed= Errors.setCoffeeMcErrors(errors);
+				 
 				 if(changed)
 					 updateEnable();
 			 }
@@ -1662,7 +1699,7 @@ void existMask(){
 					}
 				}
 				boolean  setCurCoffeeId(int type){
-					
+					Log.i(Tag, "***********setCurCoffeeId="+type);
 					if(type==-1){
 						cur_goodId=-1;
 						//t_coffeeType.setText(R.string.pleaseChooseCoffee);
@@ -1682,6 +1719,7 @@ void existMask(){
 //						cur_goodId=goodId.get(type);
 //						return true;
 //					}
+					
 					return false;
 				}
 				

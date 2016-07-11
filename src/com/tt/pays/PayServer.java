@@ -1,6 +1,8 @@
 package com.tt.pays;
 
 import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -41,10 +43,10 @@ public class PayServer {
 	private String cur_goodId=null;
 	private String cur_price=null;
 	private String buyerid=null;
-	private int payType=1;
+	private String payType="";
 	private boolean isLogin=false;
-	private final int PayType_zfb=1;
-	private final int PayType_weixin=2;
+	private final String PayType_zfb="alipay";
+	private final String PayType_weixin="weixin";
 	boolean inPayQuery=false;
 //	boolean paySuccess=false;
 	/*
@@ -284,6 +286,7 @@ public class PayServer {
 
 	
 	void onGetZfbQrSuccess(Map map ){
+		Log.i(Tag,"onGetZfbQrSuccess type======== ");
 		if(map.containsKey(Index_qrCode)){
 			String temp=(String) map.get(Index_qrCode);
 			if(callback!=null){
@@ -296,6 +299,8 @@ public class PayServer {
 		
 	}
 	void onGetWeixinQrSuccess(Map map ){
+		Log.i(Tag,"onGetWeixinQrSuccess type======== ");
+		
 		if(map.containsKey(Index_qrCode)){
 			String temp=(String) map.get(Index_qrCode);
 			if(callback!=null){
@@ -352,25 +357,25 @@ public class PayServer {
 			callback.onLoginSuccess();
 	}
 	private void onPostSaleSuccess(){
-
+		  Log.e(Tag, "onPostSaleSuccess!!!");
 	}
 	private void onHeatbeatFailed(String msg){
-		
+		  Log.e(Tag, "onHeatbeatFailed!!!");
 	}
 	private void onGetZfbQrFailed(String msg){
-		
+		  Log.e(Tag, "onGetZfbQrFailed!!!");
 	}
 	private void onGetWeixinQrFailed(String msg){
-		
+		 Log.e(Tag, "onGetWeixinQrFailed!!!");
 	}
 	private void onGetZfbPayStateFailed(String msg){
-		
+		Log.e(Tag, "onGetZfbPayStateFailed!!!");
 	}
 	private void onGetWeixinPayStateFailed(String msg){
-		
+		Log.e(Tag, "onGetWeixinPayStateFailed!!!");
 	}
 	private void onPostSaleFailed(String msg){
-		
+		Log.e(Tag, "onPostSaleFailed!!!");
 	}
 	
 	
@@ -565,6 +570,13 @@ public class PayServer {
 		long now_timeL= System.currentTimeMillis();
 		return now_timeL+"";
 	}
+	SimpleDateFormat formatDate = new SimpleDateFormat ("yyyyMMddHHmmss");
+	private String getSaleTime(){
+		Date date= new Date(System.currentTimeMillis());//获取当前时间
+		String time = formatDate.format(date);
+		
+		return time;
+	}
 	private void addedCommParas(RequestParams params){
 		if(params==null){
 			params = new RequestParams();
@@ -622,6 +634,7 @@ public class PayServer {
 	}
 	
 	public void getZfbQr(String id,String price){	
+		Log.i(Tag, "getZfbQr id="+id+"price="+price);
 		RequestParams params = new RequestParams();
 		addedCommParas(params);
 		cur_goodId=id;
@@ -655,8 +668,11 @@ public class PayServer {
 	public void updateSale(){	
 		RequestParams params = new RequestParams();
 		addedCommParas(params);
+		
+		params.add(Index_saleTime,getSaleTime());
 		params.add(Index_goodsId,cur_goodId);
 		params.add(Index_price,cur_price);
+		params.add(Index_payType,payType);
 		if(payType==PayType_zfb){
 			params.add(Index_outTradeno,zfbTradeno);
 		}else{
