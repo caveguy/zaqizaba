@@ -1,26 +1,7 @@
 package com.tt.main;
 
-import java.io.File;
-import java.sql.Array;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.app.AlarmManager;
 import android.app.Fragment;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -34,14 +15,13 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android_serialport_api.AssistProtocol;
-import android_serialport_api.CoffeeMcProtocol;
 
 import com.example.coffemachinev3.R;
 import com.tt.main.PayDialog.PayListener;
 import com.tt.main.SugarDialog.ConfirmListener;
 import com.tt.pays.PayServer;
 import com.tt.pays.ServerCallback;
+import com.tt.util.Cleans;
 import com.tt.util.Encode;
 import com.tt.util.Errors;
 import com.tt.util.Errors.McError;
@@ -51,12 +31,24 @@ import com.tt.util.TTLog;
 import com.tt.util.ToastShow;
 import com.tt.view.GuideFragmentAdapter;
 import com.tt.view.MainViewPager;
-import com.tt.xml.CleanTime;
 import com.tt.xml.Coffee;
 import com.tt.xml.CoffeeFormula;
 import com.tt.xml.MachineTemper;
 import com.viewpagerindicator.CirclePageIndicator;
 import com.viewpagerindicator.PageIndicator;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import android_serialport_api.AssistProtocol;
+import android_serialport_api.CoffeeMcProtocol;
 
 /*
  * ������Fragment
@@ -70,7 +62,7 @@ public class MainFragment extends Fragment {
 	private final int Handler_tCoffee=1006;	
 	private final int Handler_qr_weixin=1007;
 	private final int Handler_qr_zhifubao=1008;
-	private final int Handler_ServerInitTimeOut=1009;
+//	private final int Handler_ServerInitTimeOut=1009;
 	private final int Handler_CloseTimer=1010;
 	private final int Handler_temper=1011;
 	private final String Tag="CoffeeFrag";
@@ -114,7 +106,7 @@ public class MainFragment extends Fragment {
 	MakingStateDialog stateDialog;
 	 TTLog mylog=null;
 	 CoffeeFormula xmlConfig=null;
-	
+	Cleans cleans=null;
 	byte makingStep=0;  //出粉跟出咖啡完成标志
 	int tradeStep=0;    //整个交易步骤
 //	boolean isDeliverEnable=false;  //辅助板是否工作正常
@@ -140,7 +132,7 @@ public class MainFragment extends Fragment {
 	
 	byte mcWindowLast=0; //为了知道咖啡有没有制作完成
 	private List<Coffee> coffeeFormula =null;
-	private List<CleanTime> cleanTimes=null;
+//	private List<CleanTime> cleanTimes=null;
 	private int makeCnt=0;
 //	HashMap<Integer,Integer> goodId=new HashMap<Integer,Integer>();
 //	HashMap<Long,String>	goodName=new HashMap<Long,String>();
@@ -208,6 +200,7 @@ public class MainFragment extends Fragment {
 		void enterDevMode();
 		void enterMaintainMode(boolean refund,String errors);
 		void hide();
+		void onGetNewVer(String ver,String path);
 		void onTemperChanged(String t);
 	//	void updateId(String id);
 	}
@@ -215,10 +208,20 @@ public class MainFragment extends Fragment {
 	boolean  getCoffeeFormula(){
 		boolean enable=false;
 		try {
-			xmlConfig=new CoffeeFormula(context);
+			if(xmlConfig==null) {
+				xmlConfig = new CoffeeFormula(context);
+			}
+
 			coffeeFormula=xmlConfig.getCoffeeFormula();
-			cleanTimes=xmlConfig.getCleanTimes();
+//			cleanTimes=xmlConfig.getCleanTimes();
+			initCleans(xmlConfig.getCleanTimes(),xmlConfig.getClean_duration(),xmlConfig.getClean_water());
+			String ver=xmlConfig.getVerSerial();
+
+			if(payServer!=null){
+				payServer.setCurXmlVer(ver);
+			}
 			makeCnt=Settings.getCoffees(context);
+
 			enable=true;
 		
 			//AssistState.getXml=true;
@@ -256,16 +259,7 @@ public class MainFragment extends Fragment {
 			myCallback.onTemperChanged(state);
 		}
 	}
-//	void setDevNetState(String state){
-//		if(myCallback!=null){
-//			myCallback.onNetStateChanged(state);
-//		}
-//	}
-//	void setDevAssisState(String state){
-//		if(myCallback!=null){
-//			myCallback.onAssisStateChanged(state);
-//		}
-//	}
+
 	/*
 	 * dev模式是强制进入的，在maintain模式也可以进去
 	 * 
@@ -366,31 +360,7 @@ public class MainFragment extends Fragment {
     //	simulateGoodId(Settings.getIsDebug(context));
     	coffeeMachine.cmd_openBoiler(Settings.getIsHeating(context));
     }
-    
-    
-//    
-//    Integer getCurType(){
-//    	
-//    	for(Coffee coffee:coffeeFormula){
-//    		if(coffee.getId()==cur_goodId){
-//    			return coffee.getOrder();
-//    		}
-//    	}
- 
-//    	Iterator it = goodId.entrySet().iterator(); 
-//    	while (it.hasNext()) {  	  
-//    		 Map.Entry entry=(HashMap.Entry) it.next();  
-//    		    Integer key = (Integer)entry.getKey();  	    
-//    		    Integer value = (Integer)entry.getValue();  
-//    	    if( value==cur_goodId){
-//    	    	return key;
-//    	    }  
-//    	}
-//    	return 0;
-//    }
-//    Integer getCurType(){
-//		return (int) cur_goodId;
-//}
+
     String getCurGoodName(){
     	for(Coffee coffee:coffeeFormula){
     		if(coffee.getId()==cur_goodId){
@@ -428,8 +398,10 @@ public class MainFragment extends Fragment {
 		
 		@Override
 		public void onReady() {
-			setEnable(true,Errors.McError.Mc_error4,context.getString(R.string.cmd1_ready));
-		//	setMcEnable(true,context.getString(R.string.cmd1_ready));
+			cleanMcErrors(context.getString(R.string.cmd1_ready));
+			//setCoffeeMcEnable(true,null,context.getString(R.string.cmd1_ready));
+			//setEnable(true,Errors.McError.Mc_error4,context.getString(R.string.cmd1_ready));
+
 			
 		}
 		
@@ -460,7 +432,7 @@ public class MainFragment extends Fragment {
 
 		@Override
 		public void onWaiting(String fault) {
-			// TODO Auto-generated method stub
+			setEnable(false,Errors.McError.Mc_waiting,fault);
 			
 		}
 
@@ -536,13 +508,16 @@ void initAssistMachine(){
 			@Override
 			public void tradeFinish() {
 				mylog.log_i("***cup was taken away,deal finished ****");
+				//如果杯子没有移走，此处不会执行
+				
 				myHandler.post(new Runnable() {
 					@Override
 					public void run() {
-					//	payServer.updateSale();
-						closeOder();
+						tradeFinished();
 					}
 				});	
+				
+				
 			}
 			@Override
 			public void startDropCup() {
@@ -605,7 +580,10 @@ void initSever(){
 }
 
 
-
+void tradeFinished(){
+	dealClean();//处理清洗事件
+	closeOder();
+}
 
 void existMask(){
 	
@@ -686,16 +664,18 @@ void existMask(){
 						//myToast.toastShow(dsp);
 						break;
 					case Handler_TradeTimeOut:
-							closeOder();
+							//closeOder();
+						 tradeFinished();
 						//dispRetryDialog();//超时后显示是否重做对话框
 						//myToast.toastShow(R.string.);
 						break;
 					case Handler_CloseTimer:
 						closeOder();
+						
 						break;
-					case Handler_ServerInitTimeOut:
-						reStartApp();
-						break;
+//					case Handler_ServerInitTimeOut:
+//						reStartApp();
+//						break;
 		        }
 		        }
 
@@ -730,7 +710,12 @@ void existMask(){
 			coffeeMachine.cmd_cleaning();
 		}
 
-		@Override
+			@Override
+			public void askVer(String cur) {
+				payServer.askapkVer(cur);
+			}
+
+			@Override
 		public void onEnableHeating(boolean is) {
 			coffeeMachine.cmd_openBoiler(is);	
 		}
@@ -1088,84 +1073,44 @@ void existMask(){
 					
 					@Override
 					public void onGetNewVersion(String ver, String path) {
-						// TODO Auto-generated method stub
+
 						
 					}
 					
 					@Override
 					public void onFormulaUpdate(String xml) {
-						// TODO Auto-generated method stub
-						
+					//	Log.i("Tag","onFormulaUpdate xml="+xml);
+						if(xmlConfig==null){
+						 Log.e(Tag,"onFormulaUpdate xmlConfig==null ");
+							return ;
+						}
+							if(xmlConfig.updateXml(xml)){
+								if(getCoffeeFormula()) {
+									myHandler.post(new  Runnable() {
+
+										@Override
+										public void run() {
+											setGoodMsg();
+										}
+									});
+								}
+							}
+						}
+					@Override
+					public void onDisconnect(){
+						setEnable(false, Errors.McError.Mc_error27);
+						myToast.toastShow("onDisconnect");
+						payServer.tryLogin();
 					}
+
+
 				});
-	    		payServer.login(context.getString(R.string.version), "v1.1", "8", "0", "0");
+
 	    	}
+			payServer.login(context.getString(R.string.version), "v1.1", "8",xmlConfig==null?"10000":xmlConfig.getVerSerial(), "0");
 	    }
 	    
-	    
-//	    void initPayServer2(){
-//	    	if(coffeeDeviceEvent==null){
-//	    		startTimeOutTimer(SeverTimeOutDuaration,TimerOutTask.Event_serverInit_timeOut);
-//	        coffeeDeviceEvent = new CoffeeDeviceEvent() {
-//
-//	        	@Override
-//	            public void onLoad() {
-//	                super.onLoad();
-//	                cancelTimeOutTask();//取消超时定时器
-//	                /*获得设备商品列表*/
-//	              String feedid=deviceInterfaceAdapter.getDevice().getFeedId();
-//		 	    	updateIdCallBack(feedid);
-//	                setNetWorkEnable(true,context.getString(R.string.connectServer));
-//	                
-//	                updatePrice();
-//
-//	            }
-//				@Override
-//				public void onPayFail(Long arg0) {				
-//					myHandler.post(new Runnable() {	
-//						@Override
-//						public void run() {
-//							
-//							 myToast.toastShow("支付失败");	
-//					
-//						}
-//					});	
-//				}
-//
-//				@Override
-//				public void onPaySuccess(Long arg0) {
-//					mylog.log_i("onPaySuccess!!!");
-//					myHandler.post(new Runnable() {
-//						@Override
-//						public void run() {
-//							myToast.toastShow(R.string.paySuccess);
-//
-//							
-//						}
-//					});
-//					startMaking();
-//					
-//				}
-//				@Override
-//				public void onReceiveTranspTransfer(String arg0) {
-//				//	mylog.log_i("onReceiveTranspTransfer ="+arg0);	
-//					String updatePrice=context.getString(R.string.update_Price);
-//					if(arg0.equals(updatePrice)){
-//						//更新价格
-//						 updatePrice();
-//					}else{
-//						updateMsgCallBack(arg0);
-//					}
-//				}
-//
-//	        	
-//	        };
-//	       
-//	    	}
-//	    	if(deviceInterfaceAdapter==null){
-//	    		deviceInterfaceAdapter = new CoffeeDeviceInterfaceAdapter(context,myHandler,coffeeDeviceEvent);	    		
-//	    	}
-//	    }
+
 		private void sendMsgToHandler(int what,String dsp){
 			Message msg=new Message();
 			msg.what=what;
@@ -1228,17 +1173,17 @@ void existMask(){
 		}
 
 		
-		void reStartApp(){	
-			
-			Intent restartIntent = new Intent(context, MainActivity.class);
-			restartIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-			int pendingId = 1;
-			PendingIntent pendingIntent = PendingIntent.getActivity(context, pendingId, restartIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-			AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-			mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 2000, pendingIntent);
-			//((Activity) context).finish();
-			android.os.Process.killProcess(android.os.Process.myPid());
-		}
+//		void reStartApp(){
+//
+//			Intent restartIntent = new Intent(context, MainActivity.class);
+//			restartIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//			int pendingId = 1;
+//			PendingIntent pendingIntent = PendingIntent.getActivity(context, pendingId, restartIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+//			AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+//			mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 2000, pendingIntent);
+//			//((Activity) context).finish();
+//			android.os.Process.killProcess(android.os.Process.myPid());
+//		}
 		    
 		    
 		    void mc_dropCup(){
@@ -1477,9 +1422,9 @@ void existMask(){
 									if(event==Event_trade_timeOut){
 										tradeTimeOut();	
 									}
-									else if(event==Event_serverInit_timeOut){
-										serverInitTimeOut();
-									}
+//									else if(event==Event_serverInit_timeOut){
+//										serverInitTimeOut();
+//									}
 								}
 							}
 						});	
@@ -1492,10 +1437,10 @@ void existMask(){
 		    	//这个时候应该可以选择重试或者退款！！！
 		    	sendMsgToHandler(Handler_TradeTimeOut,"");
 		    }
-		    void serverInitTimeOut(){
-		    	reStartApp();
-		    	//sendMsgToHandler(Handler_ServerInitTimeOut,"");
-		    }
+//		    void serverInitTimeOut(){
+//		    	reStartApp();
+//		    	//sendMsgToHandler(Handler_ServerInitTimeOut,"");
+//		    }
 		    
 		    void startCloseTimer(int cnt){	    	
 		    	if(closeTimer==null){
@@ -1556,16 +1501,7 @@ void existMask(){
 				}	
 			} 
 
-			 
-//			 void setMcEnable2(boolean  enable,String msg){
-//				 mylog.log_i("setMcEnable ="+enable+" msg="+msg);
-//				 if(isMachineWork!=enable||(!oldMcStr.equals(msg))){
-//					 oldMcStr=msg;
-//					 isMachineWork=enable;
-//					 updateEnable();
-//					 sendMsgToHandler(Handler_mcDisp, msg);
-//				 }
-//			 }
+
 			 void setEnable(boolean  enable,Errors.McError error){
 				 mylog.log_i("setEnable ="+enable+" msg="+error.getValue());
 				 boolean changed=false;
@@ -1603,9 +1539,21 @@ void existMask(){
 					 for(Errors.McError e:errors)
 					 	changed|=Errors.removeError(e);
 				 }
+				 
 				 if(changed)
 					 updateEnable();
 			 }
+			 
+			 void cleanMcErrors(String state){
+				// mylog.log_i("setCoffeeMcEnable ="+enable+" errors="+errors.toString());
+				 boolean changed=false;
+				 changed= Errors.setCoffeeMcErrors(null);
+				 changed|= setMcStateText(state); 
+				 if(changed)
+					 updateEnable();
+
+			 }
+			 
 			 void setCoffeeMcEnable(boolean  enable,List<Errors.McError> errors){
 				 mylog.log_i("setCoffeeMcEnable ="+enable+" errors="+errors.toString());
 				 boolean changed=false;
@@ -1627,50 +1575,7 @@ void existMask(){
 				 }
 				 return false;
 			 }
-//			 void updateAssitMcEnable(){
-//				 String msg=null;
-//				 boolean enable=AssistState.getEnable();
-//				// if(isAssistMcWork!=enable||(!oldAssisStr.equals(msg))){
-//					 isAssistMcWork=enable;
-//					 if(!isAssistMcWork){
-//					 msg=(AssistState.hasCup?"":context.getString(R.string.noCup))+
-//						(AssistState.hasWater?"":(" "+context.getString(R.string.noWater)))+
-//						(AssistState.getXml?"":(" "+context.getString(R.string.errgetXml)))+
-//						(AssistState.isConnect?"":(" "+context.getString(R.string.toAssisTimeOut)));
-//						 
-//					 }else{
-//					// oldAssisStr=msg;
-//						 msg=context.getString(R.string.cmd1_ready); 
-//					 }
-//					 updateEnable();
-//					 sendMsgToHandler(Handler_assiMcDisp, msg);
-//				// }
-//			 }
-//			 void setNetWorkEnable(boolean  enable,String msg){
-//				 if(isConnectToServer!=enable||(!oldNetStr.equals(msg))){
-//					 oldNetStr=msg;
-//					 isConnectToServer=enable;
-//					 updateEnable();
-//					 sendMsgToHandler(Handler_netDisp, msg);
-//				 }
-//			 }
-			 
-//			 void setEnable(boolean enable){
-//				// Log.e(Tag, "setEnable!!!!!!!!!!="+enable);
-//				if(enable){
-//					leaveDevOrMaintainMode();
-//				}else{
-//					enterMaintainMode(appealed);
-//				}
-//			 }
-//			 void setEnable(boolean enable,String errors){
-//				 // Log.e(Tag, "setEnable!!!!!!!!!!="+enable);
-//				 if(enable){
-//					 leaveDevOrMaintainMode();
-//				 }else{
-//					 enterMaintainMode(appealed);
-//				 }
-//			 }
+
 			 void updateEnable(){
 				 String errors=null;
 				 if(Errors.hasError()){
@@ -1717,11 +1622,7 @@ void existMask(){
 							return true;
 						}
 					}
-//					
-//					if(goodId.containsKey(type)){
-//						cur_goodId=goodId.get(type);
-//						return true;
-//					}
+
 					
 					return false;
 				}
@@ -1737,7 +1638,28 @@ void existMask(){
 					
 					return isConnected;
 				}
-				
-
+	void dealClean(){
+		if(cleans.dealClean()){
+			coffeeMachine.cmd_cleaning();
+			assistProtocol.cmd_cleaning(cleans.getWater());
+		}
+	}
+	void initCleans(List<String> time,int cnt,int ml){
+		if(cleans==null){
+			cleans=new Cleans(context);
+			cleans.setCallBack(new Cleans.CleanCallBack() {
+				@Override
+				public void onClean() {
+					if(tradeStep==StepNone){
+						coffeeMachine.cmd_cleaning();
+						assistProtocol.cmd_cleaning(cleans.getWater());
+					}
+				}
+			});
+		}
+		cleans.setDuaration(cnt);
+		cleans.setWater(ml);
+		cleans.setTimes(time);
+	}
 				
 }

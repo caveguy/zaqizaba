@@ -2,6 +2,7 @@ package com.tt.main;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,7 +15,7 @@ import com.example.coffemachinev3.R;
 public class CoffeeFragmentPage1 extends Fragment implements OnClickListener,android.widget.CompoundButton.OnCheckedChangeListener{
 
 	CheckBox btn_coffee1,btn_coffee2,btn_coffee3,btn_coffee4;
-
+	private final String Tag="CoffeeFragmentPage1";
 	CheckedCallBack back=null;
 	public interface CheckedCallBack{
 		void onCallback(int id);
@@ -35,14 +36,18 @@ public class CoffeeFragmentPage1 extends Fragment implements OnClickListener,and
 	
 	public static CoffeeFragmentPage1 newInstance() {
 		CoffeeFragmentPage1 fragment = new CoffeeFragmentPage1();
+
 		return fragment;
 	}
+
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
 		View view = inflater.inflate(R.layout.fragment_coffee_page1, container, false);
 		initView(view);
+	//	Log.i("CoffeeFragmentPage1","onCreateView !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		return view;
 	}
 	@Override
@@ -54,7 +59,6 @@ public class CoffeeFragmentPage1 extends Fragment implements OnClickListener,and
 		super.onDestroy();
 	}
 
-	
     void initView(View view){
 
      	btn_coffee1=(CheckBox)view.findViewById(R.id.radio_1);
@@ -69,49 +73,65 @@ public class CoffeeFragmentPage1 extends Fragment implements OnClickListener,and
 
     }
 	public void setIconNames(String[] name){
-		
-		if(name.length>0)
-			btn_coffee1.setText(name[0]);
-		if(name.length>1)
-			btn_coffee2.setText(name[1]);
-		if(name.length>2)
-			btn_coffee3.setText(name[2]);
-		if(name.length>3)
-			btn_coffee4.setText(name[3]);
+		if(name==null){
+			Log.e(Tag,"setIconNames name==null！！！！");
+		}
+		if(btn_coffee1==null){
+			Log.e(Tag,"setIconNames btn_coffee1==null！！！！");
+		}
+
+		try {
+			if (name.length > 0)
+				btn_coffee1.setText(name[0]);
+			if (name.length > 1)
+				btn_coffee2.setText(name[1]);
+			if (name.length > 2)
+				btn_coffee3.setText(name[2]);
+			if (name.length > 3)
+				btn_coffee4.setText(name[3]);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	public void setCoffeeIconRadio(int id){
-		switch(id){
-			case R.id.radio_1:
-				checkedCallBack(0);
-				btn_coffee2.setChecked(false);
-				btn_coffee3.setChecked(false);
-				btn_coffee4.setChecked(false);
-				break;
-			case R.id.radio_2:
-				checkedCallBack(1);
-				btn_coffee1.setChecked(false);
-				btn_coffee3.setChecked(false);
-				btn_coffee4.setChecked(false);
-				break;
-			case R.id.radio_3:
-				checkedCallBack(2);
-				btn_coffee2.setChecked(false);
-				btn_coffee1.setChecked(false);
-				btn_coffee4.setChecked(false);
-				break;
-			case R.id.radio_4:
-				checkedCallBack(3);
-				btn_coffee1.setChecked(false);
-				btn_coffee2.setChecked(false);
-				btn_coffee3.setChecked(false);
-				break;
-			case 0:
-			default:
-				btn_coffee1.setChecked(false);
-				btn_coffee2.setChecked(false);
-				btn_coffee3.setChecked(false);
-				btn_coffee4.setChecked(false);	
-				break;
+		try {
+
+
+			switch(id){
+				case R.id.radio_1:
+					checkedCallBack(0);
+					btn_coffee2.setChecked(false);
+					btn_coffee3.setChecked(false);
+					btn_coffee4.setChecked(false);
+					break;
+				case R.id.radio_2:
+					checkedCallBack(1);
+					btn_coffee1.setChecked(false);
+					btn_coffee3.setChecked(false);
+					btn_coffee4.setChecked(false);
+					break;
+				case R.id.radio_3:
+					checkedCallBack(2);
+					btn_coffee2.setChecked(false);
+					btn_coffee1.setChecked(false);
+					btn_coffee4.setChecked(false);
+					break;
+				case R.id.radio_4:
+					checkedCallBack(3);
+					btn_coffee1.setChecked(false);
+					btn_coffee2.setChecked(false);
+					btn_coffee3.setChecked(false);
+					break;
+				case 0:
+				default:
+					btn_coffee1.setChecked(false);
+					btn_coffee2.setChecked(false);
+					btn_coffee3.setChecked(false);
+					btn_coffee4.setChecked(false);
+					break;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 	@Override

@@ -306,7 +306,10 @@ public class CoffeeMcProtocol {
 			case State_waiting:
 			case State_fillingSystem:
 				onWaitingCallBack(in_cmd0x21D0_runningState);
+				
 				break;
+			default:
+				Log.w(TAG, " unknown state: in_cmd0x21D0_runningState="+in_cmd0x21D0_runningState);
 			}
 
 			

@@ -47,6 +47,7 @@
 	<dimen name="margin_qr_img_x">26dp</dimen>
 	<dimen name="btn_paymargin_bottom">32dp</dimen>
 	<dimen name="btn_paymargin_top">16dp</dimen>
+	<dimen name="btn_padding">7dp</dimen>
 	<dimen name="size_button_otherPay">32dp</dimen>
 	<dimen name="size_button_ok">26sp</dimen>
 	<dimen name="indicator_padding">22dp</dimen>

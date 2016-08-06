@@ -20,19 +20,32 @@ public class MainViewPager extends ViewPager {
 	}
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent arg0) {
-		if(onTouch){
-			return super.onInterceptTouchEvent(arg0);
-		}else{
+		try {
+			if (onTouch) {
+				return super.onInterceptTouchEvent(arg0);
+			} else {
+				return false;
+
+			}
+		}
+		catch (Exception e){
+			e.printStackTrace();
 			return false;
-			
 		}
 	}
+
+
 	public boolean onTouchEvent(MotionEvent arg0) {
-		if(onTouch){
-			return super.onTouchEvent(arg0);
-		}else{
+		try {
+			if(onTouch){
+				return super.onTouchEvent(arg0);
+			}else{
+				return false;
+
+			}
+		}catch (Exception e){
+			e.printStackTrace();
 			return false;
-			
 		}
 	}
 

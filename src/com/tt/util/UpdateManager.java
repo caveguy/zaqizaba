@@ -1,18 +1,5 @@
 package com.tt.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.example.coffemachinev3.R;
-
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -21,18 +8,21 @@ import android.os.Environment;
 import android.os.Looper;
 import android.util.Log;
 
-/*
- *@author Eric 
- *@2015-11-7上午8:03:31
- */
+import com.example.coffemachinev3.R;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class UpdateManager {
 	private final String TAG="UpdateManager";
 	private final static  String url="http://caveguy.wicp.net";
 	
 	private static UpdateManager manager = null;
 	Context context=null;
-	int version = 0;
-	int serverVersion = 0;
 	String versionName=null;
 	final static String fileName="/CoffeMachineV3.apk";
 	final static String serverFileName="/CoffeMachineV3.zip";
@@ -50,19 +40,19 @@ public class UpdateManager {
 		return fileName;
 	}
 	//获取版本号
-	public int getVersion(){
-		
-		try {  
-			String pkName = context.getPackageName();
-			version = context.getPackageManager().getPackageInfo(  
-					pkName, 0).versionCode;  
-        } catch (Exception e) { 
-        	dispDialog(context.getString(R.string.error),context.getString(R.string.getVerError),context.getString(R.string.ok),null,null);
-			Log.e(TAG,context.getString(R.string.getVerError));
-        	// System.out.println("获取版本号异常！");
-        }  
-		return version;
-	}
+//	public int getVersion(){
+//
+//		try {
+//			String pkName = context.getPackageName();
+//			version = context.getPackageManager().getPackageInfo(
+//					pkName, 0).versionCode;
+//        } catch (Exception e) {
+//        	dispDialog(context.getString(R.string.error),context.getString(R.string.getVerError),context.getString(R.string.ok),null,null);
+//			Log.e(TAG,context.getString(R.string.getVerError));
+//        	// System.out.println("获取版本号异常！");
+//        }
+//		return version;
+//	}
 	
 	//获取版本名
 	public String getVersionName(){
@@ -77,30 +67,32 @@ public class UpdateManager {
 		}
 		return versionName;
 	}
-	
-	//获取服务器版本号
-	public String getServerVersion(){
-		String serverJson = null;
-		byte[] buffer = new byte[128];
-		
-		try {
-			URL serverURL = new URL(url+"/ver.aspx");
-			HttpURLConnection connect = (HttpURLConnection) serverURL.openConnection();
-			connect.setConnectTimeout(5000);  
-			connect.setReadTimeout(5000); 
-			BufferedInputStream bis = new BufferedInputStream(connect.getInputStream());
-			int n = 0;
-			while((n = bis.read(buffer))!= -1){
-				serverJson = new String(buffer);
-			}
-		} catch (Exception e) {
-			serverJson=null;
-			dispDialog(context.getString(R.string.error),context.getString(R.string.errorToserver),context.getString(R.string.ok),null,null);
-			Log.e(TAG,context.getString(R.string.errorToserver)+e);
-		}
-		
-		return serverJson;
-	}	
+
+
+
+//	//获取服务器版本号
+//	public String getServerVersion(){
+//		String serverJson = null;
+//		byte[] buffer = new byte[128];
+//
+//		try {
+//			URL serverURL = new URL(url+"/ver.aspx");
+//			HttpURLConnection connect = (HttpURLConnection) serverURL.openConnection();
+//			connect.setConnectTimeout(5000);
+//			connect.setReadTimeout(5000);
+//			BufferedInputStream bis = new BufferedInputStream(connect.getInputStream());
+//			int n = 0;
+//			while((n = bis.read(buffer))!= -1){
+//				serverJson = new String(buffer);
+//			}
+//		} catch (Exception e) {
+//			serverJson=null;
+//			dispDialog(context.getString(R.string.error),context.getString(R.string.errorToserver),context.getString(R.string.ok),null,null);
+//			Log.e(TAG,context.getString(R.string.errorToserver)+e);
+//		}
+//
+//		return serverJson;
+//	}
 	
 	
 	
@@ -135,68 +127,45 @@ public class UpdateManager {
         	});  
         builder.show();
 	}
-	
-	
+   String serverVerName=null;
+	String downUrl=null;
 	//比较服务器版本与本地版本弹出对话框
-	public boolean compareVersion(){
-		
+	public boolean compareVersion(String serverVer,String downurl){
+
 		final Context contextTemp = context;
-		version=getVersion();
 		versionName=getVersionName();
-		//Log.e(TAG, "compareVersion!!!!!!!!!!!0");
-		
+		serverVerName=serverVer;
+		downUrl=downurl;
 		Thread thread=new Thread(){
 			public void run() {
-				
 				Looper.prepare();
-				//Log.e(TAG, "compareVersion!!!!!!!!!!!1");
-				String serverJson = manager.getServerVersion();
-				//Log.e(TAG, "compareVersion!!!!!!!!!!!2");
-				if(serverJson!=null&&versionName!=null){
-				//Log.e(TAG, "compareVersion!!!!!!!!!!!3");
-					//解析Json数据
-					try {
-						JSONArray array = new JSONArray(serverJson);
-						JSONObject object = array.getJSONObject(0);
-						String getServerVersion = object.getString("version");
-						serverVersion=new Integer(getServerVersion);
-						serverVersionName = object.getString("versionName");	
-						
-						onSeverVerChangedCallback(getServerVersion,serverVersionName);
-						if(version < serverVersion){
-							
-							DialogInterface.OnClickListener listen=new DialogInterface.OnClickListener() {  
-				                   @Override  
-				                   public void onClick(DialogInterface dialog, int arg1) { 
-				                       //开启线程下载apk
-				                	   new Thread(){
-				                		   public void run() {
-				                			   Looper.prepare();
-				                			   downloadApkFile(contextTemp);
-				                			   Looper.loop();
-				                		   };
-				                	   }.start();
-				                	   dialog.dismiss();
-				                   } 
-				                   
-				               };
-							
-				               dispDialog(context.getString(R.string.update),context.getString(R.string.curVer)+versionName
-				            		   +"\n"+context.getString(R.string.serverVer)+serverVersionName 
-				            		   ,context.getString(R.string.doNow),context.getString(R.string.nextTime),listen);
-	
+						onSeverVerChangedCallback(serverVersionName);
+						if(serverVerName.compareTo(versionName)>0&&(serverVerName.length()>=versionName.length()) ){
+							DialogInterface.OnClickListener listen=new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int arg1) {
+									//开启线程下载apk
+									new Thread(){
+										public void run() {
+											Looper.prepare();
+											downloadApkFile(contextTemp,downUrl);
+											Looper.loop();
+										};
+									}.start();
+									dialog.dismiss();
+								}
+
+							};
+
+							dispDialog(context.getString(R.string.update),context.getString(R.string.curVer)+versionName
+											+"\n"+context.getString(R.string.serverVer)+serverVersionName
+									,context.getString(R.string.doNow),context.getString(R.string.nextTime),listen);
+
 						}else{
 							dispDialog(context.getString(R.string.update),context.getString(R.string.newest),context.getString(R.string.ok),null,null);
 						}
-					} catch (JSONException e) {
-						e.printStackTrace();
 
-						dispDialog(context.getString(R.string.error),context.getString(R.string.errorGetServerVer),context.getString(R.string.ok),null,null);
-						Log.e(TAG,context.getString(R.string.errorGetServerVer));
-					}
-				}else{
-				//	dispDialog(context.getString(R.string.error),context.getString(R.string.unknowError),context.getString(R.string.ok),null,null);
-				}
+
 				Looper.loop();
 			};
 		};
@@ -204,15 +173,82 @@ public class UpdateManager {
 		thread.start();
 		return false;
 	}
+//	//比较服务器版本与本地版本弹出对话框
+//	public boolean compareVersion(){
+//
+//		final Context contextTemp = context;
+//		version=getVersion();
+//		versionName=getVersionName();
+//		//Log.e(TAG, "compareVersion!!!!!!!!!!!0");
+//
+//		Thread thread=new Thread(){
+//			public void run() {
+//
+//				Looper.prepare();
+//				//Log.e(TAG, "compareVersion!!!!!!!!!!!1");
+//				String serverJson = manager.getServerVersion();
+//				//Log.e(TAG, "compareVersion!!!!!!!!!!!2");
+//				if(serverJson!=null&&versionName!=null){
+//				//Log.e(TAG, "compareVersion!!!!!!!!!!!3");
+//					//解析Json数据
+//					try {
+//						JSONArray array = new JSONArray(serverJson);
+//						JSONObject object = array.getJSONObject(0);
+//						String getServerVersion = object.getString("version");
+//						serverVersion=new Integer(getServerVersion);
+//						serverVersionName = object.getString("versionName");
+//
+//						onSeverVerChangedCallback(getServerVersion,serverVersionName);
+//						if(version < serverVersion){
+//
+//							DialogInterface.OnClickListener listen=new DialogInterface.OnClickListener() {
+//				                   @Override
+//				                   public void onClick(DialogInterface dialog, int arg1) {
+//				                       //开启线程下载apk
+//				                	   new Thread(){
+//				                		   public void run() {
+//				                			   Looper.prepare();
+//				                			   downloadApkFile(contextTemp);
+//				                			   Looper.loop();
+//				                		   };
+//				                	   }.start();
+//				                	   dialog.dismiss();
+//				                   }
+//
+//				               };
+//
+//				               dispDialog(context.getString(R.string.update),context.getString(R.string.curVer)+versionName
+//				            		   +"\n"+context.getString(R.string.serverVer)+serverVersionName
+//				            		   ,context.getString(R.string.doNow),context.getString(R.string.nextTime),listen);
+//
+//						}else{
+//							dispDialog(context.getString(R.string.update),context.getString(R.string.newest),context.getString(R.string.ok),null,null);
+//						}
+//					} catch (JSONException e) {
+//						e.printStackTrace();
+//
+//						dispDialog(context.getString(R.string.error),context.getString(R.string.errorGetServerVer),context.getString(R.string.ok),null,null);
+//						Log.e(TAG,context.getString(R.string.errorGetServerVer));
+//					}
+//				}else{
+//				//	dispDialog(context.getString(R.string.error),context.getString(R.string.unknowError),context.getString(R.string.ok),null,null);
+//				}
+//				Looper.loop();
+//			};
+//		};
+//		//thread.setPriority(Thread.MAX_PRIORITY);
+//		thread.start();
+//		return false;
+//	}
 	
 	
 	//下载apk文件
-	public void downloadApkFile(Context context){
+	public void downloadApkFile(Context context,String downurl){
 		String savePath = Environment.getExternalStorageDirectory()+fileName;
-		String serverFilePath = url+serverFileName;
+	//	String serverFilePath = url+serverFileName;
 		try {
 			if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){  
-				URL serverURL = new URL(serverFilePath);
+				URL serverURL = new URL(downurl);
 				HttpURLConnection connect = (HttpURLConnection) serverURL.openConnection();
 				BufferedInputStream bis = new BufferedInputStream(connect.getInputStream());
 				File apkfile = new File(savePath);
@@ -259,14 +295,14 @@ public class UpdateManager {
 		callBack = call;
 	}
 
-	void onCurVerChangedCallback(String ver,String verName){
+	void onCurVerChangedCallback(String verName){
 		if(callBack!=null){
-			callBack.onCurVerChanged( ver,verName);
+			callBack.onCurVerChanged(verName);
 		}
 	}
-	void onSeverVerChangedCallback(String ver,String verName){
+	void onSeverVerChangedCallback(String verName){
 		if(callBack!=null){
-			callBack.onServerVerChanged( ver,verName);
+			callBack.onServerVerChanged(verName);
 		}
 	}
 	void onVerChangedCallback(int gress){
@@ -276,8 +312,8 @@ public class UpdateManager {
 	}
 	public interface CallBack {
 
-		void onCurVerChanged(String ver,String verName);
-		void onServerVerChanged(String ver,String verName);
+		void onCurVerChanged(String verName);
+		void onServerVerChanged(String verName);
 		void updateProgress(int gress);
 	
 	}

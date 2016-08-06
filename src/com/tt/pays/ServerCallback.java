@@ -8,6 +8,8 @@ package com.tt.pays;
 public interface  ServerCallback {
 	//注册成功
 	public void onLoginSuccess();
+   //断开连接
+	public void onDisconnect();
 	public void onLoginFailed(String msg);
 	//工艺表更新
 	public void onFormulaUpdate(String xml);

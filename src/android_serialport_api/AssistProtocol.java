@@ -1,17 +1,16 @@
 package android_serialport_api;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.example.coffemachinev3.R;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import android.content.Context;
-import android.os.Handler;
-import android.util.Log;
-
-import com.example.coffemachinev3.R;
 
 public class AssistProtocol {
 	Context context;
@@ -58,7 +57,7 @@ public class AssistProtocol {
 	final byte QueryStep_flowing=BIT4;		//出粉/水阶段
 	final byte QueryStep_takingCup=BIT5;	//取杯阶段
 	final int ReciveLength=8;
-	
+//	final byte Clean_water_ml=20;
 	//错误bit
 	public static  final byte Fault_noWater=BIT0;
 	public static final byte Fault_noCup=BIT1;
@@ -579,7 +578,13 @@ public class AssistProtocol {
 	public void  cmd_QueryCupToken(){
 		setCurStep(QueryStep_takingCup);
 	}
-	
+
+	public void cmd_cleaning(int ml){
+		cmd_setWater(ml,ml,ml,ml);
+		cmd_setPowder(0,0,0,0,0,0,0,0);
+		cmd_startDropPowder(true,true,true,true,true,true,true,true);
+	}
+
 	/*
 	 * 查询杯子是否放好
 	 * 为不需要落杯的程序准备

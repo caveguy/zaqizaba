@@ -5,7 +5,7 @@ public class Coffee {
 	private Integer order=null;
 	private String name=null;
 	private String price=null;
-
+	private String org_price=null;
 	
 	private Integer needCoffee=0;
 	private Integer coffeePowder=0;
@@ -65,6 +65,12 @@ public class Coffee {
 		return price;
 	}
 	public void setPrice(String price) {
+		this.price = price;
+	}
+	public String getOrgPrice() {
+		return price;
+	}
+	public void setOrgPrice(String price) {
 		this.price = price;
 	}
 	public Integer getNeedCoffee() {

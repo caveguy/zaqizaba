@@ -12,7 +12,7 @@
 	            android:textSize="@dimen/size_coffee_title"  
 	            android:textColor="@color/brown_title"    
 	            android:gravity="bottom|center_horizontal"  
-	            android:text="@string/coffee_type5" 
+	            android:text="@string/coffee_type6"
 	            android:layout_weight="1"  
 	            android:button="@null"
 				android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"

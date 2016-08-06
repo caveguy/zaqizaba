@@ -1,16 +1,5 @@
 package com.tt.pays;
 
-import java.security.MessageDigest;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
@@ -20,6 +9,16 @@ import com.tt.httpUtils.AsyncHttp;
 import com.tt.httpUtils.HttpCallback;
 import com.tt.util.GetMacAddress;
 import com.tt.util.JsonHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 /**
  * 服务器及交易处理
  * 创建时间：2016-07-01
@@ -34,7 +33,7 @@ public class PayServer {
 	private String machine_key=null;
 	
 	private String goodsNum=null;
-	private String techSerial=null;
+	private String techSerial="10000";
 	private String textSerial=null;
 	private String stocks=null;
 	private String errors=null;
@@ -70,8 +69,8 @@ public class PayServer {
 	private final String url_extra_zfb_state="alipaystatus";
 	private final String url_extra_weixin_state="weixinpaystatus";
 	private final String url_extra_finish="saledata";
-	private final String url_extra_tech="";
-	private final String url_extra_text="";
+	private final String url_extra_tech="gettechpara";
+	private final String url_extra_text="gettextinfo";
 	private final String url_extra_ver="lastversion";
 	
 	private final String Index_deviceid="deviceid";
@@ -79,12 +78,17 @@ public class PayServer {
 	private final String Index_random="rstr";
 	private final String Index_sign="sign";
 	private final String Index_apkver="apkver";
+	private final String Index_serverapkver="serverapkver";
+	private final String Index_serverapkpath="downurl";
 	private final String Index_ctlver="controllerver";
 	private final String Index_coffeeNum="coffeetype";
 	private final String Index_techserial="techserial";
 	private final String Index_textserial="textserial";
 	private final String Index_servertechserial="servertechserial";
 	private final String Index_servertextserial="servertextserial";
+	private final String Index_requesttechserial="requesttechserial";
+	private final String Index_text="text";
+	private final String Index_tech="tech";
 	private final String Index_stock="stock";
 	private final String Index_error="errors";
 	private final String Index_code="code";
@@ -104,23 +108,28 @@ public class PayServer {
 
 	private final int Duration_beat=1000*60*3;
 	private final String Tag="BLService===";
+	private final int Max_connect_retry=10;
+	private final int Max_postSale_retry=20;
 //	private final byte Query_zfb=0x01;
 //	private final byte Query_weixin=0x02;
 //
 //	
 //	private byte query_what=0;
-	
+	private int connect_cnt=0;
+	private int post_cnt=0;
 	private Timer serverTimer=null;
 	private BeatTask beatTask=null;
 	private ZfbPayStateTask zfbPayStateTask=null;
 	private WeixinPayStateTask weixinPayStateTask=null;
-	Handler myHandler=new Handler();
+
+
+	Handler sHandler=new Handler();
 	
 	class BeatTask extends TimerTask{
 		
 		@Override
 		public void run() {
-			myHandler.post(heatBeatRunable);	
+			sHandler.post(heatBeatRunable);
 		}
 		
 	};
@@ -136,6 +145,27 @@ public class PayServer {
 			}
 		}
 		
+	};
+	Runnable getWeixinQrRunable=new Runnable(){
+
+		@Override
+		public void run() {
+			getWeixinQr(cur_goodId,cur_price);
+		}
+	};
+	Runnable getZfbQrRunable=new Runnable(){
+		@Override
+		public void run() {
+			getZfbQr(cur_goodId,cur_price);
+		}
+	};
+	Runnable updataSaleRunable=new Runnable(){
+
+		@Override
+		public void run() {
+			updateSale();
+		}
+
 	};
 	Runnable queryZfbRunable=new Runnable(){
 		
@@ -162,7 +192,7 @@ public class PayServer {
 		@Override
 		public void run() {
          		if(isRun){
-         			myHandler.post(queryZfbRunable);	    	
+         			sHandler.post(queryZfbRunable);
          		}
 		}
 	};
@@ -171,7 +201,7 @@ public class PayServer {
 		@Override
 		public void run() {
 			if(isRun){
-				myHandler.post(queryWeixinRunable);	
+				sHandler.post(queryWeixinRunable);
 			}
 		}
 		
@@ -263,27 +293,40 @@ public class PayServer {
 		return map;
 	}
 	void onBeatSuccess(Map map ){
-
+		connect_cnt=0;
 		if(map.containsKey(Index_servertechserial)){
 			String temp=(String) map.get(Index_servertechserial);
-			if(!temp.equals(techSerial)){
-				techSerial=temp;
-				askTechXml(techSerial);
+			//if(!temp.equals(techSerial)){
+
+				if(temp.compareTo(techSerial)>0&&(temp.length()>=techSerial.length())){
+					Log.i(Tag,"---------------sever tech serial="+temp+" local tech serial="+techSerial);
+				//techSerial=temp;
+				askTechXml(temp);
 				//callback.onHaveNewTech(techSerial);
 			}
-			
+
 		}
 		if(map.containsKey(Index_servertextserial)){
 			String temp=(String) map.get(Index_servertextserial);
-			if(!temp.equals(textSerial)){
-				textSerial=temp;
-				askText(textSerial);
+		//	if(!temp.equals(textSerial)){
+			if(temp.compareTo(textSerial)>0&&(temp.length()>=textSerial.length())){
+			//	textSerial=temp;
+				askText(temp);
 				//callback.onHaveNewTech(textSerial);
 			}
 			
 		}
 	}
+	private void onHeatbeatFailed(String msg){
+		Log.e(Tag, "onHeatbeatFailed!!!");isLogin=false;
 
+		if(connect_cnt++>=Max_connect_retry){
+			//connect_cnt=0;
+			isLogin=false;
+			if(callback!=null)
+				callback.onDisconnect();
+		}
+	}
 	
 	void onGetZfbQrSuccess(Map map ){
 		Log.i(Tag,"onGetZfbQrSuccess type======== ");
@@ -345,7 +388,53 @@ public class PayServer {
 		}
 		return false;
 	}
-	
+	/*
+	"servertextserial":"909"
+"text":"庆祝父亲节，今天全场八折;买两杯送一杯"  //”;”符号分隔两条或三
+	 */
+
+	boolean onGetTextSuccess(Map map ){
+		Log.i(Tag,"onGetTextSuccess map= "+map.toString());
+		if(map.containsKey(Index_servertextserial)){
+			String serial=(String) map.get(Index_servertextserial);
+			textSerial=serial;
+		}
+		if(map.containsKey(Index_text)){
+			String text=(String) map.get(Index_text);
+			if(callback!=null){
+				callback.onTextUpdate(text);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	boolean onGetTechSuccess(Map map ){
+		if(map.containsKey(Index_tech)){
+			String tech=(String) map.get(Index_tech);
+			if(callback!=null){
+				callback.onFormulaUpdate(tech);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	boolean onGetApkVerSuccess(Map map ){
+		if(map.containsKey(Index_serverapkver)) {
+			String ver = (String) map.get(Index_serverapkver);
+			if (map.containsKey(Index_serverapkpath)) {
+				String path = (String) map.get(Index_serverapkpath);
+				if (callback != null) {
+					callback.onGetNewVersion(ver,path);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 	private void onLoginFailed(String msg){
 		isLogin=false;
 		if(callback!=null)
@@ -357,25 +446,28 @@ public class PayServer {
 			callback.onLoginSuccess();
 	}
 	private void onPostSaleSuccess(){
-		  Log.e(Tag, "onPostSaleSuccess!!!");
+		  Log.i(Tag, "onPostSaleSuccess!!!");
 	}
-	private void onHeatbeatFailed(String msg){
-		  Log.e(Tag, "onHeatbeatFailed!!!");
-	}
+
 	private void onGetZfbQrFailed(String msg){
-		  Log.e(Tag, "onGetZfbQrFailed!!!");
+		  Log.i(Tag, "onGetZfbQrFailed,try again!!!");
+		//sHandler.post(getZfbQrRunable);
+		sHandler.postDelayed(getZfbQrRunable,500);
 	}
 	private void onGetWeixinQrFailed(String msg){
-		 Log.e(Tag, "onGetWeixinQrFailed!!!");
+		 Log.i(Tag, "onGetWeixinQrFailed try again!!!");
+		sHandler.postDelayed(getWeixinQrRunable,500);
+
 	}
 	private void onGetZfbPayStateFailed(String msg){
-		Log.e(Tag, "onGetZfbPayStateFailed!!!");
+		Log.i(Tag, "onGetZfbPayStateFailed try again!!!");
 	}
 	private void onGetWeixinPayStateFailed(String msg){
-		Log.e(Tag, "onGetWeixinPayStateFailed!!!");
+		Log.i(Tag, "onGetWeixinPayStateFailed try again!!!");
 	}
 	private void onPostSaleFailed(String msg){
-		Log.e(Tag, "onPostSaleFailed!!!");
+		Log.i(Tag, "onPostSaleFailed try again!!! ");
+		sHandler.postDelayed(updataSaleRunable,1000);
 	}
 	
 	
@@ -512,9 +604,12 @@ public class PayServer {
 			StringBuffer  msg=new StringBuffer();
 			map=dealCommBack(code,response, msg);
 			if(map!=null){
+				post_cnt=0;
 				onPostSaleSuccess();
 			}else{
-				onPostSaleFailed(msg.toString());
+				if(post_cnt++<Max_postSale_retry){
+					onPostSaleFailed(msg.toString());
+				}
 			}
 		}
 		
@@ -526,9 +621,15 @@ public class PayServer {
 	HttpCallback textCallback=new HttpCallback(){
 		@Override
 		public void onHttpResult(int code, JSONObject response) {
-
+			Map map=null;
+			StringBuffer  msg=new StringBuffer();
+			map=dealCommBack(code,response, msg);
+			if(map!=null){
+				if(onGetTextSuccess(map)){
+					Log.i(Tag,"get new　Text success!");
+				}
+			}
 		}
-		
 		@Override
 		public void onHttpResult(int code, String response) {
 			
@@ -537,7 +638,15 @@ public class PayServer {
 	HttpCallback techCallback=new HttpCallback(){
 		@Override
 		public void onHttpResult(int code, JSONObject response) {
-			
+			Log.i(Tag,"techCallback response="+response.toString());
+			Map map=null;
+			StringBuffer  msg=new StringBuffer();
+			map=dealCommBack(code,response, msg);
+			if(map!=null){
+				if(onGetTechSuccess(map)){
+					Log.i(Tag,"get new　tech success!");
+				}
+			}
 		}
 		
 		@Override
@@ -548,7 +657,17 @@ public class PayServer {
 	HttpCallback apkVerCallback=new HttpCallback(){
 		@Override
 		public void onHttpResult(int code, JSONObject response) {
-			
+			Log.i(Tag,"apkVerCallback response="+response.toString());
+			Map map=null;
+			StringBuffer  msg=new StringBuffer();
+			map=dealCommBack(code,response, msg);
+			if(map!=null){
+				if(onGetApkVerSuccess(map)){
+					Log.i(Tag,"get new　tech success!");
+				}
+			}else{
+
+			}
 		}
 		
 		@Override
@@ -678,7 +797,7 @@ public class PayServer {
 		}else{
 			params.add(Index_outTradeno,weixinTradeno);
 		}
-		postParams(url_extra_finish,params,weixinPayStateCallback);
+		postParams(url_extra_finish,params,postSaleMsgCallback);
 	}
 	public  void askText(String serial){	
 		RequestParams params = new RequestParams();
@@ -689,10 +808,10 @@ public class PayServer {
 	public  void askTechXml(String serial){	
 		RequestParams params = new RequestParams();
 		addedCommParas(params);
-		params.add(Index_servertechserial,serial);
+		params.add(Index_requesttechserial,serial);
 		postParams(url_extra_tech,params,techCallback);
 	}
-	public  void askapkVerXml(String curVer){	
+	public  void askapkVer(String curVer){
 		RequestParams params = new RequestParams();
 		addedCommParas(params);
 		params.add(Index_apkver,curVer);
@@ -706,7 +825,9 @@ public class PayServer {
 		asyncHttp.PostHttpClient(url,params,callback);
 	}
 
-    
+    public void setCurXmlVer(String ver){
+		techSerial=ver;
+	}
 
 
 	private  String MD5(String s) {
@@ -746,25 +867,6 @@ public class PayServer {
 	}
 
 
-	
-
-
-	public void updateState(Map<String,Integer> stock,List<String> error){
-		
-	}
-	public void updateState(Map<String,Integer> stock,Map<String,Object> bills,List<String> error){
-		
-	}
-	public void requestFormula(){
-		
-	}
-	public void requestZfb(int goodsId,float price){
-		
-	}
-	
-	public void requestWeixin(int goodsId,float price){
-		
-	}
 	/*
 	 * 交易完成后需要主动调用
 	 */

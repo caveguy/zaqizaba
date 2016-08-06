@@ -1,23 +1,24 @@
 package com.tt.xml;
 
+import android.content.Context;
+import android.util.Log;
+import android.util.Xml;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlSerializer;
-
-import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
-import android.util.Xml;
-
 public class CoffeeFormula {
-	public static String xml_path=Environment.getExternalStorageDirectory().toString()+"/coffeeConfig.xml";
-	//public static String xml_path="/storage/udisk/coffeeConfig.xml";
-	
+	//public static String xml_path=Environment.getExternalStorageDirectory().toString()+"/coffeeConfig.xml";
+	public static String xml_path="/storage/udisk/coffeeConfig.xml";
+	public static String xml_name="coffeeConfig.xml";
+
 	private final static String Tag="CoffeeFormula";
 	private  final static String Coffee="coffee";
 	private  final static String Coffees="coffees";
@@ -25,9 +26,11 @@ public class CoffeeFormula {
 	private  final static String Clean_cnt="cnt";
 	private  final static String Clean_time="time";
 	private  final static String objiect_temper="temperature";
+	private  final static String Ver="serial";
 	private  final static String id="id";
 	private  final static String name="name";
 	private  final static String price="price";
+	private  final static String orgPrice="org_price";
 	//咖啡机配置
 	private  final static String need_coffee="need_coffee";
 	private  final static String coffee_powder="coffee_powder";
@@ -49,12 +52,13 @@ public class CoffeeFormula {
 
 	 MachineTemper coffeeTemper=null;
 	List<Coffee> coffees = null;
-	List<CleanTime> times = null;
-	int clean_duration=0;
-	
-	public CoffeeFormula(Context c) throws Exception{
+	List<String> times = null;
+	int clean_duration=20;
+	int clean_water=20;
+	String verSerial=null;
+	public CoffeeFormula(Context c) {
 		context=c;
-		 parse();
+		// parse();
 	}
 	
 	
@@ -78,6 +82,15 @@ public class CoffeeFormula {
 		}
 		return false;
 	}
+	public static boolean setOrgPrice(List<Coffee> list,int id,String price){
+		for(Coffee coffee:list){
+			if(coffee.getId()==id){
+				coffee.setOrgPrice(price);
+				return true;
+			}
+		}
+		return false;
+	}
 	/**
 	 * 
 	 * ��ȡ����
@@ -88,7 +101,7 @@ public class CoffeeFormula {
 	public void getConfigs(InputStream xml) throws Exception{
 		int order=0;
 		Coffee coffee = null;
-		CleanTime time = null;
+		//CleanTime time = null;
 		XmlPullParser pullParser = Xml.newPullParser();
 		pullParser.setInput(xml, "UTF-8");//ΪPull����������Ҫ������XML����
 		int event = pullParser.getEventType();
@@ -101,17 +114,33 @@ public class CoffeeFormula {
 //				break;
 				
 			case XmlPullParser.START_TAG:
+				int num_value=pullParser.getAttributeCount();
+				
 				if(Coffees.equals(pullParser.getName())){
 					coffees = new ArrayList<Coffee>();
 				}
 				else if(Cleans.equals(pullParser.getName())){
-					times = new ArrayList<CleanTime>();
-					clean_duration=new Integer(pullParser.getAttributeValue(0));
+					times = new ArrayList<String>();
+					if(num_value>0)
+						clean_duration=new Integer(pullParser.getAttributeValue(0));
+					if(num_value>1)
+						clean_water=new Integer(pullParser.getAttributeValue(1));
 				}
+				else if(Ver.equals(pullParser.getName())){
+					verSerial=pullParser.nextText();
+				}
+
+
 				else if(objiect_temper.equals(pullParser.getName())){
-					int goal = new Integer(pullParser.getAttributeValue(0));
-					int backlash = new Integer(pullParser.getAttributeValue(1));
-					int min = new Integer(pullParser.getAttributeValue(2));
+					int goal=90;
+					int backlash=10;
+					int min=70;
+					if(num_value>0)
+						goal = new Integer(pullParser.getAttributeValue(0));
+					if(num_value>1)
+						backlash = new Integer(pullParser.getAttributeValue(1));
+					if(num_value>2)
+						min = new Integer(pullParser.getAttributeValue(2));
 					if(goal*backlash*min!=0){
 						coffeeTemper =new MachineTemper(goal,backlash,min);
 					}
@@ -119,8 +148,9 @@ public class CoffeeFormula {
 				}
 				else if(Clean_time.equals(pullParser.getName())){
 					String value = pullParser.nextText();
+					times.add(value);
 					//int id = new Integer(pullParser.getAttributeValue(0));
-					time = new CleanTime(value);
+					//time = new CleanTime(value);
 				}
 				
 				else if(Coffee.equals(pullParser.getName())){
@@ -138,6 +168,10 @@ public class CoffeeFormula {
 				else if(price.equals(pullParser.getName())){
 					String value = pullParser.nextText();
 					coffee.setPrice(value);
+				}
+				else if(orgPrice.equals(pullParser.getName())){
+					String value = pullParser.nextText();
+					coffee.setOrgPrice(value);
 				}
 				else if(need_coffee.equals(pullParser.getName())){
 					int value =new Integer(pullParser.nextText());
@@ -212,10 +246,10 @@ public class CoffeeFormula {
 					coffees.add(coffee);
 					coffee = null;
 				}
-				else if(Clean_time.equals(pullParser.getName())){
-					times.add(time);
-					time = null;
-				}
+//				else if(Clean_time.equals(pullParser.getName())){
+//					times.add(time);
+//					time = null;
+//				}
 				break;
 			}
 			event = pullParser.next();
@@ -290,7 +324,7 @@ public class CoffeeFormula {
 		out.close();
 	}
 	Context context;
-	void parse() throws Exception{
+	public void parse() throws Exception{
 		InputStream xml=null;
 		Log.e("Coffee",xml_path);
 		try{
@@ -299,21 +333,55 @@ public class CoffeeFormula {
 		}
 		catch(Exception e){
 			Log.e(Tag,"getCoffeeFormula error="+e.getMessage());
-			 xml = context.getClass().getClassLoader().getResourceAsStream("coffeeConfig.xml");
+			 xml = context.getClass().getClassLoader().getResourceAsStream(xml_name);
 		}
 		
 		getConfigs(xml);
 
 	}
+	public boolean updateXml(String xml){
+		boolean done=false;
+		try{
+			FileOutputStream fout = new FileOutputStream(xml_path);
+			byte [] bytes = xml.getBytes();
+			fout.write(bytes);
+			fout.close();
+			done=true;
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			try{
+				FileOutputStream fout =context.openFileOutput(xml_name, context.MODE_PRIVATE);
+				byte [] bytes = xml.getBytes();
+				fout.write(bytes);
+				fout.close();
+				done=true;
+			}
+			catch(Exception ee){
+				ee.printStackTrace();
+			}
+		}
+		return done;
+	}
 	
 	
-	
-	public  List<Coffee>  getCoffeeFormula() {
+	public  List<Coffee>  getCoffeeFormula() throws Exception {
+		parse();
 		return coffees;
 	}
-	public  List<CleanTime>  getCleanTimes() {
+	public  List<String>  getCleanTimes() {
 		return times;
 		
+	}
+	public int getClean_duration(){
+		return clean_duration;
+	}
+	public int getClean_water(){
+		return clean_water;
+	}
+
+	public String getVerSerial(){
+		return verSerial;
 	}
 	
 	public  MachineTemper getTemper(){

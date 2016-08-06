@@ -4,7 +4,8 @@
 <!--
 	<coffee id="1">
 		<name>Espresso</name>
-		<price>0.1</price>
+		<org_price>8</org_price>
+		<price>2</price>
 		<need_coffee>1</need_coffee>
 		<coffee_powder>10</coffee_powder>
 		<coffee_water>80</coffee_water>
@@ -26,7 +27,7 @@
 	-->
 	<coffee id="2">
 		<name>美式咖啡</name>
-		<price>0.02</price>
+		<price>0.03</price>
 		<need_coffee>1</need_coffee>
 		<coffee_powder>9</coffee_powder>
 		<coffee_water>80</coffee_water>
@@ -113,7 +114,7 @@
 	<!--锅炉温度设置  -->
 	<temperature 	goal="90" backlash="2"  min="70"/>
 	<!--设置定时清洗时间，及固定清洗频率  -->
-	<cleans cnt="50" >
+	<cleans cnt="50" water="20">
 	   <time>0:00</time> 
 	   <time>12:00</time> 
 	</cleans>  

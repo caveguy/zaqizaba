@@ -1,9 +1,6 @@
 package com.tt.main;
 
-import java.io.File;
-
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +11,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,6 +30,8 @@ import com.example.coffemachinev3.R;
 import com.tt.util.GetMacAddress;
 import com.tt.util.Settings;
 import com.tt.util.UpdateManager;
+
+import java.io.File;
 
 public class MaintainFragment extends Fragment implements OnClickListener,android.widget.CompoundButton.OnCheckedChangeListener{
 
@@ -71,6 +69,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		void onEnableHeating(boolean is);
 		void leave();
 		void clean();
+		void askVer(String cur);
 	}
 	
 	void leave(){
@@ -80,6 +79,12 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			back.leave();
 		}
 	}
+	void askVer(String cur){
+		if(back!=null){
+			back.askVer(cur);
+		}
+	}
+
 	void clean(){
 		if(back!=null){
 			back.clean();
@@ -121,7 +126,12 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		
 		MainFragment.myCallback=new MainFragment.SetDevCallBack() {
 
-		@Override
+			@Override
+			public void onGetNewVer(String ver, String path) {
+				manager.compareVersion(ver,path);
+			}
+
+			@Override
 		public void onMcStateChanged(String state) {
 			//Log.e("maintain","onMcStateChanged="+state);
 			Message message=new Message();
@@ -132,23 +142,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			
 		}
 
-//		@Override
-//		public void onNetStateChanged(String state) {
-//			Message message=new Message();
-//			message.what=Handler_net;
-//			message.obj=state;
-//			myHandler.sendMessage(message);
-//			
-//			
-//		}
-//		@Override
-//		public void onAssisStateChanged(String state) {
-//			Message message=new Message();
-//			message.what=Handler_assis;
-//			message.obj=state;
-//			myHandler.sendMessage(message);
-//			
-//		}
+
 		@Override
 		public void enterDevMode() {
 			
@@ -169,13 +163,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			
 		}
 
-//		@Override
-//		public void updateId(String id) {
-//			Message message=new Message();
-//			message.what=Handler_id;
-//			message.obj=id;
-//			myHandler.sendMessage(message);
-//		}
+
 
 		@Override
 		public void enterMaintainMode(boolean refund, String errors) {
@@ -369,21 +357,21 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			}
 
 			@Override
-			public void onCurVerChanged(String ver, String verName) {
+			public void onCurVerChanged( String verName) {
 				Message msg = new Message();
 				msg.what=Handler_ver;
-				msg.obj = ver;
-				String disp="当前版本号:"+ver+"\n"+"当前版本名:"+verName;
+				msg.obj = verName;
+				String disp="当前版本名:"+verName;
 				myHandler.sendMessage(msg);
 				
 			}
 
 			@Override
-			public void onServerVerChanged(String ver, String verName) {
+			public void onServerVerChanged(String verName) {
 				Message msg = new Message();
 				msg.what=Handler_ver;
-				msg.obj = ver;
-				String disp="服务器版本号:"+ver+"\n"+"服务器版本名:"+verName;
+				msg.obj = verName;
+				String disp="服务器版本名:"+verName;
 				myHandler.sendMessage(msg);
 				
 			}
@@ -443,6 +431,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 							}
 							break;
 						case Handler_hide:
+							t_error.setText(context.getString(R.string.empty));
 							hide(); 
 							break;
 						case Handler_id:
@@ -533,7 +522,8 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 				clean();
 			break;
 			case R.id.btn_update:
-				manager.compareVersion();
+				askVer("v34");
+				//manager.compareVersion();
 				break;
 			case R.id.btn_stock:
 				StockFragment stockFragment=StockFragment.newInstance();
@@ -548,7 +538,7 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 //        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 //        transaction.add(R.id.layout_mask, fragment).commit();
 		getFragmentManager().beginTransaction()
-				.setCustomAnimations(R.anim.alphain, R.anim.alphaout)
+			//	.setCustomAnimations(R.anim.alphain, R.anim.alphaout)
 			//	.add(android.R.id.content, fragment)
 				.add(R.id.layout_mask, fragment)
 				.addToBackStack(null).commit();
