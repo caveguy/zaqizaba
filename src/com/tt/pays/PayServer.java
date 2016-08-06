@@ -663,7 +663,7 @@ public class PayServer {
 			map=dealCommBack(code,response, msg);
 			if(map!=null){
 				if(onGetApkVerSuccess(map)){
-					Log.i(Tag,"get new　tech success!");
+					Log.i(Tag,"get new　apk ver success!");
 				}
 			}else{
 

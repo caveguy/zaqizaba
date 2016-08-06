@@ -1073,7 +1073,9 @@ void existMask(){
 					
 					@Override
 					public void onGetNewVersion(String ver, String path) {
-
+						if(myCallback!=null){
+							myCallback.onGetNewVer(ver, path);
+						}
 						
 					}
 					

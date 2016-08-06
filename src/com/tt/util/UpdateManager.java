@@ -26,7 +26,7 @@ public class UpdateManager {
 	String versionName=null;
 	final static String fileName="/CoffeMachineV3.apk";
 	final static String serverFileName="/CoffeMachineV3.zip";
-	String serverVersionName=null;
+
 	private UpdateManager(Context context){
 		this.context=context;
 		
@@ -139,7 +139,7 @@ public class UpdateManager {
 		Thread thread=new Thread(){
 			public void run() {
 				Looper.prepare();
-						onSeverVerChangedCallback(serverVersionName);
+						onSeverVerChangedCallback(serverVerName);
 						if(serverVerName.compareTo(versionName)>0&&(serverVerName.length()>=versionName.length()) ){
 							DialogInterface.OnClickListener listen=new DialogInterface.OnClickListener() {
 								@Override
@@ -158,7 +158,7 @@ public class UpdateManager {
 							};
 
 							dispDialog(context.getString(R.string.update),context.getString(R.string.curVer)+versionName
-											+"\n"+context.getString(R.string.serverVer)+serverVersionName
+											+"\n"+context.getString(R.string.serverVer)+serverVerName
 									,context.getString(R.string.doNow),context.getString(R.string.nextTime),listen);
 
 						}else{
