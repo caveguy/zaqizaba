@@ -229,8 +229,9 @@
 	<string name="mc_error26">缺水</string>
 	<string name="mc_waiting">系统自处理中</string>
     <string name="empty">无</string>
+     <string name="orgPrice">原价￥</string>
     <string name="mc_error27">未连接服务器</string>
-    <string name="version">v3.3.2-160806-5</string>
+    <string name="version">v3.3.4-160819-4</string>
     
 
 </resources>

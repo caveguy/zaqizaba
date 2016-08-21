@@ -13,10 +13,7 @@ public class SharePreferenceUtil {
 	editor = sp.edit();
 	 
 	}
-	 
-	
-	
-	
+
 	public void setStringValue(String key,String value) {
 	 
 	// TODO Auto-generated method stub

@@ -61,6 +61,8 @@
 	<dimen name="marginTop_payTile">10dp</dimen>
 	<dimen name="paddingBotton_iconCoffee">12dp</dimen>
 	<dimen name="size_coffee_title">38sp</dimen>
+	<dimen name="size_coffee_orgPrice">24sp</dimen>
+	
 		<dimen name="padding_qr_frag">60dp</dimen>
 	<dimen name="paddingTop_qr_img">60dp</dimen>
 	<dimen name="margin_qr_img">60dp</dimen>

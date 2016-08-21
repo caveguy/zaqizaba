@@ -115,9 +115,11 @@
 	<temperature 	goal="90" backlash="2"  min="70"/>
 	<!--设置定时清洗时间，及固定清洗频率  -->
 	<cleans cnt="50" water="20">
-	   <time>0:00</time> 
+	   <time>3:00</time> 
 	   <time>12:00</time> 
 	</cleans>  
 	<serial>3</serial>
+
+	
 </root>
 

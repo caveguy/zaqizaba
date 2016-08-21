@@ -1,6 +1,7 @@
 package com.tt.main;
 
 import android.app.Fragment;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,12 +10,16 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import com.example.coffemachinev3.R;
 
 public class CoffeeFragmentPage1 extends Fragment implements OnClickListener,android.widget.CompoundButton.OnCheckedChangeListener{
 
 	CheckBox btn_coffee1,btn_coffee2,btn_coffee3,btn_coffee4;
+	TextView t_name1,t_name2,t_name3,t_name4;
+	TextView t_org1,t_org2,t_org3,t_org4;
+	TextView t_price1,t_price2,t_price3,t_price4;
 	private final String Tag="CoffeeFragmentPage1";
 	CheckedCallBack back=null;
 	public interface CheckedCallBack{
@@ -69,7 +74,23 @@ public class CoffeeFragmentPage1 extends Fragment implements OnClickListener,and
     	btn_coffee1.setOnCheckedChangeListener(this);
     	btn_coffee2.setOnCheckedChangeListener(this);
     	btn_coffee3.setOnCheckedChangeListener(this);
-    	btn_coffee4.setOnCheckedChangeListener(this);
+    	btn_coffee4.setOnCheckedChangeListener(this);	
+    	t_name1=(TextView)view.findViewById(R.id.t_name1);
+    	t_name2=(TextView)view.findViewById(R.id.t_name2);
+    	t_name3=(TextView)view.findViewById(R.id.t_name3);
+    	t_name4=(TextView)view.findViewById(R.id.t_name4);
+    	t_org1=(TextView)view.findViewById(R.id.t_orgprice1);
+    	t_org2=(TextView)view.findViewById(R.id.t_orgprice2);
+    	t_org3=(TextView)view.findViewById(R.id.t_orgprice3);
+    	t_org4=(TextView)view.findViewById(R.id.t_orgprice4);
+    	t_price1=(TextView)view.findViewById(R.id.t_price1);
+    	t_price2=(TextView)view.findViewById(R.id.t_price2);
+    	t_price3=(TextView)view.findViewById(R.id.t_price3);
+    	t_price4=(TextView)view.findViewById(R.id.t_price4);
+    	t_org1.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG|Paint.ANTI_ALIAS_FLAG); 
+    	t_org2.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG|Paint.ANTI_ALIAS_FLAG);
+    	t_org3.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG|Paint.ANTI_ALIAS_FLAG); 
+    	t_org4.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG|Paint.ANTI_ALIAS_FLAG); 
 
     }
 	public void setIconNames(String[] name){
@@ -82,13 +103,55 @@ public class CoffeeFragmentPage1 extends Fragment implements OnClickListener,and
 
 		try {
 			if (name.length > 0)
-				btn_coffee1.setText(name[0]);
+				t_name1.setText(name[0]);
 			if (name.length > 1)
-				btn_coffee2.setText(name[1]);
+				t_name2.setText(name[1]);
 			if (name.length > 2)
-				btn_coffee3.setText(name[2]);
+				t_name3.setText(name[2]);
 			if (name.length > 3)
-				btn_coffee4.setText(name[3]);
+				t_name4.setText(name[3]);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	public void setIconOrgPrice(String[] name){
+		if(name==null){
+			Log.e(Tag,"setIconOrgPrice name==null！！！！");
+		}
+		if(btn_coffee1==null){
+			Log.e(Tag,"setIconOrgPrice btn_coffee1==null！！！！");
+		}
+
+		try {
+			if (name.length > 0)
+				t_org1.setText(name[0]);
+			if (name.length > 1)
+				t_org2.setText(name[1]);
+			if (name.length > 2)
+				t_org3.setText(name[2]);
+			if (name.length > 3)
+				t_org4.setText(name[3]);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	public void setIconPrice(String[] name){
+		if(name==null){
+			Log.e(Tag,"setIconPrice name==null！！！！");
+		}
+		if(btn_coffee1==null){
+			Log.e(Tag,"setIconPrice btn_coffee1==null！！！！");
+		}
+
+		try {
+			if (name.length > 0)
+				t_price1.setText(name[0]);
+			if (name.length > 1)
+				t_price2.setText(name[1]);
+			if (name.length > 2)
+				t_price3.setText(name[2]);
+			if (name.length > 3)
+				t_price4.setText(name[3]);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

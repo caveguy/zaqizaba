@@ -457,7 +457,6 @@ public class MassageFragment extends Fragment {
 			 weatherTimerTask=null;
 		 } 
 	 }
-	 
 	 void initTimer(){
 		 cancelTimer();
 		 myTimer=new Timer();

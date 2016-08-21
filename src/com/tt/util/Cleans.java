@@ -39,7 +39,7 @@ public  class Cleans {
 		int i=0;
 		all_Alarm=times.size();
 		for(String time :times){
-			setAlarmReboot( context, time,i++);
+			setAlarmClean( context, time,i++);
 		}
 	}
 
@@ -68,7 +68,7 @@ public  class Cleans {
 	}
 
 	private void cleanCallBack(){
-		Log.e(Tag,"!!!!clickCallBack");
+		Log.e(Tag,"!!!!cleanCallBack");
 		if(callBack!=null)
 			callBack.onClean();
 	}
@@ -78,17 +78,28 @@ public  class Cleans {
 		filter.addAction(IntentStr);
 		context.registerReceiver(alarmReceiver, filter);
 	}
-
-
+    void unregisterRebootReceiver(){
+    	if(alarmReceiver!=null){
+    		context.unregisterReceiver(alarmReceiver);
+    		alarmReceiver=null;
+    	}
+    }
+    
+  
+	@Override
+	protected void finalize() throws Throwable {
+		unregisterRebootReceiver();
+		super.finalize();
+	}
 
 	public class AlarmReceiver extends BroadcastReceiver {
 		private String TAG="AlarmReceiver";
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
+			
 			String time=intent.getStringExtra(Key_time);
 			int which=intent.getIntExtra(Key_which,0);
-
+			Log.i(TAG,"onReceive time="+time +" which="+which);
 			if(isTime(time)&&which<all_Alarm){
 				Log.i(TAG,"in time");
 				cleanCallBack();
@@ -128,7 +139,7 @@ public  class Cleans {
 			}
 			long allInSecond_set=hour*3600+minute*60+second;
 
-			if(Math.abs(allInSecond-allInSecond_set)<120){
+			if(Math.abs(allInSecond-allInSecond_set)<300){
 				return true;
 			}
 			return false;
@@ -209,12 +220,13 @@ public  class Cleans {
 	}
 
 
-	public boolean  setAlarmReboot(Context context,String time,int which){
+	public boolean  setAlarmClean(Context context,String time,int which){
 		Intent intent = new Intent();
 		intent.setAction(IntentStr);
-
+		intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
 		intent.putExtra(Key_time, time);
 		intent.putExtra(Key_which, which);
+		Log.i(Tag,"setAlarmReboot time="+time+" which="+which);
 		PendingIntent sender = PendingIntent.getBroadcast(context.getApplicationContext(),
 				which, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
@@ -224,7 +236,7 @@ public  class Cleans {
 
 		long setTimeLong=getAlarmTime(time);
 		if(setTimeLong==-1){
-			Log.i(Tag,"setAlarmReboot failed!");
+			Log.e(Tag,"setAlarmReboot failed!");
 			return false;
 		}
 		alarm.setRepeating(AlarmManager.RTC, setTimeLong,INTERVAL, sender);

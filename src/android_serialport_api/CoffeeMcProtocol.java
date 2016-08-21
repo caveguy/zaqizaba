@@ -745,7 +745,7 @@ public class CoffeeMcProtocol {
 		
 	}
 	private void temperCallBack(byte temper){
-		Log.i(TAG,"!!!!onReady");
+		Log.i(TAG,"!!!!temperCallBack");
 		if(callBack!=null)
 			callBack.onTemperChanged(temper);
 		

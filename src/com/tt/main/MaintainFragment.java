@@ -58,6 +58,9 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 	private final int Handler_id=1008;
 	private final int Handler_progress=1009;
 	private final int Handler_ver=1009;
+	private boolean dispDebug=false;
+	
+	
 	private com.tt.util.UpdateManager manager =null; 	
 	Context context=null;
 	
@@ -190,6 +193,12 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 			
 		}
 
+		@Override
+		public void onEnableDebugChanged(boolean enable) {
+			dispDebug=enable;
+			
+		}
+
 
 		
 
@@ -232,7 +241,10 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
 		btn_stock.setVisibility(View.VISIBLE);
 		radioCup1.setVisibility(View.VISIBLE);
 		radioCup2.setVisibility(View.VISIBLE);
-		btn_debug.setVisibility(View.VISIBLE);
+		if(dispDebug)
+			btn_debug.setVisibility(View.VISIBLE);
+		else
+			btn_debug.setVisibility(View.GONE);
 		btn_heating.setVisibility(View.VISIBLE);
 //		radio_needBean.setVisibility(View.VISIBLE);
 //		radio_noBean.setVisibility(View.VISIBLE);
@@ -297,7 +309,9 @@ public class MaintainFragment extends Fragment implements OnClickListener,androi
     	btn_debug=(CheckBox)view.findViewById(R.id.btn_debug);
     	btn_heating=(CheckBox)view.findViewById(R.id.btn_heating);
     	btn_debug.setOnCheckedChangeListener(this);
-    	btn_debug.setChecked(Settings.getIsDebug(context));
+    	//btn_debug.setChecked(Settings.getIsDebug(context));
+    	btn_debug.setChecked(false);
+    	
     	btn_heating.setOnCheckedChangeListener(this);
     	btn_heating.setChecked(Settings.getIsHeating(context));
 

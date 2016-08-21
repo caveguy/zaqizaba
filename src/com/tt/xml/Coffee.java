@@ -68,10 +68,10 @@ public class Coffee {
 		this.price = price;
 	}
 	public String getOrgPrice() {
-		return price;
+		return org_price;
 	}
 	public void setOrgPrice(String price) {
-		this.price = price;
+		this.org_price = price;
 	}
 	public Integer getNeedCoffee() {
 		return needCoffee;

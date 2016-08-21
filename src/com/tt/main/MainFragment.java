@@ -33,6 +33,7 @@ import com.tt.view.GuideFragmentAdapter;
 import com.tt.view.MainViewPager;
 import com.tt.xml.Coffee;
 import com.tt.xml.CoffeeFormula;
+import com.tt.xml.DebugFinder;
 import com.tt.xml.MachineTemper;
 import com.viewpagerindicator.CirclePageIndicator;
 import com.viewpagerindicator.PageIndicator;
@@ -202,9 +203,17 @@ public class MainFragment extends Fragment {
 		void hide();
 		void onGetNewVer(String ver,String path);
 		void onTemperChanged(String t);
+		
+		void onEnableDebugChanged(boolean enable);
 	//	void updateId(String id);
 	}
-	
+	boolean getDebugMode(){
+		boolean enable=false;
+
+			DebugFinder debug = new DebugFinder(context);
+			enable=debug.isDebugMode();
+			return enable;
+	}
 	boolean  getCoffeeFormula(){
 		boolean enable=false;
 		try {
@@ -260,6 +269,11 @@ public class MainFragment extends Fragment {
 		}
 	}
 
+	void setEnableDebug(boolean enable){
+		if(myCallback!=null){
+			myCallback.onEnableDebugChanged(enable);
+		}
+	}
 	/*
 	 * dev模式是强制进入的，在maintain模式也可以进去
 	 * 
@@ -344,7 +358,7 @@ public class MainFragment extends Fragment {
 		if(getCoffeeFormula()){
 			//setGoodMsg();
 		}
-    	
+    	setEnableDebug(getDebugMode());
     	firstInitErrors();
     	 initSever();
     	initCoffeeMachine();
@@ -948,18 +962,37 @@ void existMask(){
 	    		return;
 	    	}
 	    	String[] name = new String[coffeeFormula.size()];
+	    	String[] orgPrice=new String[coffeeFormula.size()];
+	    	String[] price=new String[coffeeFormula.size()];
 	    	int i=0;
 	    	for(Coffee coffee:coffeeFormula){
-	    		name[i++]=coffee.getName()+"|￥"+coffee.getPrice();
+	    		name[i]=coffee.getName();
+
+	    		if(coffee.getPrice()!=null){
+	    			price[i]="|￥"+coffee.getPrice();
+	    		}
+	    		if(coffee.getOrgPrice()!=null){
+	    			orgPrice[i]=context.getString(R.string.orgPrice)+coffee.getOrgPrice();
+	    		}
+	    		i++;
+	    		
 	    	}
 
 	    	page1.setIconNames(name);
+	    	page1.setIconOrgPrice(orgPrice);
+	    	page1.setIconPrice(price);
 	    	if(name.length>4){
 		    	String[] name2=new String[name.length-4];
+		    	String[] orgPrice2=new String[name.length-4];
+		    	String[] price2=new String[name.length-4];
 		    	for( i=4;i<name.length;i++){
-		    		name2[i-4]=name[i]	;
+		    		name2[i-4]=name[i];
+		    		orgPrice2[i-4]=orgPrice[i];
+		    		price2[i-4]=price[i];
 		    	}
 		    	page2.setIconNames(name2);
+		    	page2.setIconOrgPrice(orgPrice2);
+		    	page2.setIconPrice(price2);
 	    	}
 	    }
 	    

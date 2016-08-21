@@ -4,71 +4,231 @@
 		    android:layout_height="match_parent"
 		    android:layout_weight="1"
 		    android:orientation="horizontal" xmlns:android="http://schemas.android.com/apk/res/android">
-	        <CheckBox     
+		   <RelativeLayout 
+		        android:layout_width="match_parent"     
+	            android:layout_height="match_parent" 
+	            android:layout_marginLeft="@dimen/icon_coffee_margin_out_side"
+				android:layout_marginRight="@dimen/icon_coffee_margin_side" 
+				android:layout_weight="1"  
+				
+	            >
+		    <CheckBox     
 	            android:id="@+id/radio_1"  
 	            android:layout_width="match_parent"     
-	            android:layout_height="match_parent"  
-	            
-	            android:textSize="@dimen/size_coffee_title"  
-	            android:textColor="@color/brown_title"    
-	            android:gravity="bottom|center_horizontal"  
-	            android:text="@string/coffee_type6"
-	            android:layout_weight="1"  
+	            android:layout_height="match_parent"            
+	             android:gravity="bottom|center_horizontal"  
 	            android:button="@null"
-				android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
-				android:layout_marginLeft="@dimen/icon_coffee_margin_out_side"
-				android:layout_marginRight="@dimen/icon_coffee_margin_side"
 	            android:background="@drawable/radio1" 
 	            />
+		    <LinearLayout 
+		        	android:layout_width="wrap_content"     
+	                android:layout_height="wrap_content"  
+	                android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
+		            android:layout_alignParentBottom="true"
+		            android:layout_centerHorizontal="true"
+		        >
+		        
+		        
+		    
+		    	<TextView
+		    	    android:id="@+id/t_name1"
+		    	    android:layout_width="wrap_content"     
+	                 android:layout_height="wrap_content"   
+				    android:textSize="@dimen/size_coffee_title"  
+		            android:textColor="@color/brown_title"    
+		            android:text="@string/coffee_type6"
+		        >
+		        </TextView>
 
+		        <TextView
+		    	    android:id="@+id/t_price1"
+		    	    android:layout_width="wrap_content"     
+	                 android:layout_height="wrap_content"  
+				   android:textSize="@dimen/size_coffee_title"  
+		            android:textColor="@color/brown_title"    
+		        >
+		        </TextView>
+		         <TextView
+		    	    android:id="@+id/t_orgprice1"
+		    	    android:layout_width="wrap_content"     
+	                 android:layout_height="wrap_content" 
+				    android:textSize="@dimen/size_coffee_orgPrice"  				     
+		            android:textColor="@color/brown_title"    
+		        >
+		        </TextView>
+		        </LinearLayout>
+			</RelativeLayout>
 	          
-	        <CheckBox     
+		   		  
+			<RelativeLayout 
+		        android:layout_width="match_parent"     
+	            android:layout_height="match_parent" 
+	            android:layout_marginLeft="@dimen/icon_coffee_margin_out_side"
+				android:layout_marginRight="@dimen/icon_coffee_margin_side" 
+				android:layout_weight="1"  
+				
+	            >
+		    <CheckBox     
 	            android:id="@+id/radio_2"  
 	            android:layout_width="match_parent"     
-	            android:layout_height="match_parent"  
-	            android:text="@string/coffee_type6"
-	            android:textSize="@dimen/size_coffee_title"    
-	            android:textColor="@color/brown_title"    
-	            android:gravity="bottom|center_horizontal" 
-	            android:layout_weight="1"  
-	            android:button="@null"  
-	            android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
-	            android:layout_marginLeft="@dimen/icon_coffee_margin_side"
-	            android:layout_marginRight="@dimen/icon_coffee_margin_side"
-	            android:background="@drawable/radio2" 
-	            android:adjustViewBounds="true" 
-	            /> 
-	        <CheckBox     
+	            android:layout_height="match_parent"            
+	             android:gravity="bottom|center_horizontal"  
+	            android:button="@null"
+	            android:background="@drawable/radio1" 
+	            />
+		    <LinearLayout 
+		        	android:layout_width="wrap_content"     
+	                android:layout_height="wrap_content"  
+	                android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
+		            android:layout_alignParentBottom="true"
+		            android:layout_centerHorizontal="true"
+		        >
+		        
+		        
+		    
+		    	<TextView
+		    	    android:id="@+id/t_name2"
+		    	    android:layout_width="wrap_content"     
+	                 android:layout_height="wrap_content"   
+				    android:textSize="@dimen/size_coffee_title"  
+		            android:textColor="@color/brown_title"    
+		            android:text="@string/coffee_type6"
+		        >
+		        </TextView>
+
+		        <TextView
+		    	    android:id="@+id/t_price2"
+		    	    android:layout_width="wrap_content"     
+	                 android:layout_height="wrap_content"  
+				   android:textSize="@dimen/size_coffee_title"  
+		            android:textColor="@color/brown_title"    
+		        >
+		        </TextView>
+		         <TextView
+		    	    android:id="@+id/t_orgprice2"
+		    	    android:layout_width="wrap_content"     
+	                 android:layout_height="wrap_content" 
+				    android:textSize="@dimen/size_coffee_orgPrice"  
+				     
+		            android:textColor="@color/brown_title"    
+		
+		        >
+		        </TextView>
+		        </LinearLayout>
+			</RelativeLayout>
+					   <RelativeLayout 
+		        android:layout_width="match_parent"     
+	            android:layout_height="match_parent" 
+	            android:layout_marginLeft="@dimen/icon_coffee_margin_out_side"
+				android:layout_marginRight="@dimen/icon_coffee_margin_side" 
+				android:layout_weight="1"  
+				
+	            >
+		    <CheckBox     
 	            android:id="@+id/radio_3"  
 	            android:layout_width="match_parent"     
-	            android:layout_height="match_parent"  
-	            android:text="@string/coffee_type6"
-	            android:textSize="@dimen/size_coffee_title"    
-	            android:textColor="@color/brown_title"    
-	            android:gravity="bottom|center_horizontal"  
-	            android:layout_weight="1"  
-	            android:button="@null"  
-	            android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
-	            android:layout_marginLeft="@dimen/icon_coffee_margin_side"
-	            android:layout_marginRight="@dimen/icon_coffee_margin_side"
-	            android:background="@drawable/radio3"
-	            android:adjustViewBounds="true"  
-	            /> 
-	             <CheckBox     
+	            android:layout_height="match_parent"            
+	             android:gravity="bottom|center_horizontal"  
+	            android:button="@null"
+	            android:background="@drawable/radio1" 
+	            />
+		    <LinearLayout 
+		        	android:layout_width="wrap_content"     
+	                android:layout_height="wrap_content"  
+	                android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
+		            android:layout_alignParentBottom="true"
+		            android:layout_centerHorizontal="true"
+		        >
+		        
+		        
+		    
+		    	<TextView
+		    	    android:id="@+id/t_name3"
+		    	    android:layout_width="wrap_content"     
+	                 android:layout_height="wrap_content"   
+				    android:textSize="@dimen/size_coffee_title"  
+		            android:textColor="@color/brown_title"    
+		            android:text="@string/coffee_type6"
+		        >
+		        </TextView>
+
+		        <TextView
+		    	    android:id="@+id/t_price3"
+		    	    android:layout_width="wrap_content"     
+	                 android:layout_height="wrap_content"  
+				   android:textSize="@dimen/size_coffee_title"  
+		            android:textColor="@color/brown_title"    
+
+		        >
+		        </TextView>
+		        <TextView
+		    	    android:id="@+id/t_orgprice3"
+		    	    android:layout_width="wrap_content"     
+	                 android:layout_height="wrap_content" 
+				    android:textSize="@dimen/size_coffee_orgPrice"  
+				     
+		            android:textColor="@color/brown_title"    
+		        >
+		        </TextView>		        
+		        </LinearLayout>
+			</RelativeLayout>
+			   <RelativeLayout 
+		        android:layout_width="match_parent"     
+	            android:layout_height="match_parent" 
+	            android:layout_marginLeft="@dimen/icon_coffee_margin_out_side"
+				android:layout_marginRight="@dimen/icon_coffee_margin_side" 
+				android:layout_weight="1"  
+				
+	            >
+		    <CheckBox     
 	            android:id="@+id/radio_4"  
 	            android:layout_width="match_parent"     
-	            android:layout_height="match_parent"  
-	            android:text="@string/coffee_type6"
-	            android:textSize="@dimen/size_coffee_title"   
-	            android:textColor="@color/brown_title"    
-	            android:gravity="bottom|center_horizontal"  
-	            android:layout_weight="1"  
-	            android:button="@null" 
-	            android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
-	            android:layout_marginLeft="@dimen/icon_coffee_margin_side"
-	            android:layout_marginRight="@dimen/icon_coffee_margin_out_side"
-	            android:background="@drawable/radio4"  
-	            />            
+	            android:layout_height="match_parent"            
+	             android:gravity="bottom|center_horizontal"  
+	            android:button="@null"
+	            android:background="@drawable/radio4" 
+	            />
+		    <LinearLayout 
+		        	android:layout_width="wrap_content"     
+	                android:layout_height="wrap_content"  
+	                android:paddingBottom="@dimen/coffee_icon_text_padding_bottom"
+		            android:layout_alignParentBottom="true"
+		            android:layout_centerHorizontal="true"
+		        >
+		        
+		        
+		    
+		    	<TextView
+		    	    android:id="@+id/t_name4"
+		    	    android:layout_width="wrap_content"     
+	                 android:layout_height="wrap_content"   
+				    android:textSize="@dimen/size_coffee_title"  
+		            android:textColor="@color/brown_title"    
+		            android:text="@string/coffee_type6"
+		        >
+		        </TextView>
+
+		        <TextView
+		    	    android:id="@+id/t_price4"
+		    	    android:layout_width="wrap_content"     
+	                 android:layout_height="wrap_content"  
+				   android:textSize="@dimen/size_coffee_title"  
+		            android:textColor="@color/brown_title"    
+
+		        >
+		        </TextView>
+		        <TextView
+		    	    android:id="@+id/t_orgprice4"
+		    	    android:layout_width="wrap_content"     
+	                 android:layout_height="wrap_content" 
+				    android:textSize="@dimen/size_coffee_orgPrice"  
+				     
+		            android:textColor="@color/brown_title"    
+		        >
+		        </TextView>
+		        </LinearLayout>
+			</RelativeLayout>		   
+           
 	     </LinearLayout>     
 	      
 

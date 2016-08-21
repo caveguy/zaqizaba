@@ -263,7 +263,7 @@ public class UpdateManager {
 					bos.write(buffer, 0, n);
 					downLength +=n;
 					progress = (int) (((float) downLength / fileLength) * 100);
-					 onVerChangedCallback(progress);
+					onProgressChangedCallback(progress);
 //					Message msg = new Message();
 //					msg.arg1 = progress;
 //					MainActivity.handler.sendMessage(msg);
@@ -296,16 +296,16 @@ public class UpdateManager {
 	}
 
 	void onCurVerChangedCallback(String verName){
-		if(callBack!=null){
-			callBack.onCurVerChanged(verName);
-		}
+//		if(callBack!=null){
+//			callBack.onCurVerChanged(verName);
+//		}
 	}
 	void onSeverVerChangedCallback(String verName){
-		if(callBack!=null){
-			callBack.onServerVerChanged(verName);
-		}
+//		if(callBack!=null){
+//			callBack.onServerVerChanged(verName);
+//		}
 	}
-	void onVerChangedCallback(int gress){
+	void onProgressChangedCallback(int gress){
 		if(callBack!=null){
 			callBack.updateProgress( gress);
 		}

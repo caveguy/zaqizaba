@@ -62,6 +62,7 @@ public class PayServer {
 	 2.10 查看新版本           lastversion
 	 */
 	private final String url_comm="http://114.55.128.131/blservice/";
+//	private final String url_comm="http://192.168.1.103/blservice/";
 	private final String url_extra_login="register";
 	private final String url_extra_heartbeat="heart";
 	private final String url_extra_zfb="alipayready";
@@ -457,7 +458,6 @@ public class PayServer {
 	private void onGetWeixinQrFailed(String msg){
 		 Log.i(Tag, "onGetWeixinQrFailed try again!!!");
 		sHandler.postDelayed(getWeixinQrRunable,500);
-
 	}
 	private void onGetZfbPayStateFailed(String msg){
 		Log.i(Tag, "onGetZfbPayStateFailed try again!!!");
@@ -467,7 +467,7 @@ public class PayServer {
 	}
 	private void onPostSaleFailed(String msg){
 		Log.i(Tag, "onPostSaleFailed try again!!! ");
-		sHandler.postDelayed(updataSaleRunable,1000);
+		sHandler.postDelayed(updataSaleRunable,2000);
 	}
 	
 	
@@ -753,6 +753,7 @@ public class PayServer {
 	}
 	
 	public void getZfbQr(String id,String price){	
+		post_cnt=0;
 		Log.i(Tag, "getZfbQr id="+id+"price="+price);
 		RequestParams params = new RequestParams();
 		addedCommParas(params);
@@ -763,7 +764,8 @@ public class PayServer {
 		postParams(url_extra_zfb,params,zfbQrCallback);
 		
 	}
-	public void getWeixinQr(String id,String price){	
+	public void getWeixinQr(String id,String price){
+		post_cnt=0;
 		Log.i(Tag, "getWeixinQr id="+id+"price="+price);
 		RequestParams params = new RequestParams();
 		addedCommParas(params);
@@ -785,6 +787,7 @@ public class PayServer {
 		postParams(url_extra_weixin_state,params,weixinPayStateCallback);
 	}
 	public void updateSale(){	
+		
 		RequestParams params = new RequestParams();
 		addedCommParas(params);
 		
